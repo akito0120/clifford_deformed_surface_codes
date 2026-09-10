@@ -22,7 +22,7 @@ dependencies = [
 ]
 
 [project.scripts]
-cdsc = "cli:main"
+cdsc = "cdsc.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
