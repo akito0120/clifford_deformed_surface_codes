@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clifford_deformed_surface_codes"
+version = "0.1.0"
+description = "Surface code framework: stabilizer-defined surface code memory simulations"
+requires-python = ">=3.10"
+dependencies = [
+    "stim>=1.16",
+    "sinter>=1.16",
+    "pymatching>=2.4",
+    "beliefmatching>=0.2",
+    "ldpc>=2.4",
+    "numpy>=2.0",
+    "scipy>=1.15",
+    "pandas>=2.2",
+    "matplotlib>=3.8",
+    "joblib>=1.5",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+cdsc = "cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
