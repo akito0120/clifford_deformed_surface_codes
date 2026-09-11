@@ -3,6 +3,7 @@ from .codes.builtin import *
 from .noise import NoiseModel
 from .circuit_builder.circuit_level import CircuitLevelBuilder
 from .validation import validate_codes, validation_report
+import json
 
 def main() -> int:
     css = build_code("rotated_surface", distance=3)
@@ -11,7 +12,8 @@ def main() -> int:
 
     # Validation
     result = validate_codes(codes)
-    print(validation_report(result))
+    report = validation_report(result)
+    print(json.dumps(report, indent=2))
 
     # Code definitions
     print(css)
