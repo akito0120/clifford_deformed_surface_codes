@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from typing import Mapping, Optional
 from .definition import CodeDefinition, Coord, Pauli
 
-CHECK_NAMES: tuple[str, ...] = (
+CODE_CHECK_NAMES: tuple[str, ...] = (
     "stabilizer_commutation",
     "logical_operators",
     "generator_independence",
@@ -135,12 +135,12 @@ def check_stabilizer_commutation(code: CodeDefinition) -> CheckResult:
 
     detail: dict[str, object] = {"generators": len(ancillas)}
     if not offenders:
-        return CheckResult(CHECK_NAMES[0], True, detail=detail)
+        return CheckResult(CODE_CHECK_NAMES[0], True, detail=detail)
 
     detail["anticommuting_pairs"] = len(offenders)
     detail["examples"] = [[list(a), list(b)] for a, b in offenders[:_MAX_REPORTED]]
     return CheckResult(
-        CHECK_NAMES[0],
+        CODE_CHECK_NAMES[0],
         False,
         f"{len(offenders)} generator pair(s) anticommute: "
         + _summarise([f"{a} with {b}" for a, b in offenders]),
@@ -177,8 +177,8 @@ def check_logical_operators(code: CodeDefinition) -> CheckResult:
         )
 
     if problems:
-        return CheckResult(CHECK_NAMES[1], False, "; ".join(problems), detail)
-    return CheckResult(CHECK_NAMES[1], True, detail=detail)
+        return CheckResult(CODE_CHECK_NAMES[1], False, "; ".join(problems), detail)
+    return CheckResult(CODE_CHECK_NAMES[1], True, detail=detail)
 
 
 # --- checks 3a and 3b --------------------------------------------------------
@@ -194,9 +194,9 @@ def check_generator_independence(
 
     detail = {"n": n, "m": m, "rank": rank}
     if rank == m:
-        return CheckResult(CHECK_NAMES[2], True, detail=detail)
+        return CheckResult(CODE_CHECK_NAMES[2], True, detail=detail)
     return CheckResult(
-        CHECK_NAMES[2],
+        CODE_CHECK_NAMES[2],
         False,
         f"check matrix rank {rank} is below the generator count {m}: "
         f"{m - rank} generator(s) are dependent on the others (duplicated, or a "
@@ -215,9 +215,9 @@ def check_logical_qubit_count(
 
     detail = {"rank": rank, "expected": expected, "k": n - rank}
     if rank == expected:
-        return CheckResult(CHECK_NAMES[3], True, detail=detail)
+        return CheckResult(CODE_CHECK_NAMES[3], True, detail=detail)
     return CheckResult(
-        CHECK_NAMES[3],
+        CODE_CHECK_NAMES[3],
         False,
         f"check matrix rank {rank} implies k = {n - rank} logical qubit(s), "
         f"but the framework tracks exactly one (rank must be n - 1 = {expected})",
@@ -238,7 +238,7 @@ def check_schedule_consistency(code: CodeDefinition) -> CheckResult:
 
     if not code.schedule:
         return CheckResult(
-            CHECK_NAMES[4],
+            CODE_CHECK_NAMES[4],
             True,
             detail={"steps": 0, "scheduled": False},
         )
@@ -247,7 +247,7 @@ def check_schedule_consistency(code: CodeDefinition) -> CheckResult:
     extra = sorted(set(code.schedule) - set(code.stabilizers))
     if missing or extra:
         return CheckResult(
-            CHECK_NAMES[4],
+            CODE_CHECK_NAMES[4],
             False,
             f"schedule does not cover the generators: missing {missing}, "
             f"unexpected {extra}",
@@ -257,7 +257,7 @@ def check_schedule_consistency(code: CodeDefinition) -> CheckResult:
     step_counts = {len(steps) for steps in code.schedule.values()}
     if len(step_counts) != 1:
         return CheckResult(
-            CHECK_NAMES[4],
+            CODE_CHECK_NAMES[4],
             False,
             f"generators disagree on the number of time steps: "
             f"{sorted(step_counts)}; a round takes one fixed number of steps",
@@ -298,15 +298,15 @@ def check_schedule_consistency(code: CodeDefinition) -> CheckResult:
         problems.append("leg coverage: " + _summarise(coverage))
 
     if problems:
-        return CheckResult(CHECK_NAMES[4], False, "; ".join(problems), detail)
-    return CheckResult(CHECK_NAMES[4], True, detail=detail)
+        return CheckResult(CODE_CHECK_NAMES[4], False, "; ".join(problems), detail)
+    return CheckResult(CODE_CHECK_NAMES[4], True, detail=detail)
 
 
 # --- orchestration -----------------------------------------------------------
 
 
 def run_checks(code: CodeDefinition) -> list[CheckResult]:
-    # Run checks 1-4, in CHECK_NAMES order.
+    # Run checks 1-4, in CODE_CHECK_NAMES order.
     rank = check_matrix_rank(code)
     return [
         check_stabilizer_commutation(code),
@@ -322,7 +322,7 @@ def require_valid(code: CodeDefinition) -> None:
     failures = [result for result in run_checks(code) if not result.passed]
     if failures:
         raise CodeValidationError(
-            f"code {code.name!r} failed {len(failures)} of {len(CHECK_NAMES)} "
+            f"code {code.name!r} failed {len(failures)} of {len(CODE_CHECK_NAMES)} "
             "checks:\n"
             + "\n".join(f"  {result.name}: {result.message}" for result in failures)
         )

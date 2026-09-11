@@ -1,21 +1,23 @@
-from .codes.registry import registered_codes, build_code
-from .codes.checks import run_checks
+from .codes.registry import build_code
 from .codes.builtin import *
 from .noise import NoiseModel
-from .circuit_builder.circuit_level import CircuitLevelBuilder 
+from .circuit_builder.circuit_level import CircuitLevelBuilder
+from .validation import validate_codes, validation_report
 
 def main() -> int:
-    print(registered_codes())
-
     css = build_code("rotated_surface", distance=3)
-    xzzx = build_code("xzzx", distance=3)
+    xzzx = build_code("xzzx", distance=5)
+    codes = [css, xzzx]
+
+    # Validation
+    result = validate_codes(codes)
+    print(validation_report(result))
+
+    # Code definitions
     print(css)
     print(xzzx)
 
-    results = run_checks(xzzx)
-    for result in results:
-        print(result.as_json())
-
+    # Circuit
     noise = NoiseModel(p=0.1, channel="biased", eta=10)
     circuit = CircuitLevelBuilder(code=xzzx, noise=noise, basis='X').build()
     print(str(circuit))
