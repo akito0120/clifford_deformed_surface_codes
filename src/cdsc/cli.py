@@ -45,7 +45,7 @@ def _analyze(args: argparse.Namespace) -> int:
     return EXIT_FAILED
 
 
-def _diagrams(args: argparse.Namespace) -> int:
+def _visualize(args: argparse.Namespace) -> int:
     config = load_config(args.config)
     distances = [3, 5, 7]
 
@@ -78,8 +78,8 @@ def _build_parser() -> argparse.ArgumentParser:
     analyze = subparsers.add_parser("analyze", help="Estimate the theshold, suppression factor and teraquop footpring")
     analyze.add_argument("config", help="path to the YAML config")
 
-    diagrams = subparsers.add_parser("diagrams", help="Visualize the circuit")
-    diagrams.add_argument("config", help="path to the YAML config")
+    visualize = subparsers.add_parser("visualize", help="Visualize the analysis result and circuit diagrams")
+    visualize.add_argument("config", help="path to the YAML config")
 
     return parser
 
@@ -88,7 +88,7 @@ HANDLERS = {
     "run": _run,
     "validate": _validate,
     "analyze": _analyze,
-    "diagrams": _diagrams,
+    "visualize": _visualize,
 }
 
 

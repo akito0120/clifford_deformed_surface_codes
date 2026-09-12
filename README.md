@@ -9,3 +9,10 @@ threshold and the suppression factor and visualizes the result.
 ```
 pip install -e .
 ```
+
+## How to use
+
+```
+cdsc validate <path-to-config-file>
+cdsc visualize <path-to-config-file>
+```
