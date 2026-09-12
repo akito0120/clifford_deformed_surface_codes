@@ -1,13 +1,8 @@
-# 1. stabilizer commutation: every generator pair overlaps in an even number of positions where the Paulis differ
-# 2. logical operators: both commute with every stabilizer and anticommute with each other
-# 3a. generator independence: the GF(2) rank of the symplectic check matrix equals the number of generators
-# 3b. logical qubit count: that same rank equals n - 1, i.e. k = 1
-# 4. schedule consistency: no qubit is used twice in one time step, and every stabilizer leg is covered exactly once
-
 from __future__ import annotations
-from dataclasses import dataclass, field
 from typing import Mapping, Optional
-from .definition import CodeDefinition, Coord, Pauli
+from ..codes.definition import CodeDefinition, Coord, Pauli
+from .check_result import CheckResult
+
 
 CODE_CHECK_NAMES: tuple[str, ...] = (
     "stabilizer_commutation",
@@ -23,22 +18,6 @@ _MAX_REPORTED = 5
 
 class CodeValidationError(ValueError):
     pass
-
-
-@dataclass(frozen=True)
-class CheckResult:
-    # The verdict on one check, with enough detail to act on it.
-    name: str
-    passed: bool
-    message: str = "" # for humans
-    detail: Mapping[str, object] = field(default_factory=dict) # for validation.json
-
-    def as_json(self) -> dict[str, object]:
-        # The validation.json record: passed alongside the detail fields.
-        record: dict[str, object] = {"passed": self.passed, **self.detail}
-        if not self.passed:
-            record["message"] = self.message
-        return record
 
 
 # --- shared machinery --------------------------------------------------------
@@ -305,7 +284,7 @@ def check_schedule_consistency(code: CodeDefinition) -> CheckResult:
 # --- orchestration -----------------------------------------------------------
 
 
-def run_checks(code: CodeDefinition) -> list[CheckResult]:
+def check_code(code: CodeDefinition) -> list[CheckResult]:
     # Run checks 1-4, in CODE_CHECK_NAMES order.
     rank = check_matrix_rank(code)
     return [
@@ -319,7 +298,7 @@ def run_checks(code: CodeDefinition) -> list[CheckResult]:
 
 def require_valid(code: CodeDefinition) -> None:
     # Raise CodeValidationError if any of checks 1-4 fails.
-    failures = [result for result in run_checks(code) if not result.passed]
+    failures = [result for result in check_code(code) if not result.passed]
     if failures:
         raise CodeValidationError(
             f"code {code.name!r} failed {len(failures)} of {len(CODE_CHECK_NAMES)} "

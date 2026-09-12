@@ -2,7 +2,7 @@ from .codes.registry import build_code
 from .codes.builtin import *
 from .noise import NoiseModel
 from .circuit_builder.circuit_level import CircuitLevelBuilder
-from .validation import validate_codes, validation_report
+from .validation.validate import validate_codes, validation_report
 import json
 
 def main() -> int:

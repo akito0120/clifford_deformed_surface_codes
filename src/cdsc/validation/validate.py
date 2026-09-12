@@ -1,12 +1,13 @@
 from dataclasses import dataclass
-from .codes.checks import CheckResult, CodeValidationError, CODE_CHECK_NAMES, run_checks as run_code_checks
-from .circuit_builder.checks import (
+from .check_result import CheckResult
+from .code_checks import CodeValidationError, CODE_CHECK_NAMES, check_code
+from .circuit_checks import (
     CIRCUIT_CHECK_NAMES, DEFAULT_BASES, VALIDATION_NOISE,
-    run_checks as run_circuit_checks
+    check_circuit
 )
-from .codes.definition import CodeDefinition, Pauli
+from ..codes.definition import CodeDefinition, Pauli
 from typing import Optional, Sequence, Iterable
-from .noise import NoiseModel
+from ..noise import NoiseModel
 
 
 CHECK_NAMES: tuple[str, ...] = CODE_CHECK_NAMES + CIRCUIT_CHECK_NAMES
@@ -58,8 +59,8 @@ def validate_code(
     rounds: Optional[int] = None,
 ) -> CodeValidation:
     # Run all six checks on one code.
-    code_results = run_code_checks(code)
-    circuit_results = run_circuit_checks(code, list(bases), noise, rounds)
+    code_results = check_code(code)
+    circuit_results = check_circuit(code, list(bases), noise, rounds)
     results = (
         *code_results,
         *circuit_results

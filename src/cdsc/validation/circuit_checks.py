@@ -1,11 +1,10 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional, Sequence
-from . import CircuitLevelBuilder
-from ..codes.checks import CheckResult
+from ..circuit_builder.circuit_level import CircuitLevelBuilder
+from .check_result import CheckResult
 from ..codes.definition import CodeDefinition, Pauli
 from ..noise import NoiseModel
-
 
 CIRCUIT_CHECK_NAMES: tuple[str, ...] = (
     "detector_determinism",
@@ -128,7 +127,7 @@ def _distance_result(
     return CheckResult(CIRCUIT_CHECK_NAMES[1], False, "; ".join(problems), detail)
 
 
-def run_checks(
+def check_circuit(
     code: CodeDefinition, 
     bases: Sequence[Pauli], 
     noise: NoiseModel,
