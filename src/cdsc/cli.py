@@ -6,6 +6,7 @@ from .config import load_config
 import argparse
 from pathlib import Path
 from typing import Optional, Sequence
+from .visualization.diagrams import render_diagrams
 
 
 # Exit codes for the cli
@@ -45,7 +46,19 @@ def _analyze(args: argparse.Namespace) -> int:
 
 
 def _diagrams(args: argparse.Namespace) -> int:
-    return EXIT_FAILED
+    config = load_config(args.config)
+    distances = [3, 5, 7]
+
+    for entry in config.codes:
+        codes: list[CodeDefinition] = []
+        code_ids: list[str] = []
+        output_dir = Path(config.output.dir) / "diagrams" / f"{entry.id}"
+        for distance in distances:
+            codes.append(build_code(entry.builder, distance=distance))
+            code_ids.append(entry.id)
+        render_diagrams(output_dir, codes, code_ids)
+        
+    return EXIT_OK
 
 
 def _build_parser() -> argparse.ArgumentParser:
