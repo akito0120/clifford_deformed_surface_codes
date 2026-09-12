@@ -9,6 +9,7 @@ from typing import Optional, Sequence
 from .visualization.diagrams import render_diagrams
 from datetime import datetime
 import platform
+import subprocess
 
 
 # Exit codes for the cli
@@ -86,6 +87,13 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def commit_hash() -> str:
+    return subprocess.check_output(
+        ["git", "rev-parse", "HEAD"],
+        text=True,
+    ).strip()
+
+
 def _write_manifest(args: argparse.Namespace):
     config = load_config(args.config)
     now = datetime.now()
@@ -94,6 +102,7 @@ def _write_manifest(args: argparse.Namespace):
             "python_version": platform.python_version(),
             "platform": platform.platform(),
         },
+        "git_commit": commit_hash(),
         "started_at": str(now),
         "config_path": str(args.config),
         "config": config.as_dict(),
