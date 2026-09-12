@@ -7,6 +7,8 @@ import argparse
 from pathlib import Path
 from typing import Optional, Sequence
 from .visualization.diagrams import render_diagrams
+from datetime import datetime
+import platform
 
 
 # Exit codes for the cli
@@ -84,6 +86,25 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _write_manifest(args: argparse.Namespace):
+    config = load_config(args.config)
+    now = datetime.now()
+    manifest = {
+        "environment": {
+            "python_version": platform.python_version(),
+            "platform": platform.platform(),
+        },
+        "started_at": str(now),
+        "config_path": str(args.config),
+        "config": config.as_dict(),
+    }
+
+    output_dir = Path(config.output.dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_file = output_dir / "manifest.json"
+    output_file.write_text(json.dumps(manifest, indent=2) + "\n")
+
+
 HANDLERS = {
     "run": _run,
     "validate": _validate,
@@ -94,6 +115,8 @@ HANDLERS = {
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = _build_parser().parse_args(argv)
+    _write_manifest(args)
+
     handler = HANDLERS.get(args.command)
     if handler is None:
         return EXIT_USAGE_ERROR
