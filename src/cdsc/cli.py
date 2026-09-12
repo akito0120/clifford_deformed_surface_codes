@@ -56,11 +56,17 @@ def _build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", metavar="COMMAND")
     subparsers.required = True
 
-    validate = subparsers.add_parser(
-        "validate",
-        help="run the six code health checks",
-    )
+    run = subparsers.add_parser("run", help="Build circuits, sample, and decode")
+    run.add_argument("config", help="path to the YAML config")
+
+    validate = subparsers.add_parser("validate", help="Run checks on codes and circuits")
     validate.add_argument("config", help="path to the YAML config")
+
+    analyze = subparsers.add_parser("analyze", help="Estimate the theshold, suppression factor and teraquop footpring")
+    analyze.add_argument("config", help="path to the YAML config")
+
+    diagrams = subparsers.add_parser("diagrams", help="Visualize the circuit")
+    diagrams.add_argument("config", help="path to the YAML config")
 
     return parser
 
