@@ -16,3 +16,19 @@ pip install -e .
 cdsc validate <path-to-config-file>
 cdsc visualize <path-to-config-file>
 ```
+
+
+## Layout
+
+```
+.
+├── configs/                # Simulation config files
+└── src/cdsc/
+    ├── circuit_builder/    # Stim circuit builders
+    ├── codes/              # Code definition, registry and built-in codes
+    ├── validation/         # Code and circuit validation
+    ├── visualization/      # Visualization
+    ├── cli.py              # CLI entrypoint and command handlers
+    ├── config.py           # YAML config schema definition 
+    └── noise.py            # Noise definition
+```
