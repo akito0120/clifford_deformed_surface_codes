@@ -1,0 +1,362 @@
+{
+  "css_d3": {
+    "passed": true,
+    "checks": {
+      "stabilizer_commutation": {
+        "passed": true,
+        "generators": 8
+      },
+      "logical_operators": {
+        "passed": true
+      },
+      "generator_independence": {
+        "passed": true,
+        "n": 9,
+        "m": 8,
+        "rank": 8
+      },
+      "logical_qubit_count": {
+        "passed": true,
+        "rank": 8,
+        "expected": 8,
+        "k": 1
+      },
+      "schedule_consistency": {
+        "passed": true,
+        "steps": 4,
+        "scheduled": true
+      },
+      "detector_determinism": {
+        "passed": true,
+        "bases": [
+          "X",
+          "Z"
+        ]
+      },
+      "distance_preservation": {
+        "passed": true,
+        "declared": 3,
+        "bases": [
+          "X",
+          "Z"
+        ],
+        "measured": 3
+      }
+    }
+  },
+  "css_d5": {
+    "passed": true,
+    "checks": {
+      "stabilizer_commutation": {
+        "passed": true,
+        "generators": 24
+      },
+      "logical_operators": {
+        "passed": true
+      },
+      "generator_independence": {
+        "passed": true,
+        "n": 25,
+        "m": 24,
+        "rank": 24
+      },
+      "logical_qubit_count": {
+        "passed": true,
+        "rank": 24,
+        "expected": 24,
+        "k": 1
+      },
+      "schedule_consistency": {
+        "passed": true,
+        "steps": 4,
+        "scheduled": true
+      },
+      "detector_determinism": {
+        "passed": true,
+        "bases": [
+          "X",
+          "Z"
+        ]
+      },
+      "distance_preservation": {
+        "passed": true,
+        "declared": 5,
+        "bases": [
+          "X",
+          "Z"
+        ],
+        "measured": 5
+      }
+    }
+  },
+  "css_d7": {
+    "passed": true,
+    "checks": {
+      "stabilizer_commutation": {
+        "passed": true,
+        "generators": 48
+      },
+      "logical_operators": {
+        "passed": true
+      },
+      "generator_independence": {
+        "passed": true,
+        "n": 49,
+        "m": 48,
+        "rank": 48
+      },
+      "logical_qubit_count": {
+        "passed": true,
+        "rank": 48,
+        "expected": 48,
+        "k": 1
+      },
+      "schedule_consistency": {
+        "passed": true,
+        "steps": 4,
+        "scheduled": true
+      },
+      "detector_determinism": {
+        "passed": true,
+        "bases": [
+          "X",
+          "Z"
+        ]
+      },
+      "distance_preservation": {
+        "passed": true,
+        "declared": 7,
+        "bases": [
+          "X",
+          "Z"
+        ],
+        "measured": 7
+      }
+    }
+  },
+  "css_d9": {
+    "passed": true,
+    "checks": {
+      "stabilizer_commutation": {
+        "passed": true,
+        "generators": 80
+      },
+      "logical_operators": {
+        "passed": true
+      },
+      "generator_independence": {
+        "passed": true,
+        "n": 81,
+        "m": 80,
+        "rank": 80
+      },
+      "logical_qubit_count": {
+        "passed": true,
+        "rank": 80,
+        "expected": 80,
+        "k": 1
+      },
+      "schedule_consistency": {
+        "passed": true,
+        "steps": 4,
+        "scheduled": true
+      },
+      "detector_determinism": {
+        "passed": true,
+        "bases": [
+          "X",
+          "Z"
+        ]
+      },
+      "distance_preservation": {
+        "passed": true,
+        "declared": 9,
+        "bases": [
+          "X",
+          "Z"
+        ],
+        "measured": 9
+      }
+    }
+  },
+  "xzzx_d3": {
+    "passed": true,
+    "checks": {
+      "stabilizer_commutation": {
+        "passed": true,
+        "generators": 8
+      },
+      "logical_operators": {
+        "passed": true
+      },
+      "generator_independence": {
+        "passed": true,
+        "n": 9,
+        "m": 8,
+        "rank": 8
+      },
+      "logical_qubit_count": {
+        "passed": true,
+        "rank": 8,
+        "expected": 8,
+        "k": 1
+      },
+      "schedule_consistency": {
+        "passed": true,
+        "steps": 4,
+        "scheduled": true
+      },
+      "detector_determinism": {
+        "passed": true,
+        "bases": [
+          "X",
+          "Z"
+        ]
+      },
+      "distance_preservation": {
+        "passed": true,
+        "declared": 3,
+        "bases": [
+          "X",
+          "Z"
+        ],
+        "measured": 3
+      }
+    }
+  },
+  "xzzx_d5": {
+    "passed": true,
+    "checks": {
+      "stabilizer_commutation": {
+        "passed": true,
+        "generators": 24
+      },
+      "logical_operators": {
+        "passed": true
+      },
+      "generator_independence": {
+        "passed": true,
+        "n": 25,
+        "m": 24,
+        "rank": 24
+      },
+      "logical_qubit_count": {
+        "passed": true,
+        "rank": 24,
+        "expected": 24,
+        "k": 1
+      },
+      "schedule_consistency": {
+        "passed": true,
+        "steps": 4,
+        "scheduled": true
+      },
+      "detector_determinism": {
+        "passed": true,
+        "bases": [
+          "X",
+          "Z"
+        ]
+      },
+      "distance_preservation": {
+        "passed": true,
+        "declared": 5,
+        "bases": [
+          "X",
+          "Z"
+        ],
+        "measured": 5
+      }
+    }
+  },
+  "xzzx_d7": {
+    "passed": true,
+    "checks": {
+      "stabilizer_commutation": {
+        "passed": true,
+        "generators": 48
+      },
+      "logical_operators": {
+        "passed": true
+      },
+      "generator_independence": {
+        "passed": true,
+        "n": 49,
+        "m": 48,
+        "rank": 48
+      },
+      "logical_qubit_count": {
+        "passed": true,
+        "rank": 48,
+        "expected": 48,
+        "k": 1
+      },
+      "schedule_consistency": {
+        "passed": true,
+        "steps": 4,
+        "scheduled": true
+      },
+      "detector_determinism": {
+        "passed": true,
+        "bases": [
+          "X",
+          "Z"
+        ]
+      },
+      "distance_preservation": {
+        "passed": true,
+        "declared": 7,
+        "bases": [
+          "X",
+          "Z"
+        ],
+        "measured": 7
+      }
+    }
+  },
+  "xzzx_d9": {
+    "passed": true,
+    "checks": {
+      "stabilizer_commutation": {
+        "passed": true,
+        "generators": 80
+      },
+      "logical_operators": {
+        "passed": true
+      },
+      "generator_independence": {
+        "passed": true,
+        "n": 81,
+        "m": 80,
+        "rank": 80
+      },
+      "logical_qubit_count": {
+        "passed": true,
+        "rank": 80,
+        "expected": 80,
+        "k": 1
+      },
+      "schedule_consistency": {
+        "passed": true,
+        "steps": 4,
+        "scheduled": true
+      },
+      "detector_determinism": {
+        "passed": true,
+        "bases": [
+          "X",
+          "Z"
+        ]
+      },
+      "distance_preservation": {
+        "passed": true,
+        "declared": 9,
+        "bases": [
+          "X",
+          "Z"
+        ],
+        "measured": 9
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "environment": {
+    "python_version": "3.14.7",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.41"
+  },
+  "software": {
+    "git_commit": "b1e5f7d14892da068265b4ccf191431300d842fb",
+    "git_dirty": true
+  },
+  "started_at": "2026-09-13 05:13:29.285793",
+  "config_path": "configs/smoke.yaml",
+  "config": {
+    "experiment": {
+      "name": "smoke",
+      "seed": 0
+    },
+    "codes": [
+      {
+        "id": "css",
+        "builder": "rotated_surface"
+      },
+      {
+        "id": "xzzx",
+        "builder": "xzzx"
+      }
+    ],
+    "output": {
+      "dir": "results/smoke",
+      "figures": false,
+      "diagrams": false
+    }
+  }
+}
