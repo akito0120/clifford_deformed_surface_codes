@@ -23,7 +23,7 @@ def _run(args: argparse.Namespace) -> int:
 
 
 def _validate(args: argparse.Namespace) -> int:
-    config = load_config(args.config)
+    config = load_config(Path(args.config))
     distances = [3, 5, 7, 9]
 
     codes: list[CodeDefinition] = []
@@ -36,7 +36,7 @@ def _validate(args: argparse.Namespace) -> int:
     result = validate_codes(codes, code_ids=code_ids)
     report = validation_report(result)
 
-    output_dir = Path(config.output.dir)
+    output_dir = config.output.path
     output_dir.mkdir(parents=True, exist_ok=True)
     output_file = output_dir / "validation.json"
     output_file.write_text(json.dumps(report, indent=2) + "\n")
@@ -49,13 +49,13 @@ def _analyze(args: argparse.Namespace) -> int:
 
 
 def _visualize(args: argparse.Namespace) -> int:
-    config = load_config(args.config)
+    config = load_config(Path(args.config))
     distances = [3, 5, 7]
 
     for entry in config.codes:
         codes: list[CodeDefinition] = []
         code_ids: list[str] = []
-        output_dir = Path(config.output.dir) / "diagrams" / f"{entry.id}"
+        output_dir = config.output.path / "diagrams" / f"{entry.id}"
         for distance in distances:
             codes.append(build_code(entry.builder, distance=distance))
             code_ids.append(entry.id)
@@ -101,7 +101,7 @@ def git_dirty() -> bool:
 
 
 def _write_manifest(args: argparse.Namespace):
-    config = load_config(args.config)
+    config = load_config(Path(args.config))
     now = datetime.now()
     manifest = {
         "environment": {
@@ -117,7 +117,7 @@ def _write_manifest(args: argparse.Namespace):
         "config": config.as_dict(),
     }
 
-    output_dir = Path(config.output.dir)
+    output_dir = config.output.path
     output_dir.mkdir(parents=True, exist_ok=True)
     output_file = output_dir / "manifest.json"
     output_file.write_text(json.dumps(manifest, indent=2) + "\n")
