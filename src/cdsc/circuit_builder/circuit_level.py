@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Optional
 import stim
 from ..codes.definition import CodeDefinition, Coord, Pauli
-from ..noise import NoiseModel
+from ..noise.noise_model import NoiseModel
 from . import fragments, rounds
 from .gates import ANCILLA_BASIS, CGATE, MEAS_GATE, PREP_ERROR, PREP_GATE
 from .record import MeasurementLog
@@ -41,8 +41,8 @@ def noisy_syndrome_round(
 ) -> stim.Circuit:
     # One full noisy round of syndrome extraction, in three phases.
 
-    px, py, pz = noise.one_qubit_rates()
-    two_qubit_rates = noise.two_qubit_rates()
+    px, py, pz = noise.one_qubit_rates
+    two_qubit_rates = noise.two_qubit_rates
 
     ancilla_indices = [code.ancilla_qubits[a] for a in ancilla_order]
     data_indices = list(code.data_qubits.values())
@@ -78,7 +78,7 @@ def noisy_syndrome_round(
 
     # Phase 3: data idling through the measurement window, then readout.
     circuit.append("PAULI_CHANNEL_1", data_indices, [px, py, pz])
-    flip = noise.measurement_flip
+    flip = noise.meas_flip
     for ancilla in ancilla_order:
         ancilla_index = code.ancilla_qubits[ancilla]
         if flip > 0.0:
@@ -134,7 +134,7 @@ class CircuitLevelBuilder:
 
         # Final readout, the top time boundary, and the logical observable.
         circuit += fragments.data_readout(
-            code, log, basis, flip=noise.measurement_flip
+            code, log, basis, flip=noise.meas_flip
         )
         circuit += rounds.final_boundary_detectors(code, log, basis)
         circuit += fragments.define_observable(code, log, basis)

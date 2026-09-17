@@ -4,14 +4,15 @@ from typing import Optional, Sequence
 from ..circuit_builder.circuit_level import CircuitLevelBuilder
 from .check_result import CheckResult
 from ..codes.definition import CodeDefinition, Pauli
-from ..noise import NoiseModel
+from ..noise.noise_model import NoiseModel
+from ..noise.builtin import depolarizing_noise
 
 CIRCUIT_CHECK_NAMES: tuple[str, ...] = (
     "detector_determinism",
     "distance_preservation",
 )
 DEFAULT_BASES: tuple[Pauli, ...] = ("X", "Z")
-VALIDATION_NOISE = NoiseModel(p=0.1, eta=0.5)
+VALIDATION_NOISE = depolarizing_noise(0.1, None)
 
 
 @dataclass(frozen=True)

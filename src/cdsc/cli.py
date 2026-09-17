@@ -10,6 +10,7 @@ from .visualization.diagrams import render_diagrams
 from datetime import datetime
 import platform
 import subprocess
+from .sweep.run import build_sweep_plans
 
 
 # Exit codes for the cli
@@ -64,6 +65,17 @@ def _visualize(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _see_plans(args: argparse.Namespace) -> int:
+    config = load_config(Path(args.config))
+    output_dir = config.output.path
+
+    plans = build_sweep_plans(config)
+    plan_file = output_dir / "plans.json"
+    plan_file.write_text(json.dumps([plan.as_dict() for plan in plans], indent=2))
+
+    return EXIT_OK
+    
+
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="cdsc",
@@ -83,6 +95,9 @@ def _build_parser() -> argparse.ArgumentParser:
 
     visualize = subparsers.add_parser("visualize", help="Visualize the analysis result and circuit diagrams")
     visualize.add_argument("config", help="path to the YAML config")
+
+    see_plans = subparsers.add_parser("see-plans", help="Generate sweep plans from the configuration file")
+    see_plans.add_argument("config", help="path to the YAML config")
 
     return parser
 
@@ -128,6 +143,7 @@ HANDLERS = {
     "validate": _validate,
     "analyze": _analyze,
     "visualize": _visualize,
+    "see-plans": _see_plans
 }
 
 

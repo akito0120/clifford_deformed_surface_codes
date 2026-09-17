@@ -7,7 +7,7 @@ from .circuit_checks import (
 )
 from ..codes.definition import CodeDefinition, Pauli
 from typing import Optional, Sequence, Iterable
-from ..noise import NoiseModel
+from ..noise.noise_model import NoiseModel
 
 
 CHECK_NAMES: tuple[str, ...] = CODE_CHECK_NAMES + CIRCUIT_CHECK_NAMES

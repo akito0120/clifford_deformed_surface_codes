@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import stim
 from ..codes.definition import CodeDefinition, Pauli
-from ..noise import NoiseModel
+from ..noise.noise_model import NoiseModel
 from . import fragments
 from .record import MeasurementLog
 

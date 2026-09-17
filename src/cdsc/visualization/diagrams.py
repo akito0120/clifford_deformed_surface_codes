@@ -1,7 +1,7 @@
 from ..codes.definition import CodeDefinition
 from ..circuit_builder.code_capacity import CodeCapacityBuilder
 from pathlib import Path
-from ..noise import NoiseModel
+from ..noise.builtin import depolarizing_noise
 
 
 def render_diagrams(
@@ -12,7 +12,7 @@ def render_diagrams(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     for code, code_id in zip(codes, code_ids):
-        circuit = CodeCapacityBuilder(code, NoiseModel(p=0.1, eta=0.5)).build()
+        circuit = CodeCapacityBuilder(code, depolarizing_noise(0.1, None)).build()
         detslice = circuit.diagram("detslice-svg")
         timeline = circuit.diagram("timeline-svg")
 

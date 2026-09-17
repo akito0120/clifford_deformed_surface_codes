@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Optional
 import stim
 from ..codes.definition import CodeDefinition, Pauli
-from ..noise import NoiseModel
+from ..noise.noise_model import NoiseModel
 from . import fragments, rounds
 from .record import MeasurementLog
 
@@ -22,7 +22,7 @@ class PhenomenologicalBuilder:
     def build(self) -> stim.Circuit:
         code, noise, basis = self.code, self.noise, self.basis
         ancilla_order = fragments.default_ancilla_order(code)
-        flip = noise.measurement_flip
+        flip = noise.meas_flip
         log = MeasurementLog()
 
         def noisy_round() -> stim.Circuit:

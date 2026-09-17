@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Any
+from typing import Any, Optional
 from pathlib import Path
 import yaml
 
@@ -27,27 +27,42 @@ class CodeConfig(BaseModel):
         return {"id": self.id, "builder": self.builder}
 
 
+class NoiseConfig(BaseModel):
+    model: str
+    channel: str
+    params: dict[str, list[Any]] | None = None
+    p_meas: str | float
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "model": self.model,
+            "channel": self.channel,
+            "params": self.params,
+            "p_meas": self.p_meas
+        }
+
+
 class PointsConfig(BaseModel):
     mode: str
 
     # For window mode
-    center: float
-    half_width: float
-    step: float
+    centers: list[float] | None = None
+    half_width: float | None = None
+    step: float | None = None
 
     # For linspace mode
-    start: float
-    stop: float
-    num: float
+    start: float | None = None
+    stop: float | None = None
+    num: float | None = None
 
     # For list mode
-    values: list[float]
+    values: list[float] | None = None
 
     def as_dict(self) -> dict[str, Any]:
         if self.mode == WINDOW_MODE:
             return {
                 "mode": self.mode,
-                "center": self.center,
+                "centers": self.centers,
                 "half_width": self.half_width,
                 "step": self.step
             }
@@ -66,7 +81,22 @@ class PointsConfig(BaseModel):
         return None
 
 
-class SamplinConfig(BaseModel):
+class SweepConfig(BaseModel):
+    id: str
+    distances: list[int]
+    basis: list[str]
+    p: PointsConfig
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "distances": self.distances,
+            "basis": self.basis,
+            "p": self.p.as_dict()
+        }
+
+
+class SamplingConfig(BaseModel):
     decoder: str
     max_shots: int
     max_errors: int
@@ -100,13 +130,17 @@ class Config(BaseModel):
     # One experiment configuration
     experiment: ExperimentConfig
     codes: list[CodeConfig]
-    sampling: SamplinConfig
+    noise: NoiseConfig
+    sweeps: list[SweepConfig]
+    sampling: SamplingConfig
     output: OutputConfig
 
     def as_dict(self) -> dict[str, Any]:
         return {
             "experiment": self.experiment.as_dict(),
             "codes": [code.as_dict() for code in self.codes],
+            "noise": self.noise.as_dict(),
+            "sweeps": [sweep.as_dict() for sweep in self.sweeps],
             "sampling": self.sampling.as_dict(),
             "output": self.output.as_dict(),
         }

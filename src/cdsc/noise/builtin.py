@@ -1,8 +1,6 @@
-from __future__ import annotations
-from dataclasses import dataclass
-from typing import Literal, Optional
-
-Channel = Literal["biased", "depolarizing"]
+from .noise_model import NoiseModel
+from .registry import register_noise
+from typing import Any
 
 # Two-qubit Pauli labels in the order Stim's PAULI_CHANNEL_2 expects its arguments.
 TWO_QUBIT_PAULIS: tuple[str, ...] = (
@@ -51,34 +49,22 @@ def depolarizing_two_qubit_rates(p: float) -> list[float]:
     return [p / 15.0] * len(TWO_QUBIT_PAULIS)
 
 
-@dataclass(frozen=True)
-class NoiseModel:
-    # A physical error rate together with the channel that shapes it.
+@register_noise("depolarizing")
+def depolarizing_noise(p: float, _: dict[str, Any]) -> NoiseModel:
+    return NoiseModel(
+        p=p,
+        meas_flip=p,
+        one_qubit_rates=depolarizing_pauli_rates(p),
+        two_qubit_rates=depolarizing_two_qubit_rates(p)
+    )
 
-    p: float
-    channel: Channel = "biased"
-    eta: float = 0.5
-    p_meas: Optional[float] = None
 
-    def __post_init__(self) -> None:
-        if self.channel not in ("biased", "depolarizing"):
-            raise ValueError(
-                f"channel must be 'biased' or 'depolarizing', got {self.channel!r}"
-            )
-
-    @property
-    def measurement_flip(self) -> float:
-        # Readout flip probability.
-        return self.p if self.p_meas is None else self.p_meas
-
-    def one_qubit_rates(self) -> tuple[float, float, float]:
-        # (p_X, p_Y, p_Z) for PAULI_CHANNEL_1.
-        if self.channel == "depolarizing":
-            return depolarizing_pauli_rates(self.p)
-        return biased_pauli_rates(self.p, self.eta)
-
-    def two_qubit_rates(self) -> list[float]:
-        # The 15 rates for PAULI_CHANNEL_2, in TWO_QUBIT_PAULIS order.
-        if self.channel == "depolarizing":
-            return depolarizing_two_qubit_rates(self.p)
-        return biased_two_qubit_rates(self.p, self.eta)
+@register_noise("biased")
+def biased_noise(p: float, params: dict[str, Any]) -> NoiseModel:
+    eta = params["eta"]
+    return NoiseModel(
+        p=p,
+        meas_flip=p,
+        one_qubit_rates=biased_pauli_rates(p, eta),
+        two_qubit_rates=biased_two_qubit_rates(p, eta)
+    )

@@ -3,7 +3,7 @@
 from __future__ import annotations
 import stim
 from ..codes.definition import CodeDefinition, Coord, Pauli
-from ..noise import NoiseModel
+from ..noise.noise_model import NoiseModel
 from .gates import ANCILLA_BASIS, BASES, CGATE, MEAS_GATE, PREP_ERROR, PREP_GATE
 from .record import MeasurementLog
 
@@ -68,7 +68,7 @@ def data_round_noise(code: CodeDefinition, noise: NoiseModel) -> stim.Circuit:
     circuit.append(
         "PAULI_CHANNEL_1",
         list(code.data_qubits.values()),
-        list(noise.one_qubit_rates()),
+        list(noise.one_qubit_rates),
     )
     return circuit
 
