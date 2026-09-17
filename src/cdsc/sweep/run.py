@@ -5,11 +5,8 @@ from typing import Any
 from dataclasses import dataclass
 from ..noise.registry import build_noise
 from ..codes.registry import build_code
-from ..circuit_builder.circuit_level import CircuitLevelBuilder
-from ..circuit_builder.phenomenological import PhenomenologicalBuilder
-from ..circuit_builder.code_capacity import CodeCapacityBuilder
+from ..circuit_builder import build_circuit
 import sinter
-import stim
 
 
 @dataclass(frozen=True)
@@ -109,14 +106,13 @@ def plan_to_tasks(plan: SweepPlan) -> list[sinter.Task]:
         code = build_code(plan.code_builder, distance=distance)
         for p in plan.ps:
             noise = build_noise(plan.noise_channel, p, plan.params)
-            circuit: stim.Circuit | None = None
-
-            if plan.noise_model == "circuit_level":
-                circuit = CircuitLevelBuilder(code, noise, basis=plan.basis)
-            elif plan.noise_model == "phenomenological":
-                circuit = PhenomenologicalBuilder(code, noise, basis=plan.basis)
-            elif plan.noise_model == "code_capacity":
-                circuit = CodeCapacityBuilder(code, noise, basis=plan.basis)
+            circuit = build_circuit(
+                builder=plan.noise_model,
+                code=code,
+                noise=noise,
+                basis=plan.basis,
+                rounds=None # TODO take this value from YAML connfig
+            )
 
             dem = circuit.detector_error_model(
                 decompose_errors=True,
