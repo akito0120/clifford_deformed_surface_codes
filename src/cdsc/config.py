@@ -4,6 +4,11 @@ from pathlib import Path
 import yaml
 
 
+WINDOW_MODE = "window"
+LINSPACE_MODE = "linspace"
+LIST_MODE = "list"
+
+
 class ExperimentConfig(BaseModel):
     # Identity of the run
     name: str
@@ -20,6 +25,45 @@ class CodeConfig(BaseModel):
 
     def as_dict(self) -> dict[str, Any]:
         return {"id": self.id, "builder": self.builder}
+
+
+class PointsConfig(BaseModel):
+    mode: str
+
+    # For window mode
+    center: float
+    half_width: float
+    step: float
+
+    # For linspace mode
+    start: float
+    stop: float
+    num: float
+
+    # For list mode
+    values: list[float]
+
+    def as_dict(self) -> dict[str, Any]:
+        if self.mode == WINDOW_MODE:
+            return {
+                "mode": self.mode,
+                "center": self.center,
+                "half_width": self.half_width,
+                "step": self.step
+            }
+        elif self.mode == LINSPACE_MODE:
+            return {
+                "mode": self.mode,
+                "start": self.start,
+                "stop": self.stop,
+                "num": self.num
+            }
+        elif self.mode == LIST_MODE:
+            return {
+                "mode": self.mode,
+                "values": self.values
+            }
+        return None
 
 
 class OutputConfig(BaseModel):
