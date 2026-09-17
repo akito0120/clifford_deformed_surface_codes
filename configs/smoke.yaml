@@ -8,6 +8,13 @@ codes:
   - id: xzzx
     builder: xzzx
 
+sampling:
+  decoder: mwpm
+  max_shots: 300000
+  max_errors: 30000
+  max_batch_size: 1024
+  workers: 4
+
 output:
   dir: results/smoke
   figures: false

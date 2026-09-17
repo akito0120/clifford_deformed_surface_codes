@@ -66,6 +66,23 @@ class PointsConfig(BaseModel):
         return None
 
 
+class SamplinConfig(BaseModel):
+    decoder: str
+    max_shots: int
+    max_errors: int
+    max_batch_size: int
+    workers: str | int
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "decoder": self.decoder,
+            "max_shots": self.max_shots,
+            "max_errors": self.max_errors,
+            "max_batch_size": self.max_batch_size,
+            "workers": self.workers
+        }
+
+
 class OutputConfig(BaseModel):
     dir: str
     figures: bool = False
@@ -83,12 +100,14 @@ class Config(BaseModel):
     # One experiment configuration
     experiment: ExperimentConfig
     codes: list[CodeConfig]
+    sampling: SamplinConfig
     output: OutputConfig
 
     def as_dict(self) -> dict[str, Any]:
         return {
             "experiment": self.experiment.as_dict(),
             "codes": [code.as_dict() for code in self.codes],
+            "sampling": self.sampling.as_dict(),
             "output": self.output.as_dict(),
         }
 
