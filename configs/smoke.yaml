@@ -10,7 +10,7 @@ codes:
 
 noise:
   model: circuit_level
-  channel: biased
+  definition: biased
   params:
     eta: [0.5, 10, 100]
   p_meas: same_as_p

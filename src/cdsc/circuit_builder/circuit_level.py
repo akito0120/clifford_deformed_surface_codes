@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Optional
 import stim
 from ..codes.definition import CodeDefinition, Coord, Pauli
-from ..noise.noise_model import NoiseModel
+from ..noise.noise import Noise
 from . import fragments, rounds
 from .gates import ANCILLA_BASIS, CGATE, MEAS_GATE, PREP_ERROR, PREP_GATE
 from .record import MeasurementLog
@@ -34,7 +34,7 @@ def schedule_step_count(code: CodeDefinition) -> int:
 
 def noisy_syndrome_round(
     code: CodeDefinition,
-    noise: NoiseModel,
+    noise: Noise,
     log: MeasurementLog,
     ancilla_order: list[Coord],
     steps: int,
@@ -92,7 +92,7 @@ def noisy_syndrome_round(
 @dataclass(frozen=True)
 class CircuitLevelBuilder:
     code: CodeDefinition
-    noise: NoiseModel
+    noise: Noise
     rounds: Optional[int] = None
     basis: Pauli = "X"
 

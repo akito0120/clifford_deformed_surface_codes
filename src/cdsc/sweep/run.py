@@ -14,7 +14,7 @@ class SweepPlan:
     sweep_id: str
     code_builder: str
     noise_model: str
-    noise_channel: str
+    noise_definition: str
     params: dict[str, Any] | None
     basis: str
     distances: list[int]
@@ -25,7 +25,7 @@ class SweepPlan:
             "sweep_id": self.sweep_id,
             "code_builder": self.code_builder,
             "noise_model": self.noise_model,
-            "noise_channel": self.noise_channel,
+            "noise_definition": self.noise_definition,
             "noise_params": self.params,
             "basis": self.basis,
             "distances": self.distances,
@@ -56,7 +56,7 @@ def build_sweep_plans(config: Config) -> list[SweepPlan]:
                     sweep_id=sweep.id,
                     code_builder=code_builder,
                     noise_model=config.noise.model,
-                    noise_channel=config.noise.channel,
+                    noise_definition=config.noise.definition,
                     params=combination,
                     basis=basis,
                     distances=sweep.distances,
@@ -72,7 +72,7 @@ def build_sweep_plans(config: Config) -> list[SweepPlan]:
                     sweep_id=sweep.id,
                     code_builder=code_builder,
                     noise_model=config.noise.model,
-                    noise_channel=config.noise.channel,
+                    noise_definition=config.noise.definition,
                     params=combination,
                     basis=basis,
                     distances=sweep.distances,
@@ -88,7 +88,7 @@ def build_sweep_plans(config: Config) -> list[SweepPlan]:
                     sweep_id=sweep.id,
                     code_builder=code_builder,
                     noise_model=config.noise.model,
-                    noise_channel=config.noise.channel,
+                    noise_definition=config.noise.definition,
                     params=combination,
                     basis=basis,
                     distances=sweep.distances,

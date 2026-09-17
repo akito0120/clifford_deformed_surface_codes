@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Any, Optional
+from typing import Any, Literal
 from pathlib import Path
 import yaml
 
@@ -28,22 +28,22 @@ class CodeConfig(BaseModel):
 
 
 class NoiseConfig(BaseModel):
-    model: str
-    channel: str
+    model: Literal["code_capacity", "phenomenological", "circuit_level"]
+    definition: str
     params: dict[str, list[Any]] | None = None
     p_meas: str | float
 
     def as_dict(self) -> dict[str, Any]:
         return {
             "model": self.model,
-            "channel": self.channel,
+            "definition": self.definition,
             "params": self.params,
             "p_meas": self.p_meas
         }
 
 
 class PointsConfig(BaseModel):
-    mode: str
+    mode: Literal["window", "linspace", "list"]
 
     # For window mode
     centers: list[float] | None = None
@@ -84,7 +84,7 @@ class PointsConfig(BaseModel):
 class SweepConfig(BaseModel):
     id: str
     distances: list[int]
-    basis: list[str]
+    basis: list[Literal["X", "Z"]]
     p: PointsConfig
 
     def as_dict(self) -> dict[str, Any]:
@@ -97,7 +97,7 @@ class SweepConfig(BaseModel):
 
 
 class SamplingConfig(BaseModel):
-    decoder: str
+    decoder: Literal["mwpm", "uf", "bp"]
     max_shots: int
     max_errors: int
     max_batch_size: int

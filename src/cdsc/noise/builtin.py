@@ -1,4 +1,4 @@
-from .noise_model import NoiseModel
+from .noise import Noise
 from .registry import register_noise
 from typing import Any
 
@@ -50,8 +50,8 @@ def depolarizing_two_qubit_rates(p: float) -> list[float]:
 
 
 @register_noise("depolarizing")
-def depolarizing_noise(p: float, _: dict[str, Any]) -> NoiseModel:
-    return NoiseModel(
+def depolarizing_noise(p: float, _: dict[str, Any]) -> Noise:
+    return Noise(
         p=p,
         meas_flip=p,
         one_qubit_rates=depolarizing_pauli_rates(p),
@@ -60,9 +60,9 @@ def depolarizing_noise(p: float, _: dict[str, Any]) -> NoiseModel:
 
 
 @register_noise("biased")
-def biased_noise(p: float, params: dict[str, Any]) -> NoiseModel:
+def biased_noise(p: float, params: dict[str, Any]) -> Noise:
     eta = params["eta"]
-    return NoiseModel(
+    return Noise(
         p=p,
         meas_flip=p,
         one_qubit_rates=biased_pauli_rates(p, eta),

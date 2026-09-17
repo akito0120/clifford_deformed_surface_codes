@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import stim
 from ..codes.definition import CodeDefinition, Pauli
-from ..noise.noise_model import NoiseModel
+from ..noise.noise import Noise
 from . import fragments
 from .record import MeasurementLog
 
@@ -10,7 +10,7 @@ from .record import MeasurementLog
 @dataclass(frozen=True)
 class CodeCapacityBuilder:
     code: CodeDefinition
-    noise: NoiseModel
+    noise: Noise
     basis: Pauli = "X"
 
     def build(self) -> stim.Circuit:

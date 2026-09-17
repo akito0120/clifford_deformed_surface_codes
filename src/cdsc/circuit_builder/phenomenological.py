@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Optional
 import stim
 from ..codes.definition import CodeDefinition, Pauli
-from ..noise.noise_model import NoiseModel
+from ..noise.noise import Noise
 from . import fragments, rounds
 from .record import MeasurementLog
 
@@ -11,7 +11,7 @@ from .record import MeasurementLog
 @dataclass(frozen=True)
 class PhenomenologicalBuilder:
     code: CodeDefinition
-    noise: NoiseModel
+    noise: Noise
     rounds: Optional[int] = None
     basis: Pauli = "X"
 

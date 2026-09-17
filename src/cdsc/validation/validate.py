@@ -7,7 +7,7 @@ from .circuit_checks import (
 )
 from ..codes.definition import CodeDefinition, Pauli
 from typing import Optional, Sequence, Iterable
-from ..noise.noise_model import NoiseModel
+from ..noise.noise import Noise
 
 
 CHECK_NAMES: tuple[str, ...] = CODE_CHECK_NAMES + CIRCUIT_CHECK_NAMES
@@ -55,7 +55,7 @@ def validate_code(
     *,
     code_id: Optional[str] = None,
     bases: Sequence[Pauli] = DEFAULT_BASES,
-    noise: NoiseModel = VALIDATION_NOISE,
+    noise: Noise = VALIDATION_NOISE,
     rounds: Optional[int] = None,
 ) -> CodeValidation:
     # Run all six checks on one code.
@@ -73,7 +73,7 @@ def validate_codes(
     *,
     code_ids: Optional[Sequence[str]] = None,
     bases: Sequence[Pauli] = DEFAULT_BASES,
-    noise: NoiseModel = VALIDATION_NOISE,
+    noise: Noise = VALIDATION_NOISE,
     rounds: Optional[int] = None,
     workers: int = 1,
 ) -> list[CodeValidation]:

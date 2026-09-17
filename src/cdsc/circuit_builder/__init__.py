@@ -3,7 +3,7 @@ from .phenomenological import PhenomenologicalBuilder
 from .circuit_level import CircuitLevelBuilder
 import stim
 from ..codes.definition import CodeDefinition, Pauli
-from ..noise.noise_model import NoiseModel
+from ..noise.noise import Noise
 
 
 BUILDERS: dict[str, type] = {
@@ -21,7 +21,7 @@ CIRCUIT_LEVEL = "circuit_level"
 def build_circuit(
     builder: str,
     code: CodeDefinition, 
-    noise: NoiseModel, 
+    noise: Noise, 
     basis: Pauli,
     rounds: int | None = None,
 ) -> stim.Circuit:

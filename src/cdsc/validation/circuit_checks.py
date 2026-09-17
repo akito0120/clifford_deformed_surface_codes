@@ -4,7 +4,7 @@ from typing import Optional, Sequence
 from ..circuit_builder.circuit_level import CircuitLevelBuilder
 from .check_result import CheckResult
 from ..codes.definition import CodeDefinition, Pauli
-from ..noise.noise_model import NoiseModel
+from ..noise.noise import Noise
 from ..noise.builtin import depolarizing_noise
 
 CIRCUIT_CHECK_NAMES: tuple[str, ...] = (
@@ -28,7 +28,7 @@ class _BasisOutcome:
 def _evaluate(
     code: CodeDefinition,
     bases: Sequence[Pauli],
-    noise: NoiseModel,
+    noise: Noise,
     rounds: Optional[int],
 ) -> list[_BasisOutcome]:
     # Build each basis's circuit once and run both checks
@@ -131,7 +131,7 @@ def _distance_result(
 def check_circuit(
     code: CodeDefinition, 
     bases: Sequence[Pauli], 
-    noise: NoiseModel,
+    noise: Noise,
     rounds: Optional[int]
 ) -> list[CheckResult]:
     # Run all circuit checks in CIRCUIT_CHECK_NAMES order

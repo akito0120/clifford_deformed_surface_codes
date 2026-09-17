@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class NoiseModel:
+class Noise:
     p :float
     meas_flip: float
     one_qubit_rates: tuple[float, float, float]
