@@ -6,8 +6,10 @@ from dataclasses import dataclass
 from ..noise.registry import build_noise
 from ..codes.registry import build_code
 from ..circuit_builder import build_circuit
+from ..decoder import resolve_decoder
 import sinter
-
+import numpy as np
+import pandas as pd
 
 @dataclass(frozen=True)
 class SweepPlan:
@@ -135,3 +137,56 @@ def plan_to_tasks(plan: SweepPlan) -> list[sinter.Task]:
             ))
 
     return tasks
+
+
+def wilson_interval(errors: int, shots: int, z: float = 1.96) -> tuple[float, float]:
+    # Wilson interval for a binomial proportion
+    if shots <= 0:
+        return 0.0, 0.0
+    
+    p_hat = errors / shots
+    denom = 1.0 + z * z / shots
+    nom = (p_hat + (z * z / (2.0 * shots)))
+
+    center = nom / denom
+    half = (z / denom) * np.sqrt(p_hat * (1.0 - p_hat) / shots + z * z / (4.0 * shots * shots))
+
+    low = max(0.0, center - half)
+    high = min(1.0, center + half)
+
+    return low, high
+
+
+def sweep(config: Config):
+    # NOTE: Prototype implementation
+    decoder, custom_decoders = resolve_decoder(config.sampling.decoder)
+    rows: list[dict] = list()
+
+    plans = build_sweep_plans(config)
+    for plan in plans:
+        tasks = plan_to_tasks(plan)
+
+        stats = sinter.collect(
+            num_workers=config.sampling.workers,
+            tasks=tasks,
+            decoders=[decoder],
+            custom_decoders=custom_decoders,
+            max_shots=config.sampling.max_shots,
+            max_errors=config.sampling.max_errors,
+            max_batch_size=config.sampling.max_batch_size,
+            print_progress=True
+        )
+
+        for stat in stats:
+            meta, shots, errors = stat.json_metadata, stat.shots, stat.errors
+            pl = errors / shots if shots > 0 else 0.0
+            low, high = wilson_interval(errors, shots, z=1.0)
+            rows.append({
+                **meta,
+                "pl": pl,
+                "sigma": (high - low) / 2.0,
+                "errors": errors,
+                "shots": shots,
+            })
+        
+    return pd.DataFrame(rows)
