@@ -10,7 +10,7 @@ from .visualization.diagrams import render_diagrams
 from datetime import datetime
 import platform
 import subprocess
-from .sweep.run import build_sweep_plans
+from .sweep.run import build_sweep_plans, sweep
 
 
 # Exit codes for the cli
@@ -20,7 +20,10 @@ EXIT_USAGE_ERROR = 2
 
 
 def _run(args: argparse.Namespace) -> int:
-    return EXIT_FAILED
+    config = load_config(Path(args.config))
+    result = sweep(config)
+    result.to_csv(f"{config.output.dir}/samples.csv", index=False)
+    return EXIT_OK
 
 
 def _validate(args: argparse.Namespace) -> int:
