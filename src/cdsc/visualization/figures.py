@@ -22,7 +22,10 @@ def render_one_sweep(samples: pd.DataFrame, file: Path, config: Config):
             params[param_name] = param_value
         title += "\n(" + ", ".join(f"{key} = {value}" for key, value in params.items()) + ")"
 
-    for d, d_samples in samples.groupby("d"):
+    n_dist = samples["d"].nunique()
+    colors = plt.cm.viridis(np.linspace(0.2, 0.8, n_dist)).tolist()
+
+    for (d, d_samples), color in zip(samples.groupby("d"), colors):
         sorted_samples = d_samples.sort_values("p")
 
         ps = sorted_samples["p"].to_numpy()
@@ -42,6 +45,7 @@ def render_one_sweep(samples: pd.DataFrame, file: Path, config: Config):
                 yerr=[pls[measured] - lows[measured], highs[measured] - pls[measured]],
                 marker="o", linestyle="-", capsize=3,
                 label=f"d = {d}",
+                color=color
             )
 
         # Zero-failure points: plot the Wilson upper bound as a downward arrow
@@ -50,7 +54,8 @@ def render_one_sweep(samples: pd.DataFrame, file: Path, config: Config):
                 ps[zero], highs[zero],
                 yerr=highs[zero] * 0.5, uplims=True,
                 marker='', linestyle='none',
-                label=f"d = {d}"
+                label=None if np.any(measured) else f"d = {d}",
+                color=color
             )
 
     fig.suptitle(title)
