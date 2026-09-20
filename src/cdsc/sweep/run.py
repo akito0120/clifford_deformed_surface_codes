@@ -50,6 +50,11 @@ def build_sweep_plans(config: Config) -> list[SweepPlan]:
 
         ps: list[float] | None = None
         if sweep.p.mode == WINDOW_MODE:
+            if len(sweep.p.centers) != len(combinations):
+                raise ValueError(
+                    f"sweep {sweep.id!r}: got {len(sweep.p.centers)} window centers "
+                    f"for {len(combinations)} parameter combinations; they must match"
+                )
             for center, combination in zip(sweep.p.centers, combinations):
                 ps = build_p_window(center, sweep.p.half_width, sweep.p.step)
                 basis = combination.pop("basis", None)

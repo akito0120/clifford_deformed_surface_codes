@@ -53,7 +53,7 @@ class PointsConfig(BaseModel):
     # For linspace mode
     start: float | None = None
     stop: float | None = None
-    num: float | None = None
+    num: int | None = None
 
     # For list mode
     values: list[float] | None = None

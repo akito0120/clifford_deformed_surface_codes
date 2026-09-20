@@ -14,9 +14,9 @@ def build_p_window(
 def build_p_linspace(
     start: float,
     stop: float,
-    num: float
+    num: int
 ) -> list[float]:
-    np.linspace(start, stop, num)
+    return np.linspace(start, stop, num).tolist()
 
 
 def physical_error_rates(config: PointsConfig) -> list[float]:
