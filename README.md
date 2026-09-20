@@ -16,6 +16,8 @@ pip install -e .
 cdsc validate <path-to-config-file>
 cdsc visualize <path-to-config-file>
 cdsc see-plans <path-to-config-file>
+cdsc run <path-to-config-file>
+cdsc analyze <path-to-config-file>
 ```
 
 
