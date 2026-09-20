@@ -162,6 +162,19 @@ def wilson_interval(errors: int, shots: int, z: float = 1.96) -> tuple[float, fl
     return low, high
 
 
+def sample_row(stat: sinter.TaskStats):
+    meta, shots, errors = stat.json_metadata, stat.shots, stat.errors
+    pl = errors / shots if shots > 0 else 0.0
+    low, high = wilson_interval(errors, shots, z=1.0)
+    return {
+        **meta,
+        "pl": pl,
+        "sigma": (high - low) / 2.0,
+        "errors": errors,
+        "shots": shots,
+    }
+
+
 def sweep(config: Config):
     # NOTE: Prototype implementation
     decoder, custom_decoders = resolve_decoder(config.sampling.decoder)
@@ -183,15 +196,6 @@ def sweep(config: Config):
         )
 
         for stat in stats:
-            meta, shots, errors = stat.json_metadata, stat.shots, stat.errors
-            pl = errors / shots if shots > 0 else 0.0
-            low, high = wilson_interval(errors, shots, z=1.0)
-            rows.append({
-                **meta,
-                "pl": pl,
-                "sigma": (high - low) / 2.0,
-                "errors": errors,
-                "shots": shots,
-            })
+            rows.append(sample_row(stat))
         
     return pd.DataFrame(rows)
