@@ -104,6 +104,21 @@ class SamplingConfig(BaseModel):
         }
 
 
+class ThresholdConfig(BaseModel):
+    source_sweep: str
+    distances: list[int]
+    x_window: float
+    nu_0: float
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "source_sweep": self.source_sweep,
+            "distances": self.distances,
+            "x_window": self.x_window,
+            "nu_0": self.nu_0
+        }
+
+
 class OutputConfig(BaseModel):
     dir: str
     figures: bool = False
@@ -124,6 +139,7 @@ class Config(BaseModel):
     noise: NoiseConfig
     sweeps: list[SweepConfig]
     sampling: SamplingConfig
+    threshold: ThresholdConfig
     output: OutputConfig
 
     def as_dict(self) -> dict[str, Any]:
@@ -133,6 +149,7 @@ class Config(BaseModel):
             "noise": self.noise.as_dict(),
             "sweeps": [sweep.as_dict() for sweep in self.sweeps],
             "sampling": self.sampling.as_dict(),
+            "threshold": self.threshold.as_dict(),
             "output": self.output.as_dict(),
         }
 

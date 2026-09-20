@@ -37,6 +37,12 @@ sampling:
   max_batch_size: 1024
   workers: 4
 
+threshold:
+  source_sweep: threshold_sweep
+  distances: [15, 17, 19]
+  x_window: 0.006
+  nu_0: 1.1
+
 output:
   dir: results/smoke
   figures: false
