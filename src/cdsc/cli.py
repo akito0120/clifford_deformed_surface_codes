@@ -11,7 +11,7 @@ from datetime import datetime
 import platform
 import subprocess
 from .sweep.run import build_sweep_plans, sweep
-
+from .visualization.figures import render_all_sweeps
 
 # Exit codes for the cli
 EXIT_OK = 0
@@ -64,6 +64,8 @@ def _visualize(args: argparse.Namespace) -> int:
             codes.append(build_code(entry.builder, distance=distance))
             code_ids.append(entry.id)
         render_diagrams(output_dir, codes, code_ids)
+
+    render_all_sweeps(config)
         
     return EXIT_OK
 
