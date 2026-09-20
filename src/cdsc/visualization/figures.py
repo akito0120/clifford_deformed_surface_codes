@@ -7,7 +7,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def render_one_sweep(samples: pd.DataFrame, file: Path, config: Config):
+def render_one_sweep(
+    samples: pd.DataFrame, 
+    file: Path, 
+    config: Config, 
+    p_th: float,
+    p_th_err: float
+):
+
     fig, ax = plt.subplots(1, 1, figsize=(12, 8), dpi=600, sharey=True)
 
     code = samples.iloc[0]["code"]
@@ -23,7 +30,7 @@ def render_one_sweep(samples: pd.DataFrame, file: Path, config: Config):
         title += "\n(" + ", ".join(f"{key} = {value}" for key, value in params.items()) + ")"
 
     n_dist = samples["d"].nunique()
-    colors = plt.cm.viridis(np.linspace(0.2, 0.8, n_dist)).tolist()
+    colors = plt.cm.viridis(np.linspace(0.2, 0.8, n_dist + 1)).tolist()
 
     for (d, d_samples), color in zip(samples.groupby("d"), colors):
         sorted_samples = d_samples.sort_values("p")
@@ -58,6 +65,12 @@ def render_one_sweep(samples: pd.DataFrame, file: Path, config: Config):
                 color=color
             )
 
+    ax.axvline(
+        x=p_th, linestyle="--", 
+        label=f"{code} p_th = {p_th:.6f} ± {p_th_err:.6f}", color=colors[n_dist]
+    )
+    # ax.axvspan(p_th - p_th_err, p_th + p_th_err, alpha=0.1, color=colors[n_dist])
+
     fig.suptitle(title)
     ax.set_xscale('linear')
     ax.set_yscale('log')
@@ -81,6 +94,9 @@ def render_all_sweeps(config: Config):
     sample_path = config.output.path / "samples.csv"
     samples = pd.read_csv(sample_path)
 
+    threshold_path = config.output.path / "threshold.csv"
+    thresholds = pd.read_csv(threshold_path)
+
     figures_dir = config.output.path / "figures"
     figures_dir.mkdir(parents=True, exist_ok=True)
 
@@ -88,4 +104,8 @@ def render_all_sweeps(config: Config):
     for key, group_samples in samples.groupby(group_columns):
         tag = make_figure_tag(key)
         path = figures_dir / f"result{tag}.pdf"
-        render_one_sweep(group_samples, path, config)
+
+        key_dict = dict(zip(group_columns, key))
+        threshold = thresholds.loc[thresholds[list(key_dict)].eq(pd.Series(key_dict)).all(axis=1)].iloc[0]
+
+        render_one_sweep(group_samples, path, config, threshold["p_th"], threshold["p_th_err"])

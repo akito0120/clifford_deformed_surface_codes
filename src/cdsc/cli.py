@@ -12,6 +12,7 @@ import platform
 import subprocess
 from .sweep.run import build_sweep_plans, sweep
 from .visualization.figures import render_all_sweeps
+from .analysis.threshold import estimate_all_thresholds
 
 # Exit codes for the cli
 EXIT_OK = 0
@@ -49,7 +50,11 @@ def _validate(args: argparse.Namespace) -> int:
 
 
 def _analyze(args: argparse.Namespace) -> int:
-    return EXIT_FAILED
+    config = load_config(Path(args.config))
+    thresholds = estimate_all_thresholds(config)
+    thresholds.to_csv(f"{config.output.dir}/threshold.csv", index=False)
+
+    return EXIT_OK
 
 
 def _visualize(args: argparse.Namespace) -> int:
