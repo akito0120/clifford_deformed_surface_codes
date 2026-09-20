@@ -14,7 +14,7 @@ import pandas as pd
 @dataclass(frozen=True)
 class SweepPlan:
     sweep_id: str
-    code_builder: str
+    code: str
     noise_model: str
     noise_definition: str
     params: dict[str, Any] | None
@@ -25,7 +25,7 @@ class SweepPlan:
     def as_dict(self) -> dict[str, Any]:
         return {
             "sweep_id": self.sweep_id,
-            "code_builder": self.code_builder,
+            "code": self.code,
             "noise_model": self.noise_model,
             "noise_definition": self.noise_definition,
             "noise_params": self.params,
@@ -36,14 +36,14 @@ class SweepPlan:
 
 
 def build_sweep_plans(config: Config) -> list[SweepPlan]:
-    # Noise parameters * basis * code_builders -> 1 Plan
+    # Noise parameters * basis * codes -> 1 Plan
     # 1 Plan generates 1 sweep figure
     plans = list()
 
     for sweep in config.sweeps:
         params = config.noise.params.copy() if config.noise.params is not None else dict()
         params["basis"] = sweep.basis
-        params["code_builder"] = [code.builder for code in config.codes]
+        params["code"] = list(config.codes)
         keys = params.keys()
         values = params.values()
         combinations = [dict(zip(keys, combination)) for combination in product(*values)]
@@ -58,10 +58,10 @@ def build_sweep_plans(config: Config) -> list[SweepPlan]:
             for center, combination in zip(sweep.p.centers, combinations):
                 ps = build_p_window(center, sweep.p.half_width, sweep.p.step)
                 basis = combination.pop("basis", None)
-                code_builder = combination.pop("code_builder", None)
+                code = combination.pop("code", None)
                 plans.append(SweepPlan(
                     sweep_id=sweep.id,
-                    code_builder=code_builder,
+                    code=code,
                     noise_model=config.noise.model,
                     noise_definition=config.noise.definition,
                     params=combination,
@@ -74,10 +74,10 @@ def build_sweep_plans(config: Config) -> list[SweepPlan]:
             for combination in combinations:
                 ps = build_p_linspace(sweep.p.start, sweep.p.stop, sweep.p.num)
                 basis = combination.pop("basis", None)
-                code_builder = combination.pop("code_builder", None)
+                code = combination.pop("code", None)
                 plans.append(SweepPlan(
                     sweep_id=sweep.id,
-                    code_builder=code_builder,
+                    code=code,
                     noise_model=config.noise.model,
                     noise_definition=config.noise.definition,
                     params=combination,
@@ -90,10 +90,10 @@ def build_sweep_plans(config: Config) -> list[SweepPlan]:
             for combination in combinations:
                 ps = sweep.p.values
                 basis = combination.pop("basis", None)
-                code_builder = combination.pop("code_builder", None)
+                code = combination.pop("code", None)
                 plans.append(SweepPlan(
                     sweep_id=sweep.id,
-                    code_builder=code_builder,
+                    code=code,
                     noise_model=config.noise.model,
                     noise_definition=config.noise.definition,
                     params=combination,
@@ -110,7 +110,7 @@ def plan_to_tasks(plan: SweepPlan) -> list[sinter.Task]:
     tasks = list()
     
     for distance in plan.distances:
-        code = build_code(plan.code_builder, distance=distance)
+        code = build_code(plan.code, distance=distance)
         for p in plan.ps:
             noise = build_noise(plan.noise_definition, p, plan.params)
             circuit = build_circuit(
@@ -133,7 +133,7 @@ def plan_to_tasks(plan: SweepPlan) -> list[sinter.Task]:
                     "d": distance,
                     "p": p,
                     "sweep_id": plan.sweep_id,
-                    "code": plan.code_builder,
+                    "code": plan.code,
                     "basis": plan.basis,
                     "noise_model": plan.noise_model,
                     "noise_definition": plan.noise_definition,

@@ -34,8 +34,8 @@ def _validate(args: argparse.Namespace) -> int:
     code_ids: list[str] = []
     for entry in config.codes:
         for distance in distances:
-                codes.append(build_code(entry.builder, distance=distance))
-                code_ids.append(entry.id)
+                codes.append(build_code(entry, distance=distance))
+                code_ids.append(entry)
 
     result = validate_codes(codes, code_ids=code_ids)
     report = validation_report(result)
@@ -59,10 +59,10 @@ def _visualize(args: argparse.Namespace) -> int:
     for entry in config.codes:
         codes: list[CodeDefinition] = []
         code_ids: list[str] = []
-        output_dir = config.output.path / "diagrams" / f"{entry.id}"
+        output_dir = config.output.path / "diagrams" / f"{entry}"
         for distance in distances:
-            codes.append(build_code(entry.builder, distance=distance))
-            code_ids.append(entry.id)
+            codes.append(build_code(entry, distance=distance))
+            code_ids.append(entry)
         render_diagrams(output_dir, codes, code_ids)
 
     render_all_sweeps(config)

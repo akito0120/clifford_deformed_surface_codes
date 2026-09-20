@@ -3,10 +3,8 @@ experiment:
   seed: 0
 
 codes:
-  - id: css
-    builder: rotated_surface
-  - id: xzzx
-    builder: xzzx
+  - rotated_surface
+  - xzzx
 
 noise:
   model: circuit_level

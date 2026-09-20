@@ -18,15 +18,6 @@ class ExperimentConfig(BaseModel):
         return {"name": self.name, "seed": self.seed}
 
 
-class CodeConfig(BaseModel):
-    # One code to simulate
-    id: str
-    builder: str
-
-    def as_dict(self) -> dict[str, Any]:
-        return {"id": self.id, "builder": self.builder}
-
-
 class NoiseConfig(BaseModel):
     model: Literal["code_capacity", "phenomenological", "circuit_level"]
     definition: str
@@ -129,7 +120,7 @@ class OutputConfig(BaseModel):
 class Config(BaseModel):
     # One experiment configuration
     experiment: ExperimentConfig
-    codes: list[CodeConfig]
+    codes: list[str]
     noise: NoiseConfig
     sweeps: list[SweepConfig]
     sampling: SamplingConfig
@@ -138,7 +129,7 @@ class Config(BaseModel):
     def as_dict(self) -> dict[str, Any]:
         return {
             "experiment": self.experiment.as_dict(),
-            "codes": [code.as_dict() for code in self.codes],
+            "codes": list(self.codes),
             "noise": self.noise.as_dict(),
             "sweeps": [sweep.as_dict() for sweep in self.sweeps],
             "sampling": self.sampling.as_dict(),
