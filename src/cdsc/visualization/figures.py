@@ -93,6 +93,7 @@ def make_figure_tag(key: list[Hashable]) -> str:
 def render_all_sweeps(config: Config):
     sample_path = config.output.path / "samples.csv"
     samples = pd.read_csv(sample_path)
+    samples = samples[samples["sweep_id"] == config.threshold.source_sweep]
 
     threshold_path = config.output.path / "threshold.csv"
     thresholds = pd.read_csv(threshold_path)
