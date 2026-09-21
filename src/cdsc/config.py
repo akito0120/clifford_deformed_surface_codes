@@ -119,6 +119,17 @@ class ThresholdConfig(BaseModel):
         }
 
 
+class SuppressionConfig(BaseModel):
+    source_sweep: str
+    target_pl: float
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "source_sweep": self.source_sweep,
+            "target_pl": self.target_pl
+        }
+
+
 class OutputConfig(BaseModel):
     dir: str
     figures: bool = False
@@ -140,6 +151,7 @@ class Config(BaseModel):
     sweeps: list[SweepConfig]
     sampling: SamplingConfig
     threshold: ThresholdConfig
+    suppression: SuppressionConfig
     output: OutputConfig
 
     def as_dict(self) -> dict[str, Any]:
@@ -150,6 +162,7 @@ class Config(BaseModel):
             "sweeps": [sweep.as_dict() for sweep in self.sweeps],
             "sampling": self.sampling.as_dict(),
             "threshold": self.threshold.as_dict(),
+            "suppression": self.suppression.as_dict(),
             "output": self.output.as_dict(),
         }
 

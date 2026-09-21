@@ -20,15 +20,15 @@ sweeps:
     p:
       mode: window
       centers: [0.006870, 0.007214, 0.006056, 0.012295]
-      step: 0.0001
+      step: 0.00025
       half_width: 0.003
   
-  # - id: suppression_sweep
-  #   distances: [3, 5, 7, 9, 11, 13, 15, 17, 19]
-  #   basis: [X]
-  #   p:
-  #     mode: list
-  #     values: [0.01, 0.02, 0.03, 0.04]
+  - id: suppression_sweep
+    distances: [3, 5, 7, 9, 11, 13, 15, 17, 19]
+    basis: [X]
+    p:
+      mode: list
+      values: [0.001, 0.002, 0.003, 0.004]
 
 sampling:
   decoder: mwpm
@@ -42,6 +42,10 @@ threshold:
   distances: [7, 9, 11]
   x_window: 0.006
   nu_0: 1.1
+
+suppression:
+  source_sweep: suppression_sweep
+  target_pl: 1e-12
 
 output:
   dir: results/smoke
