@@ -25,13 +25,16 @@ cdsc visualize <path-to-config-file>
 
 ```
 .
-├── configs/                # Simulation config files
-└── src/cdsc/
+├── configs                 # Simulation config files
+└── src/cdsc
+    ├── analysis/           # Threshold and suppression analysis
     ├── circuit_builder/    # Stim circuit builders
     ├── codes/              # Code definition, registry and built-in codes
+    ├── noise/              # Noise definition, registry and built-in noises
+    ├── sweep/              # Sweep plan builder and sweep runner
     ├── validation/         # Code and circuit validation
-    ├── visualization/      # Visualization
+    ├── visualization/      # Visualization of sampling and analysis result
     ├── cli.py              # CLI entrypoint and command handlers
-    ├── config.py           # YAML config schema definition 
-    └── noise.py            # Noise definition
+    ├── config.py           # YAML config schema definition
+    └── decoder.py          # Decoder registry
 ```
