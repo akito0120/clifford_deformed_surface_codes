@@ -11,8 +11,9 @@ from datetime import datetime
 import platform
 import subprocess
 from .sweep.run import build_sweep_plans, sweep
-from .visualization.figures import render_all_sweeps
+from .visualization.figures import render_all_sweeps, render_all_suppressions
 from .analysis.threshold import estimate_all_thresholds
+from .analysis.suppression import estimate_all_suppressions
 
 # Exit codes for the cli
 EXIT_OK = 0
@@ -51,8 +52,12 @@ def _validate(args: argparse.Namespace) -> int:
 
 def _analyze(args: argparse.Namespace) -> int:
     config = load_config(Path(args.config))
+
     thresholds = estimate_all_thresholds(config)
     thresholds.to_csv(f"{config.output.dir}/threshold.csv", index=False)
+
+    suppressions = estimate_all_suppressions(config)
+    suppressions.to_csv(f"{config.output.dir}/suppression.csv", index=False)
 
     return EXIT_OK
 
@@ -71,6 +76,7 @@ def _visualize(args: argparse.Namespace) -> int:
         render_diagrams(output_dir, codes, code_ids)
 
     render_all_sweeps(config)
+    render_all_suppressions(config)
         
     return EXIT_OK
 
