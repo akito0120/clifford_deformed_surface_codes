@@ -21,10 +21,36 @@ EXIT_FAILED = 1
 EXIT_USAGE_ERROR = 2
 
 
+def _write_manifest(args: argparse.Namespace):
+    config = load_config(Path(args.config))
+    now = datetime.now()
+    manifest = {
+        "environment": {
+            "python_version": platform.python_version(),
+            "platform": platform.platform(),
+        },
+        "software": {
+            "git_commit": commit_hash(),
+            "git_dirty": git_dirty(),
+        },
+        "started_at": str(now),
+        "config_path": str(args.config),
+        "config": config.as_dict(),
+    }
+
+    output_dir = config.output.path
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_file = output_dir / "manifest.json"
+    output_file.write_text(json.dumps(manifest, indent=2) + "\n")
+
+
 def _run(args: argparse.Namespace) -> int:
+    _write_manifest(args)
+
     config = load_config(Path(args.config))
     result = sweep(config)
     result.to_csv(f"{config.output.dir}/samples.csv", index=False)
+
     return EXIT_OK
 
 
@@ -131,29 +157,6 @@ def git_dirty() -> bool:
     ).returncode != 0
 
 
-def _write_manifest(args: argparse.Namespace):
-    config = load_config(Path(args.config))
-    now = datetime.now()
-    manifest = {
-        "environment": {
-            "python_version": platform.python_version(),
-            "platform": platform.platform(),
-        },
-        "software": {
-            "git_commit": commit_hash(),
-            "git_dirty": git_dirty(),
-        },
-        "started_at": str(now),
-        "config_path": str(args.config),
-        "config": config.as_dict(),
-    }
-
-    output_dir = config.output.path
-    output_dir.mkdir(parents=True, exist_ok=True)
-    output_file = output_dir / "manifest.json"
-    output_file.write_text(json.dumps(manifest, indent=2) + "\n")
-
-
 HANDLERS = {
     "run": _run,
     "validate": _validate,
@@ -165,8 +168,6 @@ HANDLERS = {
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = _build_parser().parse_args(argv)
-    _write_manifest(args)
-
     handler = HANDLERS.get(args.command)
     if handler is None:
         return EXIT_USAGE_ERROR
