@@ -1,5 +1,6 @@
 from .codes.registry import build_code
 from .codes.builtin import *
+from .noise.builtin import *
 from .validation.validate import validate_codes, validation_report
 import json
 from .config import load_config
