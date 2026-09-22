@@ -11,6 +11,7 @@ import sinter
 import numpy as np
 import pandas as pd
 
+
 @dataclass(frozen=True)
 class SweepPlan:
     sweep_id: str
@@ -18,6 +19,7 @@ class SweepPlan:
     noise_model: str
     noise_definition: str
     params: dict[str, Any] | None
+    p_meas: str | float
     basis: str
     distances: list[int]
     ps: list[float]
@@ -29,6 +31,7 @@ class SweepPlan:
             "noise_model": self.noise_model,
             "noise_definition": self.noise_definition,
             "noise_params": self.params,
+            "p_meas": self.p_meas,
             "basis": self.basis,
             "distances": self.distances,
             "ps": self.ps
@@ -65,6 +68,7 @@ def build_sweep_plans(config: Config) -> list[SweepPlan]:
                     noise_model=config.noise.model,
                     noise_definition=config.noise.definition,
                     params=combination,
+                    p_meas=config.noise.p_meas,
                     basis=basis,
                     distances=sweep.distances,
                     ps=ps
@@ -81,6 +85,7 @@ def build_sweep_plans(config: Config) -> list[SweepPlan]:
                     noise_model=config.noise.model,
                     noise_definition=config.noise.definition,
                     params=combination,
+                    p_meas=config.noise.p_meas,
                     basis=basis,
                     distances=sweep.distances,
                     ps=ps
@@ -97,14 +102,15 @@ def build_sweep_plans(config: Config) -> list[SweepPlan]:
                     noise_model=config.noise.model,
                     noise_definition=config.noise.definition,
                     params=combination,
+                    p_meas=config.noise.p_meas,
                     basis=basis,
                     distances=sweep.distances,
                     ps=ps
                 ))
 
-    return plans  
+    return plans
 
-    
+
 def plan_to_tasks(plan: SweepPlan) -> list[sinter.Task]:
     # Build sinter tasks from 1 sweep plan
     tasks = list()
@@ -112,7 +118,7 @@ def plan_to_tasks(plan: SweepPlan) -> list[sinter.Task]:
     for distance in plan.distances:
         code = build_code(plan.code, distance=distance)
         for p in plan.ps:
-            noise = build_noise(plan.noise_definition, p, plan.params)
+            noise = build_noise(plan.noise_definition, p, plan.params).with_p_meas(plan.p_meas)
             circuit = build_circuit(
                 builder=plan.noise_model,
                 code=code,
