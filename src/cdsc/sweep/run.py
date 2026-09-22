@@ -124,7 +124,6 @@ def plan_to_tasks(plan: SweepPlan) -> list[sinter.Task]:
                 code=code,
                 noise=noise,
                 basis=plan.basis,
-                rounds=None # TODO take this value from YAML connfig
             )
 
             dem = circuit.detector_error_model(
