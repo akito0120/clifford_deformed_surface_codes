@@ -194,6 +194,7 @@ def render_all_suppressions(config: Config):
     sample_path = config.output.path / "samples.csv"
     samples = pd.read_csv(sample_path)
     samples = samples[samples["sweep_id"] == config.suppression.source_sweep]
+    samples = samples[samples["errors"] > 0]
 
     suppression_path = config.output.path / "suppression.csv"
     suppressions = pd.read_csv(suppression_path)
