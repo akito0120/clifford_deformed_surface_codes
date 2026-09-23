@@ -132,15 +132,13 @@ class SuppressionConfig(BaseModel):
 
 class OutputConfig(BaseModel):
     dir: str
-    figures: bool = False
-    diagrams: bool = False
 
     @property
     def path(self) -> Path:
         return Path(self.dir)
 
     def as_dict(self) -> dict[str, Any]:
-        return {"dir": self.dir, "figures": self.figures, "diagrams": self.diagrams}
+        return {"dir": self.dir}
 
 
 class Config(BaseModel):

@@ -49,5 +49,3 @@ suppression:
 
 output:
   dir: results/smoke
-  figures: false
-  diagrams: false
