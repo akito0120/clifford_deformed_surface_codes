@@ -1,4 +1,6 @@
 import numpy as np
+import sinter
+from scipy.optimize import brentq
 from ..codes.definition import CodeDefinition
 from ..codes.registry import build_code
 from dataclasses import dataclass
@@ -37,11 +39,27 @@ def estimate_suppression(
     d = samples["d"].to_numpy(dtype=float)
     pl = samples["pl"].to_numpy(dtype=float)
     sig = samples["sigma"].to_numpy(dtype=float)
-    log_eps = np.log10(pl / d)
-    sig_log = sig / (pl * np.log(10.0))
+    eps = np.array([
+        sinter.shot_error_rate_to_piece_error_rate(p, pieces=r) 
+        for p, r in zip(pl, d)
+    ])
+    log_eps = np.log10(eps)
+    sig_eps = sig * (1.0 - 2.0 * pl) ** (1.0 / d - 1.0) / d
+    sig_log_eps = sig_eps / (eps * np.log(10.0))
 
-    slope, intercept = np.polyfit(d, log_eps, 1, w=1.0 / sig_log)
-    d_star = (np.log10(target_pl) - intercept) / slope
+    slope, intercept = np.polyfit(d, log_eps, 1, w=1.0 / sig_log_eps)
+    if slope >= 0:
+        raise ValueError(f"code {code!r}: non-negative slope {slope}; no suppression to extrapolate")
+
+    # target_pl is per d rounds: find the d where the fitted per-round rate meets its per-round equivalent
+    def excess(x: float) -> float:
+        target_eps = sinter.shot_error_rate_to_piece_error_rate(target_pl, pieces=float(x))
+        return intercept + slope * x - np.log10(target_eps)
+
+    upper = max((np.log10(target_pl) - intercept) / slope, 2.0)
+    while excess(upper) > 0:
+        upper *= 2.0
+    d_star = brentq(excess, 1.0, upper)
 
     d_teraquop = int(np.ceil(d_star))
     if d_teraquop % 2 == 0:

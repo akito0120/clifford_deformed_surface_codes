@@ -4,6 +4,7 @@ from ..config import Config
 from typing import Hashable
 from ..sweep.run import wilson_interval
 import numpy as np
+import sinter
 import matplotlib.pyplot as plt
 
 
@@ -124,6 +125,7 @@ def render_one_suppression(
     basis = samples.iloc[0]["basis"]
     title = f"Distance vs Per-Round Logical Error Rate for {code} with {basis} Memory"
 
+    d_lo, d_hi = np.inf, -np.inf
     for p, p_samples in samples.groupby("p"):
         sorted_samples = p_samples.sort_values("d")
 
@@ -134,26 +136,47 @@ def render_one_suppression(
         bounds = np.array([wilson_interval(e, s, z=1.0) for e, s in zip(errs, shots)]).reshape(-1, 2)
         lows, highs = bounds[:, 0], bounds[:, 1]
 
+        def per_round(rates: np.ndarray) -> np.ndarray:
+            return np.array([
+                sinter.shot_error_rate_to_piece_error_rate(rate, pieces=float(d))
+                for rate, d in zip(rates, ds)
+            ])
+        eps, eps_lows, eps_highs = per_round(pls), per_round(lows), per_round(highs)
+
         fits = suppressions[np.isclose(suppressions["p"], p)]
         fit = fits.iloc[0]
         label = f"p = {p}: d* = {fit['d_star']:.1f} -> d = {fit['d_teraquop']} ({fit['qubits']} qubits)"
 
         container = ax.errorbar(
-            ds, pls / ds,
-            yerr=[(pls - lows) / ds, (highs - pls) / ds],
+            ds, eps,
+            yerr=[eps - eps_lows, eps_highs - eps],
             marker="o", linestyle="none", capsize=3,
             label=label,
         )
 
         color = container[0].get_color()
         observed = ds[errs > 0]
+
         d_fit = np.linspace(observed.min(), observed.max(), 50)
         d_ext = np.linspace(observed.max(), fit["d_star"], 50)
+
         ax.plot(d_fit, 10 ** (fit["intercept"] + fit["slope"] * d_fit), linestyle="-", color=color)
         ax.plot(d_ext, 10 ** (fit["intercept"] + fit["slope"] * d_ext), linestyle="--", color=color)
-        ax.plot(fit["d_star"], target_pl, marker="*", markersize=12, linestyle="none", color=color)
 
-    ax.axhline(target_pl, linestyle=":", color="black", label=f"target = {target_pl:g}")
+        target_at_d_star = sinter.shot_error_rate_to_piece_error_rate(target_pl, pieces=float(fit["d_star"]))
+        ax.plot(fit["d_star"], target_at_d_star, marker="*", markersize=12, linestyle="none", color=color)
+        d_lo, d_hi = min(d_lo, ds.min()), max(d_hi, fit["d_star"])
+
+    # target_pl is per d rounds; draw its per-round equivalent
+    d_grid = np.linspace(d_lo, d_hi, 200)
+    target_curve = [
+        sinter.shot_error_rate_to_piece_error_rate(target_pl, pieces=float(x)) 
+        for x in d_grid
+    ]
+    ax.plot(
+        d_grid, target_curve, linestyle=":", color="black",
+        label=f"target = {target_pl:g} per d rounds (per-round equivalent)"
+    )
 
     fig.suptitle(title)
     ax.set_xscale('linear')
