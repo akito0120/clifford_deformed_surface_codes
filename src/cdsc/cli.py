@@ -11,6 +11,7 @@ from .visualization.diagrams import render_diagrams
 from datetime import datetime
 import platform
 import subprocess
+from importlib import metadata
 from .sweep.run import build_sweep_plans, sweep
 from .visualization.figures import render_all_sweeps, render_all_suppressions
 from .analysis.threshold import estimate_all_thresholds
@@ -29,6 +30,7 @@ def _write_manifest(args: argparse.Namespace):
         "environment": {
             "python_version": platform.python_version(),
             "platform": platform.platform(),
+            "packages": installed_packages(),
         },
         "software": {
             "git_commit": commit_hash(),
@@ -156,6 +158,14 @@ def git_dirty() -> bool:
     return subprocess.run(
         ["git", "diff", "--quiet"],
     ).returncode != 0
+
+
+def installed_packages() -> dict[str, str]:
+    packages = {}
+    for dist in metadata.distributions():
+        name = dist.metadata["Name"]
+        packages[name] = dist.version
+    return dict(sorted(packages.items(), key=lambda item: item[0].lower()))
 
 
 HANDLERS = {
