@@ -8,8 +8,9 @@ def render_diagrams(
     output_dir: Path,
     codes: list[CodeDefinition],
     code_ids: list[str]
-) -> None:
+) -> list[Path]:
     output_dir.mkdir(parents=True, exist_ok=True)
+    paths = list()
 
     for code, code_id in zip(codes, code_ids):
         circuit = CodeCapacityBuilder(code, depolarizing_noise(0.1, None)).build()
@@ -21,3 +22,6 @@ def render_diagrams(
 
         detslice_path.write_text(str(detslice))
         timeline_path.write_text(str(timeline))
+        paths += [detslice_path, timeline_path]
+
+    return paths

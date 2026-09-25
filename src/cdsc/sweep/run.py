@@ -1,7 +1,7 @@
 from ..config import Config, WINDOW_MODE, LINSPACE_MODE, LIST_MODE
 from itertools import product
 from .points import build_p_linspace, build_p_window
-from typing import Any
+from typing import Any, Callable, Optional
 from dataclasses import dataclass
 from ..noise.registry import build_noise
 from ..codes.registry import build_code
@@ -10,6 +10,7 @@ from ..decoder import resolve_decoder
 import sinter
 import numpy as np
 import pandas as pd
+import time
 
 
 @dataclass(frozen=True)
@@ -180,13 +181,21 @@ def sample_row(stat: sinter.TaskStats):
     }
 
 
-def sweep(config: Config):
+def sweep(
+    config: Config,
+    on_plan_start: Optional[Callable[[int, int, SweepPlan], None]] = None,
+    on_plan_done: Optional[Callable[[int, int, SweepPlan, int, int, float], None]] = None,
+):
     # NOTE: Prototype implementation
+    # on_plan_start(index, total, plan) / on_plan_done(index, total, plan, shots, errors, elapsed)
     decoder, custom_decoders = resolve_decoder(config.sampling.decoder)
     rows: list[dict] = list()
 
     plans = build_sweep_plans(config)
-    for plan in plans:
+    for index, plan in enumerate(plans, start=1):
+        if on_plan_start is not None:
+            on_plan_start(index, len(plans), plan)
+        start = time.monotonic()
         tasks = plan_to_tasks(plan)
 
         stats = sinter.collect(
@@ -202,5 +211,10 @@ def sweep(config: Config):
 
         for stat in stats:
             rows.append(sample_row(stat))
-        
+
+        if on_plan_done is not None:
+            shots = sum(stat.shots for stat in stats)
+            errors = sum(stat.errors for stat in stats)
+            on_plan_done(index, len(plans), plan, shots, errors, time.monotonic() - start)
+
     return pd.DataFrame(rows)

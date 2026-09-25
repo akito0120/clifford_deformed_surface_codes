@@ -91,7 +91,7 @@ def make_figure_tag(key: list[Hashable]) -> str:
     return tag
 
 
-def render_all_sweeps(config: Config):
+def render_all_sweeps(config: Config) -> list[Path]:
     sample_path = config.output.path / "samples.csv"
     samples = pd.read_csv(sample_path)
     samples = samples[samples["sweep_id"] == config.threshold.source_sweep]
@@ -102,6 +102,7 @@ def render_all_sweeps(config: Config):
     figures_dir = config.output.path / "figures"
     figures_dir.mkdir(parents=True, exist_ok=True)
 
+    paths = list()
     group_columns = ["code", "basis", *config.noise.params.keys()]
     for key, group_samples in samples.groupby(group_columns):
         tag = make_figure_tag(key)
@@ -111,6 +112,9 @@ def render_all_sweeps(config: Config):
         threshold = thresholds.loc[thresholds[list(key_dict)].eq(pd.Series(key_dict)).all(axis=1)].iloc[0]
 
         render_one_sweep(group_samples, path, config, threshold["p_th"], threshold["p_th_err"])
+        paths.append(path)
+
+    return paths
 
 
 def render_one_suppression(
@@ -144,6 +148,9 @@ def render_one_suppression(
         eps, eps_lows, eps_highs = per_round(pls), per_round(lows), per_round(highs)
 
         fits = suppressions[np.isclose(suppressions["p"], p)]
+        if fits.empty:
+            # No fit for this p (skipped in analyze)
+            continue
         fit = fits.iloc[0]
         label = f"p = {p}: d* = {fit['d_star']:.1f} -> d = {fit['d_teraquop']} ({fit['qubits']} qubits)"
 
@@ -190,7 +197,7 @@ def render_one_suppression(
     plt.close(fig)
 
 
-def render_all_suppressions(config: Config):
+def render_all_suppressions(config: Config) -> list[Path]:
     sample_path = config.output.path / "samples.csv"
     samples = pd.read_csv(sample_path)
     samples = samples[samples["sweep_id"] == config.suppression.source_sweep]
@@ -198,10 +205,13 @@ def render_all_suppressions(config: Config):
 
     suppression_path = config.output.path / "suppression.csv"
     suppressions = pd.read_csv(suppression_path)
+    if "skipped" in suppressions:
+        suppressions = suppressions[suppressions["skipped"].isna()]
 
     figures_dir = config.output.path / "figures"
     figures_dir.mkdir(parents=True, exist_ok=True)
 
+    paths = list()
     group_columns = ["code", "basis", *config.noise.params.keys()]
     for key, group_samples in samples.groupby(group_columns):
         tag = make_figure_tag(key)
@@ -210,4 +220,10 @@ def render_all_suppressions(config: Config):
         key_dict = dict(zip(group_columns, key))
         group_suppressions = suppressions.loc[suppressions[list(key_dict)].eq(pd.Series(key_dict)).all(axis=1)]
 
+        if group_suppressions.empty:
+            continue
+
         render_one_suppression(group_samples, group_suppressions, config.suppression.target_pl, path)
+        paths.append(path)
+
+    return paths

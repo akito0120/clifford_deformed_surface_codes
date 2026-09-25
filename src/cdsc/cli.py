@@ -3,7 +3,10 @@ from .codes.builtin import *
 from .noise.builtin import *
 from .validation.validate import validate_codes, validation_report
 import json
-from .config import load_config
+from .config import Config, load_config
+from pydantic import ValidationError
+from . import console
+import time
 import argparse
 from pathlib import Path
 from typing import Optional, Sequence
@@ -23,8 +26,27 @@ EXIT_FAILED = 1
 EXIT_USAGE_ERROR = 2
 
 
-def _write_manifest(args: argparse.Namespace):
-    config = load_config(Path(args.config))
+class CliError(Exception):
+    # A failure reported as one line, without a traceback
+    def __init__(self, message: str, exit_code: int):
+        super().__init__(message)
+        self.exit_code = exit_code
+
+
+def _load_config(config_path: str) -> Config:
+    try:
+        return load_config(Path(config_path))
+    except (FileNotFoundError, ValidationError) as e:
+        raise CliError(console.config_error_message(config_path, e), EXIT_USAGE_ERROR) from e
+
+
+def _require(path: Path, command: str, config_path: str) -> None:
+    # Fail early when an earlier command's output is missing
+    if not path.exists():
+        raise CliError(console.missing_input_message(path, command, config_path), EXIT_FAILED)
+
+
+def _write_manifest(config: Config, config_path: str) -> Path:
     now = datetime.now()
     manifest = {
         "environment": {
@@ -37,7 +59,7 @@ def _write_manifest(args: argparse.Namespace):
             "git_dirty": git_dirty(),
         },
         "started_at": str(now),
-        "config_path": str(args.config),
+        "config_path": str(config_path),
         "config": config.as_dict(),
     }
 
@@ -45,21 +67,36 @@ def _write_manifest(args: argparse.Namespace):
     output_dir.mkdir(parents=True, exist_ok=True)
     output_file = output_dir / "manifest.json"
     output_file.write_text(json.dumps(manifest, indent=2) + "\n")
+    return output_file
 
 
 def _run(args: argparse.Namespace) -> int:
-    _write_manifest(args)
+    config = _load_config(args.config)
+    plans = build_sweep_plans(config)
+    console.header("run", config, args.config)
+    console.run_details(config, commit_hash(), git_dirty(), plans)
 
-    config = load_config(Path(args.config))
-    result = sweep(config)
-    result.to_csv(f"{config.output.dir}/samples.csv", index=False)
+    manifest_file = _write_manifest(config, args.config)
+    result = sweep(
+        config,
+        on_plan_start=console.plan_started,
+        on_plan_done=console.plan_finished,
+    )
+    samples_file = config.output.path / "samples.csv"
+    result.to_csv(samples_file, index=False)
+
+    console.samples_summary(result, config)
+    console.info()
+    console.wrote(manifest_file)
+    console.wrote(samples_file)
 
     return EXIT_OK
 
 
 def _validate(args: argparse.Namespace) -> int:
-    config = load_config(Path(args.config))
+    config = _load_config(args.config)
     distances = [3, 5, 7, 9]
+    console.header("validate", config, args.config)
 
     codes: list[CodeDefinition] = []
     code_ids: list[str] = []
@@ -76,25 +113,47 @@ def _validate(args: argparse.Namespace) -> int:
     output_file = output_dir / "validation.json"
     output_file.write_text(json.dumps(report, indent=2) + "\n")
 
-    return EXIT_OK
+    entries = [
+        (code_id, code.distance, validation)
+        for code, code_id, validation in zip(codes, code_ids, result)
+    ]
+    console.validation_summary(entries, distances)
+    console.wrote(output_file)
+
+    return EXIT_OK if all(validation.passed for validation in result) else EXIT_FAILED
 
 
 def _analyze(args: argparse.Namespace) -> int:
-    config = load_config(Path(args.config))
+    config = _load_config(args.config)
+    _require(config.output.path / "samples.csv", "run", args.config)
+    console.header("analyze", config, args.config)
 
     thresholds = estimate_all_thresholds(config)
-    thresholds.to_csv(f"{config.output.dir}/threshold.csv", index=False)
+    threshold_file = config.output.path / "threshold.csv"
+    thresholds.to_csv(threshold_file, index=False)
 
     suppressions = estimate_all_suppressions(config)
-    suppressions.to_csv(f"{config.output.dir}/suppression.csv", index=False)
+    suppression_file = config.output.path / "suppression.csv"
+    suppressions.to_csv(suppression_file, index=False)
+
+    console.thresholds(thresholds, config)
+    console.suppressions(suppressions, config)
+    console.info()
+    console.wrote(threshold_file)
+    console.wrote(suppression_file)
 
     return EXIT_OK
 
 
 def _visualize(args: argparse.Namespace) -> int:
-    config = load_config(Path(args.config))
+    config = _load_config(args.config)
+    _require(config.output.path / "samples.csv", "run", args.config)
+    _require(config.output.path / "threshold.csv", "analyze", args.config)
+    _require(config.output.path / "suppression.csv", "analyze", args.config)
     distances = [3, 5, 7]
+    console.header("visualize", config, args.config)
 
+    rendered = list()
     for entry in config.codes:
         codes: list[CodeDefinition] = []
         code_ids: list[str] = []
@@ -102,24 +161,31 @@ def _visualize(args: argparse.Namespace) -> int:
         for distance in distances:
             codes.append(build_code(entry, distance=distance))
             code_ids.append(entry)
-        render_diagrams(output_dir, codes, code_ids)
+        paths = render_diagrams(output_dir, codes, code_ids)
+        rendered.append(("diagrams", f"{entry} d={distances}", paths))
 
-    render_all_sweeps(config)
-    render_all_suppressions(config)
-        
+    rendered.append(("figures", "threshold", render_all_sweeps(config)))
+    rendered.append(("figures", "suppression", render_all_suppressions(config)))
+    console.rendered(rendered)
+
     return EXIT_OK
 
 
 def _compile_plans(args: argparse.Namespace) -> int:
-    config = load_config(Path(args.config))
+    config = _load_config(args.config)
     output_dir = config.output.path
+    console.header("compile-plans", config, args.config)
 
     plans = build_sweep_plans(config)
+    output_dir.mkdir(parents=True, exist_ok=True)
     plan_file = output_dir / "plans.json"
     plan_file.write_text(json.dumps([plan.as_dict() for plan in plans], indent=2))
 
+    console.plan_table(plans, config.sampling)
+    console.wrote(plan_file)
+
     return EXIT_OK
-    
+
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
@@ -180,6 +246,12 @@ HANDLERS = {
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = _build_parser().parse_args(argv)
     handler = HANDLERS.get(args.command)
-    if handler is None:
-        return EXIT_USAGE_ERROR
-    return handler(args)
+
+    start = time.monotonic()
+    try:
+        exit_code = handler(args)
+    except CliError as e:
+        console.error(str(e))
+        return e.exit_code
+    console.footer(exit_code == EXIT_OK, time.monotonic() - start)
+    return exit_code

@@ -85,13 +85,22 @@ def estimate_all_suppressions(config: Config) -> pd.DataFrame:
     group_columns = ["code", "basis", *config.noise.params.keys(), "p"]
     for key, group_samples in samples.groupby(group_columns):
         key_dict = dict(zip(group_columns, key))
-        result = estimate_suppression(
-            group_samples, key_dict["code"],
-            config.suppression.target_pl
-        )
+        try:
+            result = estimate_suppression(
+                group_samples, key_dict["code"],
+                config.suppression.target_pl
+            )
+        except ValueError as e:
+            # Keep the other groups; record why this one has no fit
+            rows.append({**key_dict, "skipped": str(e)})
+            continue
         rows.append({
             **key_dict,
             **result.as_dict()
         })
 
-    return pd.DataFrame(rows)
+    result = pd.DataFrame(rows)
+    for column in ("d_teraquop", "qubits"):
+        if column in result:
+            result[column] = result[column].astype("Int64")
+    return result
