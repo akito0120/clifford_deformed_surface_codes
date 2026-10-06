@@ -7,7 +7,7 @@ from typing import Any, Sequence
 import numpy as np
 import pandas as pd
 from tabulate import tabulate
-from .config import Config, SamplingConfig
+from .config import Config, ConfigError, SamplingConfig
 from .sweep.run import SweepPlan
 from .validation.validate import CHECK_NAMES, CodeValidation
 
@@ -144,16 +144,13 @@ def wrote(path: str | Path) -> None:
     info(f"wrote {path}")
 
 
-def config_error_message(path: str | Path, exc: Exception) -> str:
-    if isinstance(exc, FileNotFoundError):
-        return f"config {path}: file not found"
-    errors = getattr(exc, "errors", None)
-    if callable(errors):
-        details = "; ".join(
-            f"{'.'.join(str(loc) for loc in err['loc'])}: {err['msg']}" for err in errors()
-        )
-        return f"config {path}: {details}"
-    return f"config {path}: {exc}"
+def config_error_message(err: ConfigError) -> str:
+    if not err.readable:
+        return f"cannot read config {err.path}: {err.problems[0][1]}"
+    count = len(err.problems)
+    lines = [f"invalid config {err.path}" + (f" ({count} problems)" if count > 1 else "")]
+    lines += [f"  {location}: {reason}" for location, reason in err.problems]
+    return "\n".join(lines)
 
 
 def missing_input_message(path: str | Path, command: str, config_path: str | Path) -> str:

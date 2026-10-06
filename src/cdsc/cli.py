@@ -3,8 +3,7 @@ from .codes.builtin import *
 from .noise.builtin import *
 from .validation.validate import validate_codes, validation_report
 import json
-from .config import Config, load_config
-from pydantic import ValidationError
+from .config import Config, ConfigError, load_config
 from . import console
 import time
 import argparse
@@ -36,8 +35,8 @@ class CliError(Exception):
 def _load_config(config_path: str) -> Config:
     try:
         return load_config(Path(config_path))
-    except (FileNotFoundError, ValidationError) as e:
-        raise CliError(console.config_error_message(config_path, e), EXIT_USAGE_ERROR) from e
+    except ConfigError as e:
+        raise CliError(console.config_error_message(e), EXIT_USAGE_ERROR) from e
 
 
 def _require(path: Path, command: str, config_path: str) -> None:

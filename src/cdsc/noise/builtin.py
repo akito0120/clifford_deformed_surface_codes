@@ -59,7 +59,7 @@ def depolarizing_noise(p: float, _: dict[str, Any]) -> Noise:
     )
 
 
-@register_noise("biased")
+@register_noise("biased", required_params=("eta",))
 def biased_noise(p: float, params: dict[str, Any]) -> Noise:
     eta = params["eta"]
     return Noise(
