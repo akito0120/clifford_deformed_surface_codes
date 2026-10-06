@@ -57,14 +57,19 @@ def fmt_count(n: int) -> str:
 
 
 def fmt_compact(n: float) -> str:
-    for scale, suffix in ((1e9, "G"), (1e6, "M"), (1e3, "k")):
-        if abs(n) >= scale:
-            return f"{n / scale:.1f}{suffix}"
-    return str(int(n))
+    # Move to the next unit only when the rounded value reaches 1000,
+    # so 999,960 shows as 1.0M rather than 1000.0k (and 960,000 stays 960.0k)
+    value, suffix = float(n), ""
+    for next_suffix in ("k", "M", "G"):
+        if abs(round(value, 1 if suffix else 0)) < 1000:
+            break
+        value, suffix = value / 1000, next_suffix
+    return f"{value:.1f}{suffix}" if suffix else str(int(round(value)))
 
 
 def fmt_duration(seconds: float) -> str:
-    if seconds < 60:
+    # Decide the format after rounding, so 59.97s shows as 1m 00s rather than 60.0s
+    if round(seconds, 1) < 60:
         return f"{seconds:.1f}s"
     minutes, secs = divmod(int(round(seconds)), 60)
     if minutes < 60:
