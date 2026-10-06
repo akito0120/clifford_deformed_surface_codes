@@ -95,5 +95,6 @@ Notes:
     ├── visualization/      # Visualization of sampling and analysis result
     ├── cli.py              # CLI entrypoint and command handlers
     ├── config.py           # YAML config schema definition
+    ├── console.py          # Console messages
     └── decoder.py          # Decoder registry
 ```
