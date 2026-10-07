@@ -13,6 +13,8 @@ pip install -e .
 ## How to use
 
 ```
+python -m pytest
+
 cdsc validate <path-to-config-file>
 cdsc compile-plans <path-to-config-file>
 cdsc run <path-to-config-file>
