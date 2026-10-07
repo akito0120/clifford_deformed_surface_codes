@@ -11,6 +11,7 @@ PAULIS: tuple[Pauli, ...] = ("X", "Y", "Z")
 # Single-qubit clifford deformations
 IDENTITY: PauliMap = {"X": "X", "Y": "Y", "Z": "Z"}
 H: PauliMap = {"X": "Z", "Y": "Y", "Z": "X"}
+SQRT_X: PauliMap = {"X": "X", "Y": "Z", "Z": "Y"}
 
 
 @dataclass(frozen=True)

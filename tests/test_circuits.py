@@ -46,6 +46,25 @@ def test_circuit_distance_equals_code_distance(model, code, basis, d):
     assert len(circuit.shortest_graphlike_error()) == d
 
 
+# Depolarizing noise is invariant under single-qubit Cliffords, so a deformed code has the CSS code's error model
+@pytest.mark.parametrize(
+    "model, code, basis, d",
+    [
+        (model, code, basis, d)
+        for model in MODELS
+        for code in ("xzzx", "xy")
+        for basis in ("X", "Z")
+        for d in (3, 5)
+    ],
+)
+def test_deformed_code_matches_css_under_depolarizing_noise(model, code, basis, d):
+    assert build_code(code, distance=d).stabilizers != build_code("rotated_surface", distance=d).stabilizers
+    # Compared undecomposed: Stim's decomposition into graphlike edges is not Clifford-invariant
+    deformed = _circuit(model, code, basis, d).detector_error_model(approximate_disjoint_errors=True)
+    css = _circuit(model, "rotated_surface", basis, d).detector_error_model(approximate_disjoint_errors=True)
+    assert deformed.approx_equals(css, atol=1e-12)
+
+
 # Biased rates sum to p and split Z against X + Y in the ratio eta
 @pytest.mark.parametrize("eta", [0.5, 1.0, 10.0])
 def test_biased_rates_sum_to_p_with_the_given_bias(eta):

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from .definition import CodeDefinition, H, apply_deformation
+from .definition import CodeDefinition, H, SQRT_X, apply_deformation
 from .lattice import (
     checkerboard_parity,
     checkerboard_stabilizers,
@@ -24,3 +24,11 @@ def build_xzzx(distance: int) -> CodeDefinition:
     css = build_rotated_surface(distance)
     deformation = {q: H for q in css.data_qubits if checkerboard_parity(q) == 1}
     return apply_deformation(css, deformation, name=f"xzzx_d{distance}")
+
+
+@register_code("xy")
+def build_xy(distance: int) -> CodeDefinition:
+    # The XY code: a SQRT_X deformation on every data qubit of the CSS code turns its Z checks into Y checks.
+    css = build_rotated_surface(distance)
+    deformation = {q: SQRT_X for q in css.data_qubits}
+    return apply_deformation(css, deformation, name=f"xy_d{distance}")
