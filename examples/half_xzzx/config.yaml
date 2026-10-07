@@ -1,0 +1,54 @@
+experiment:
+  name: half_xzzx
+  seed: 0
+
+plugins:
+  - examples/half_xzzx/plugin.py
+
+codes:
+  - rotated_surface
+  - xzzx
+  - half_xzzx
+
+noise:
+  model: circuit_level
+  definition: dephasing
+  params: {}
+  p_meas: same_as_p
+
+sweeps:
+  - id: threshold_sweep
+    distances: [5, 7, 9]
+    basis: [X]
+    p:
+      mode: window
+      centers: [0.0057, 0.0216, 0.0069]
+      half_width: 0.0025
+      step: 0.00025
+
+  - id: suppression_sweep
+    distances: [3, 5, 7, 9]
+    basis: [X]
+    p:
+      mode: list
+      values: [0.003, 0.004]
+
+sampling:
+  decoder: mwpm
+  max_shots: 20000
+  max_errors: 2000
+  max_batch_size: 1024
+  workers: 4
+
+threshold:
+  source_sweep: threshold_sweep
+  distances: [5, 7, 9]
+  x_window: 0.012
+  nu_0: 1.1
+
+suppression:
+  source_sweep: suppression_sweep
+  target_pl: 1e-12
+
+output:
+  dir: results/half_xzzx

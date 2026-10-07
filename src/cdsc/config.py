@@ -2,6 +2,8 @@ from pydantic import AfterValidator, BaseModel, ConfigDict, Field, ValidationErr
 from typing import Annotated, Any, Literal
 from pathlib import Path
 from math import prod
+import importlib.util
+import sys
 import yaml
 
 
@@ -241,6 +243,7 @@ class OutputConfig(_Model):
 class Config(_Model):
     # One experiment configuration
     experiment: ExperimentConfig
+    plugins: list[str] = Field(default_factory=list)
     codes: list[str] = Field(min_length=1)
     noise: NoiseConfig
     sweeps: list[SweepConfig] = Field(min_length=1)
@@ -265,6 +268,7 @@ class Config(_Model):
     def as_dict(self) -> dict[str, Any]:
         return {
             "experiment": self.experiment.as_dict(),
+            "plugins": list(self.plugins),
             "codes": list(self.codes),
             "noise": self.noise.as_dict(),
             "sweeps": [sweep.as_dict() for sweep in self.sweeps],
@@ -376,6 +380,31 @@ def _problem(error: dict[str, Any]) -> tuple[str, str]:
     return _location(error["loc"]), reason
 
 
+# Resolved paths of the plugins imported so far, so a plugin is never imported twice
+_LOADED_PLUGINS: set[Path] = set()
+
+
+def _load_plugin(entry: str) -> None:
+    # Import a user module so that its @register_code / @register_noise decorators run
+    # A relative path is resolved against the working directory, like output.dir
+    path = Path(entry).resolve()
+    if path in _LOADED_PLUGINS:
+        return
+    if not path.is_file():
+        raise ValueError(f"file not found: {path}")
+
+    name = f"cdsc_plugin_{path.stem}"
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module  # before exec, as a normal import does
+    try:
+        spec.loader.exec_module(module)
+    except Exception as e:
+        del sys.modules[name]
+        raise ValueError(f"{type(e).__name__}: {e}") from e
+    _LOADED_PLUGINS.add(path)
+
+
 def load_config(path: Path) -> Config:
     # Read file
     try:
@@ -405,6 +434,22 @@ def load_config(path: Path) -> Config:
             "(root)",
             f"top level must be a mapping of sections (experiment, codes, ...), got {type(document).__name__}"
         )])
+
+    # Load plugins
+    entries = document.get("plugins") or []
+    if isinstance(entries, list):
+        from .codes import builtin as _builtin_codes
+        from .noise import builtin as _builtin_noises
+        problems = []
+        for index, entry in enumerate(entries):
+            if not isinstance(entry, str):
+                continue
+            try:
+                _load_plugin(entry)
+            except ValueError as e:
+                problems.append((f"plugins[{index}]", str(e)))
+        if problems:
+            raise ConfigError(path, problems)
 
     # Config schema validation
     try:

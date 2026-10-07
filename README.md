@@ -81,12 +81,11 @@ Notes:
 
 - One sweep plan is created per combination of `noise.params` × `basis` × `codes`. The last key varies fastest, and params keep their YAML order. In `window` mode, `centers` needs one entry per combination, in that order. The example gives (eta, code) = (0.5, rotated_surface), (0.5, xzzx), (10, rotated_surface), (10, xzzx). Check the plans with `cdsc compile-plans`.
 
-
 ## Layout
 
 ```
 .
-├── configs/                # Simulation config files
+├── examples/               # Example plugins and their configs
 ├── src/cdsc/
 │   ├── analysis/           # Threshold and suppression analysis
 │   ├── circuit_builder/    # Stim circuit builders

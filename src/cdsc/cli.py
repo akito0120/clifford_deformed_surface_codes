@@ -7,6 +7,7 @@ from .config import Config, ConfigError, load_config
 from . import console
 import time
 import argparse
+import hashlib
 from pathlib import Path
 from typing import Optional, Sequence
 from .visualization.diagrams import render_diagrams
@@ -56,6 +57,10 @@ def _write_manifest(config: Config, config_path: str) -> Path:
         "software": {
             "git_commit": commit_hash(),
             "git_dirty": git_dirty(),
+            "plugins": {
+                entry: hashlib.sha256(Path(entry).read_bytes()).hexdigest()
+                for entry in config.plugins
+            },
         },
         "started_at": str(now),
         "config_path": str(config_path),
