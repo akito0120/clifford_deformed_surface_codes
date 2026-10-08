@@ -31,6 +31,10 @@ experiment:
   name: smoke
   seed: 0
 
+plugins:
+  - my_codes.py
+  - my_noises.py
+
 codes: [rotated_surface, xzzx]
 
 noise:
