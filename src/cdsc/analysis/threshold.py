@@ -37,9 +37,27 @@ def fss(X, p_th, nu, a, b, c):
     return a + (b * x) + (c * x * x)
 
 
-def crossing_seed(samples: pd.DataFrame):
-    piv = samples.pivot_table(index="p", columns="d", values="pl").dropna()
-    return float(piv.std(axis=1).idxmin())
+def crossing_seed(samples: pd.DataFrame) -> float:
+    # The p where a larger distance turns from better to worse.
+    # Mean log ratio of adjacent distances: < 0 below threshold, > 0 above it
+    piv = samples.pivot_table(index="p", columns="d", values="pl").sort_index()
+    slope = np.log(piv.replace(0.0, np.nan)).diff(axis=1).mean(axis=1).dropna()
+    if slope.empty:
+        raise ValueError("cannot locate the crossing: no p has errors at two or more distances")
+    ps, ms = slope.index.to_numpy(), slope.to_numpy()
+
+    # The split into below (< 0) and above (> 0) that most points agree with, so a few noisy points do not move it
+    agreement = [np.sum(ms[:k] < 0) + np.sum(ms[k:] > 0) for k in range(len(ms) + 1)]
+    k = int(np.argmax(agreement))
+    if k == 0:
+        return float(ps[0])
+    if k == len(ms):
+        return float(ps[-1])
+
+    m0, m1 = ms[k - 1], ms[k]
+    if m0 < 0 < m1:
+        return float(ps[k - 1] + (ps[k] - ps[k - 1]) * -m0 / (m1 - m0))
+    return float((ps[k - 1] + ps[k]) / 2)
 
 
 def estimate_threshold(
