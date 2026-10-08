@@ -2,8 +2,6 @@ from cdsc.codes.builtin import build_rotated_surface
 from cdsc.codes.definition import CodeDefinition, H, apply_deformation
 from cdsc.codes.lattice import checkerboard_parity
 from cdsc.codes.registry import register_code
-from cdsc.noise.builtin import biased_noise
-from cdsc.noise.registry import register_noise
 
 
 @register_code("half_xzzx")
@@ -15,9 +13,3 @@ def build_half_xzzx(distance: int) -> CodeDefinition:
         if checkerboard_parity(q) == 1 and q[0] < distance
     }
     return apply_deformation(css, deformation, name=f"half_xzzx_d{distance}")
-
-
-@register_noise("dephasing")
-def dephasing_noise(p, params):
-    # Pure Z noise: the biased noise at infinite bias
-    return biased_noise(p, {"eta": float("inf")})

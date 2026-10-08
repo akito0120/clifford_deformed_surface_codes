@@ -3,7 +3,8 @@ experiment:
   seed: 0
 
 plugins:
-  - examples/half_xzzx/plugin.py
+  - examples/half_xzzx/my_codes.py
+  - examples/half_xzzx/my_noises.py
 
 codes:
   - rotated_surface
