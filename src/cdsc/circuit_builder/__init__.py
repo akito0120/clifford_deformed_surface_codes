@@ -32,4 +32,4 @@ def build_circuit(
     elif builder == CIRCUIT_LEVEL:
         return CircuitLevelBuilder(code, noise, rounds, basis).build()
     
-    raise ValueError("invalid circuit buillder specified")
+    raise ValueError("invalid circuit builder specified")

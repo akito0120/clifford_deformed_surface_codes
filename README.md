@@ -1,6 +1,6 @@
 # Clifford-Deformed Surface Codes
 
-A simulation framework for clifford-deformed surface codes. Define the code in stabilizer formalism,
+A simulation framework for Clifford-deformed surface codes. Define the code in stabilizer formalism,
 and the framework validates it, builds the Stim circuit, runs sampling, decodes, estimates the 
 threshold and the teraquop footprint, then visualizes the result.
 
@@ -24,7 +24,7 @@ cdsc visualize <path-to-config-file>
 
 ## Config file
 
-Every command takes one YAML config (schema: [`src/cdsc/config.py`](src/cdsc/config.py)). Example (`configs/smoke.yaml`):
+Every command takes one YAML config (schema: [`src/cdsc/config.py`](src/cdsc/config.py)). Example (based on [`examples/smoke/config.yaml`](examples/smoke/config.yaml)):
 
 ```yaml
 experiment:

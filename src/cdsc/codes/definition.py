@@ -8,7 +8,7 @@ PauliMap = Mapping[Pauli, Pauli]
 
 PAULIS: tuple[Pauli, ...] = ("X", "Y", "Z")
 
-# Single-qubit clifford deformations
+# Single-qubit Clifford deformations
 IDENTITY: PauliMap = {"X": "X", "Y": "Y", "Z": "Z"}
 H: PauliMap = {"X": "Z", "Y": "Y", "Z": "X"}
 SQRT_X: PauliMap = {"X": "X", "Y": "Z", "Z": "Y"}
@@ -30,7 +30,7 @@ class CodeDefinition:
     deformation: dict[Coord, PauliMap] = field(default_factory=dict)
 
     def deformation_of(self, q: Coord) -> PauliMap:
-        # The clifford deformation on data qubit q. Unrecorded qubits are undeformed.
+        # The Clifford deformation on data qubit q. Unrecorded qubits are undeformed.
         return self.deformation.get(q, IDENTITY)
 
     def with_schedule(

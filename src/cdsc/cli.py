@@ -205,7 +205,7 @@ def _build_parser() -> argparse.ArgumentParser:
     validate = subparsers.add_parser("validate", help="Run checks on codes and circuits")
     validate.add_argument("config", help="path to the YAML config")
 
-    analyze = subparsers.add_parser("analyze", help="Estimate the theshold, suppression factor and teraquop footpring")
+    analyze = subparsers.add_parser("analyze", help="Estimate the threshold and teraquop footprint")
     analyze.add_argument("config", help="path to the YAML config")
 
     visualize = subparsers.add_parser("visualize", help="Visualize the analysis result and circuit diagrams")

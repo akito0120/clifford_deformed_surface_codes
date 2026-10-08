@@ -29,7 +29,7 @@ def required_params(name: str) -> tuple[str, ...]:
 
 
 def registered_noises() -> list[str]:
-    # Names of all registered codes, sorted.
+    # Names of all registered noises, sorted.
     return sorted(_NOISE_REGISTRY)
 
 
