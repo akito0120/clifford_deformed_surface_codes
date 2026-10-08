@@ -1,3 +1,5 @@
+[![Tests](https://github.com/akito0120/clifford_deformed_surface_codes/actions/workflows/tests.yml/badge.svg)](https://github.com/akito0120/clifford_deformed_surface_codes/actions/workflows/tests.yml)
+
 # Clifford-Deformed Surface Codes
 
 A simulation framework for Clifford-deformed surface codes. Define the code in stabilizer formalism,
