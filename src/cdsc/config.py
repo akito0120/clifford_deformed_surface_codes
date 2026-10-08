@@ -57,7 +57,7 @@ class ExperimentConfig(_Model):
 class NoiseConfig(_Model):
     model: Literal["code_capacity", "phenomenological", "circuit_level"]
     definition: str
-    params: dict[str, list[Any]] | None = None
+    params: dict[str, list[Any]] = Field(default_factory=dict)
     p_meas: str | float
 
     @field_validator("definition")
