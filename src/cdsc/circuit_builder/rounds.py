@@ -44,7 +44,7 @@ def final_boundary_detectors(
     for ancilla in eligible_boundary_stabilizers(code, basis):
         targets = [log.rel(log.data[q]) for q in code.stabilizers[ancilla]]
         targets.append(log.rel(log.ancilla[(ancilla, last)]))
-        circuit.append("DETECTOR", targets, [ancilla[0], ancilla[1], last + 1])
+        circuit.append("DETECTOR", targets, [ancilla[0], ancilla[1], last + 1 - log.coord_base])
     return circuit
 
 
