@@ -1,0 +1,50 @@
+experiment:
+  name: b1_dephasing_mwpm
+  seed: 0
+
+codes:
+  - rotated_surface
+
+noise:
+  model: code_capacity
+  definition: biased
+  params:
+    eta: [.inf]
+  p_meas: 0 # unused at code capacity: syndrome rounds are perfect
+
+sweeps:
+  - id: threshold_sweep
+    distances: [7, 11, 15, 19, 23] # as in A1
+    basis: [X]
+    p:
+      mode: window
+      centers: [0.101]
+      half_width: 0.010
+      step: 0.002
+
+  - id: suppression_sweep # required by the schema; not used for B1
+    distances: [3, 5, 7]
+    basis: [X]
+    p:
+      mode: list
+      values: [0.05]
+
+sampling:
+  decoder: mwpm
+  max_shots: 1000000
+  max_errors: 20000
+  max_batch_size: 1024
+  workers: 4
+
+threshold:
+  source_sweep: threshold_sweep
+  distances: [7, 11, 15, 19, 23]
+  x_window: 0.1 # |p - p_th| <= 1.2 points at d = 23: the whole window
+  nu_0: 1.46 # Wang2003, independent flips
+
+suppression:
+  source_sweep: suppression_sweep
+  target_pl: 1e-12
+
+output:
+  dir: case_study/b1_decoder_comparison/results/dephasing_mwpm/

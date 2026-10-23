@@ -1,0 +1,53 @@
+experiment:
+  name: a2_phenomenological_biased_css
+  seed: 0
+
+plugins:
+  - case_study/a2_phenomenological_biased/noises.py
+
+codes:
+  - rotated_surface
+
+noise:
+  model: phenomenological
+  definition: biased_meas_yz
+  params:
+    eta: [0.5, 10, 25, 50, 100, .inf]
+  p_meas: same_as_p # keeps the plugin's flip, p_Y + p_Z
+
+sweeps:
+  - id: threshold_sweep
+    distances: [11, 13, 15, 17, 19] # Campos2026's CSS distances (code capacity, App. C)
+    basis: [X] # see the header for why Z is not run
+    p:
+      mode: window
+      centers: [0.0435, 0.0304, 0.0296, 0.0293, 0.0291, 0.0290] # the reference line, one per eta
+      half_width: 0.005
+      step: 0.001
+
+  - id: suppression_sweep
+    distances: [3, 5, 7]
+    basis: [X]
+    p:
+      mode: list
+      values: [0.01]
+
+sampling:
+  decoder: mwpm
+  max_shots: 1000000
+  max_errors: 20000
+  max_batch_size: 1024
+  workers: 4
+
+threshold:
+  source_sweep: threshold_sweep
+  distances: [11, 13, 15, 17, 19]
+  x_window: 0.06 # as in A3: |p - p_th| <= 0.32% at d = 19; every point at d = 11
+  nu_0: 1.0 # phenomenological nu0 is about 1.0 (Wang2003, Stephens2014)
+
+suppression:
+  source_sweep: suppression_sweep
+  target_pl: 1e-12
+
+output:
+  dir: case_study/a2_phenomenological_biased/results/css/

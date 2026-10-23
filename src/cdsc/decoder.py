@@ -9,7 +9,7 @@ from ldpc.union_find_decoder import UnionFindDecoder
 
 
 class UnionFindSinterDecoder(Decoder):
-    def __init__(self, uf_method: str = "peeling"):
+    def __init__(self, uf_method: str = "inversion"):
         self.uf_method = uf_method
 
     def decode_via_files(

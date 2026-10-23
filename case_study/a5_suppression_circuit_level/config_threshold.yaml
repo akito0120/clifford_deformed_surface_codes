@@ -1,0 +1,52 @@
+experiment:
+  name: a5_threshold_circuit_level
+  seed: 0
+
+plugins:
+  - case_study/a5_suppression_circuit_level/codes.py
+  - case_study/a5_suppression_circuit_level/noises.py
+
+codes:
+  - rotated_surface_sd
+
+noise:
+  model: circuit_level
+  definition: depolarizing_sd
+  p_meas: same_as_p # keeps the plugin's flip, 5p/3 - 4p^2/3
+
+sweeps:
+  - id: threshold_sweep
+    distances: [7, 9, 11, 13, 15] # as in A4
+    basis: [Z] # the paper's main-text memory
+    p:
+      mode: linspace
+      start: 0.0045
+      stop: 0.0069
+      num: 13 # step 0.0002, centred on 0.565%
+
+  - id: suppression_sweep # required by the schema; not used here
+    distances: [3, 5, 7]
+    basis: [Z]
+    p:
+      mode: list
+      values: [0.003]
+
+sampling:
+  decoder: mwpm
+  max_shots: 1000000
+  max_errors: 20000
+  max_batch_size: 1024
+  workers: 4
+
+threshold:
+  source_sweep: threshold_sweep
+  distances: [9, 11, 13, 15] # d >= 9, as in A4 and Stephens2014
+  x_window: 0.012 # |p - p_th| <= 0.09% at d = 15, about the same relative width as A4
+  nu_0: 1.06 # Stephens2014
+
+suppression:
+  source_sweep: suppression_sweep
+  target_pl: 1e-12
+
+output:
+  dir: case_study/a5_suppression_circuit_level/results/threshold/

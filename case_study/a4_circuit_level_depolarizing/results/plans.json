@@ -1,0 +1,81 @@
+[
+  {
+    "sweep_id": "threshold_sweep",
+    "code": "rotated_surface",
+    "noise_model": "circuit_level",
+    "noise_definition": "depolarizing",
+    "noise_params": {},
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      7,
+      9,
+      11,
+      13,
+      15
+    ],
+    "ps": [
+      0.0055,
+      0.00575,
+      0.006,
+      0.00625,
+      0.0065,
+      0.00675,
+      0.007,
+      0.00725,
+      0.0075,
+      0.00775,
+      0.008,
+      0.00825,
+      0.0085
+    ]
+  },
+  {
+    "sweep_id": "threshold_sweep",
+    "code": "rotated_surface",
+    "noise_model": "circuit_level",
+    "noise_definition": "depolarizing",
+    "noise_params": {},
+    "p_meas": "same_as_p",
+    "basis": "Z",
+    "distances": [
+      7,
+      9,
+      11,
+      13,
+      15
+    ],
+    "ps": [
+      0.0055,
+      0.00575,
+      0.006,
+      0.00625,
+      0.0065,
+      0.00675,
+      0.007,
+      0.00725,
+      0.0075,
+      0.00775,
+      0.008,
+      0.00825,
+      0.0085
+    ]
+  },
+  {
+    "sweep_id": "suppression_sweep",
+    "code": "rotated_surface",
+    "noise_model": "circuit_level",
+    "noise_definition": "depolarizing",
+    "noise_params": {},
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      3,
+      5,
+      7
+    ],
+    "ps": [
+      0.003
+    ]
+  }
+]

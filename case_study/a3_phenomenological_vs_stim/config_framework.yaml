@@ -1,0 +1,48 @@
+experiment:
+  name: a3_phenomenological_vs_stim_framework
+  seed: 0
+
+codes:
+  - rotated_surface
+
+noise:
+  model: phenomenological
+  definition: depolarizing
+  p_meas: same_as_p
+
+sweeps:
+  - id: threshold_sweep
+    distances: [7, 9, 11, 13, 15]
+    basis: [X, Z]
+    p:
+      mode: linspace
+      start: 0.033
+      stop: 0.045
+      num: 13 # step 0.001
+
+  - id: suppression_sweep # required by the schema; not used for A3
+    distances: [3, 5, 7]
+    basis: [X]
+    p:
+      mode: list
+      values: [0.01]
+
+sampling:
+  decoder: mwpm
+  max_shots: 1000000
+  max_errors: 20000
+  max_batch_size: 1024
+  workers: 4
+
+threshold:
+  source_sweep: threshold_sweep
+  distances: [9, 11, 13, 15] # d >= 9, as in A4
+  x_window: 0.06 # |p - p_th| <= 0.4% at d = 15; every point at d = 9
+  nu_0: 1.0 # phenomenological nu0 is about 1.0 (Wang2003, Stephens2014)
+
+suppression:
+  source_sweep: suppression_sweep
+  target_pl: 1e-12
+
+output:
+  dir: case_study/a3_phenomenological_vs_stim/results/framework/

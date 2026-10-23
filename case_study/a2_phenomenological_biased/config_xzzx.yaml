@@ -1,0 +1,55 @@
+experiment:
+  name: a2_phenomenological_biased_xzzx
+  seed: 0
+
+plugins:
+  - case_study/a2_phenomenological_biased/noises.py
+
+codes:
+  - xzzx
+
+noise:
+  model: phenomenological
+  definition: biased_meas_yz
+  params:
+    eta: [0.5, 10, 25, 50, 100]
+  p_meas: same_as_p # keeps the plugin's flip, p_Y + p_Z
+
+sweeps:
+  - id: threshold_sweep
+    distances: [11, 13, 15, 17, 19] # the same as the CSS part
+    basis: [X, Z]
+    p:
+      mode: window
+      # (eta=0.5, X), (eta=0.5, Z), (eta=10, X), (eta=10, Z), (eta=25, X), (eta=25, Z),
+      # (eta=50, X), (eta=50, Z), (eta=100, X), (eta=100, Z): from the pilot crossings
+      centers: [0.0435, 0.0435, 0.058, 0.058, 0.063, 0.062, 0.067, 0.067, 0.072, 0.070]
+      half_width: 0.008
+      step: 0.002
+
+  - id: suppression_sweep
+    distances: [3, 5, 7]
+    basis: [X]
+    p:
+      mode: list
+      values: [0.02] # high enough for errors at d = 7 with every eta
+
+sampling:
+  decoder: mwpm
+  max_shots: 1000000
+  max_errors: 10000 # see the header
+  max_batch_size: 1024
+  workers: 4
+
+threshold:
+  source_sweep: threshold_sweep
+  distances: [11, 13, 15, 17, 19]
+  x_window: 0.1 # |p - p_th| <= 0.53% at d = 19; every point at d = 11
+  nu_0: 1.0 # phenomenological nu0 is about 1.0 (Wang2003, Stephens2014)
+
+suppression:
+  source_sweep: suppression_sweep
+  target_pl: 1e-12
+
+output:
+  dir: case_study/a2_phenomenological_biased/results/xzzx/
