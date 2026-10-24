@@ -1,0 +1,13 @@
+eta,code,pth,err_approx,source
+0.5,rotated_surface,0.044,0.002,Campos2026 Fig. 6(a) CSS l=2; read from the vector PDF in the arXiv source (v3); error bar as drawn
+5,rotated_surface,0.032,0.002,Campos2026 Fig. 6(a) CSS l=2; read from the vector PDF in the arXiv source (v3); error bar as drawn
+10,rotated_surface,0.030,0.002,Campos2026 Fig. 6(a) CSS l=2; read from the vector PDF in the arXiv source (v3); error bar as drawn
+25,rotated_surface,0.029,0.002,Campos2026 Fig. 6(a) CSS l=2; read from the vector PDF in the arXiv source (v3); error bar as drawn
+50,rotated_surface,0.029,0.002,Campos2026 Fig. 6(a) CSS l=2; read from the vector PDF in the arXiv source (v3); error bar as drawn
+100,rotated_surface,0.029,0.002,Campos2026 Fig. 6(a) CSS l=2; read from the vector PDF in the arXiv source (v3); error bar as drawn
+0.5,xzzx,0.044,0.002,Campos2026 Fig. 6(b) XZZX l=2; read from the vector PDF in the arXiv source (v3); error bar as drawn
+5,xzzx,0.051,0.002,Campos2026 Fig. 6(b) XZZX l=2; read from the vector PDF in the arXiv source (v3); error bar as drawn
+10,xzzx,0.056,0.002,Campos2026 Fig. 6(b) XZZX l=2; read from the vector PDF in the arXiv source (v3); error bar as drawn
+25,xzzx,0.063,0.002,Campos2026 Fig. 6(b) XZZX l=2; read from the vector PDF in the arXiv source (v3); error bar as drawn
+50,xzzx,0.069,0.002,Campos2026 Fig. 6(b) XZZX l=2; read from the vector PDF in the arXiv source (v3); error bar as drawn
+100,xzzx,0.074,0.002,Campos2026 Fig. 6(b) XZZX l=2; read from the vector PDF in the arXiv source (v3); error bar as drawn

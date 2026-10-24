@@ -1,0 +1,48 @@
+experiment:
+  name: b1_depolarizing_uf
+  seed: 0
+
+codes:
+  - rotated_surface
+
+noise:
+  model: code_capacity
+  definition: depolarizing
+  p_meas: 0 # unused at code capacity: syndrome rounds are perfect
+
+sweeps:
+  - id: threshold_sweep
+    distances: [7, 11, 15, 19, 23] # as in A1 and Criger2018
+    basis: [Z]
+    p:
+      mode: window
+      centers: [0.134]
+      half_width: 0.012
+      step: 0.002
+
+  - id: suppression_sweep # required by the schema; not used for B1
+    distances: [3, 5, 7]
+    basis: [Z]
+    p:
+      mode: list
+      values: [0.05]
+
+sampling:
+  decoder: uf
+  max_shots: 1000000
+  max_errors: 20000
+  max_batch_size: 1024
+  workers: 4
+
+threshold:
+  source_sweep: threshold_sweep
+  distances: [7, 11, 15, 19, 23]
+  x_window: 0.1 # as in A1
+  nu_0: 1.5 # as in A1
+
+suppression:
+  source_sweep: suppression_sweep
+  target_pl: 1e-12
+
+output:
+  dir: case_study/b1_decoder_comparison/results/depolarizing_uf/

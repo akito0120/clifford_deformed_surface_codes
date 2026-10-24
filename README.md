@@ -91,6 +91,7 @@ Notes:
 
 ```
 .
+├── case_studies/           # Case studies using the framework
 ├── examples/               # Example plugins and their configs
 ├── src/cdsc/
 │   ├── analysis/           # Threshold and suppression analysis

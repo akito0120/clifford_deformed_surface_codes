@@ -1,0 +1,53 @@
+experiment:
+  name: a5_suppression_circuit_level
+  seed: 0
+
+plugins:
+  - case_study/a5_suppression_circuit_level/codes.py
+  - case_study/a5_suppression_circuit_level/noises.py
+
+codes:
+  - rotated_surface_sd
+
+noise:
+  model: circuit_level
+  definition: depolarizing_sd
+  p_meas: same_as_p # keeps the plugin's flip, 5p/3 - 4p^2/3
+
+sweeps:
+  - id: threshold_placeholder # required by `cdsc analyze`; not part of A5
+    distances: [3, 5, 7]
+    basis: [Z]
+    p:
+      mode: linspace
+      start: 0.004
+      stop: 0.007
+      num: 7
+
+  - id: suppression_sweep
+    distances: [7, 9, 11, 13]
+    basis: [Z]
+    p:
+      mode: list
+      # expected p_L at d = 13: about 4e-7 (p = 0.001) and 6e-5 (p = 0.002)
+      values: [0.001, 0.002]
+
+sampling:
+  decoder: mwpm
+  max_shots: 200000000 # at p = 0.001, d = 11 stops near 500 errors and d = 13 near 80
+  max_errors: 1000
+  max_batch_size: 100000 # 1024 was 27% slower at these shot counts
+  workers: 4
+
+threshold:
+  source_sweep: threshold_placeholder
+  distances: [3, 5, 7]
+  x_window: 0.01 # covers every point
+  nu_0: 1.06
+
+suppression:
+  source_sweep: suppression_sweep
+  target_pl: 1e-12 # per d rounds, as in O'Rourke & Devitt
+
+output:
+  dir: case_study/a5_suppression_circuit_level/results/suppression/
