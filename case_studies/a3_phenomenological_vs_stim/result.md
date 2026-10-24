@@ -34,7 +34,6 @@ From [results/framework/threshold.csv](results/framework/threshold.csv) and [res
 | X | 3.892 ± 0.005 | 3.900 ± 0.005 | −0.008 ± 0.007 (−1.2σ) | 1.09 / 1.10 | 1.25 / 1.39 |
 | Z | 3.904 ± 0.005 | 3.902 ± 0.005 | +0.002 ± 0.007 (+0.2σ) | 1.13 / 1.09 | 0.62 / 0.82 |
 
-- p_L point by point, by a two-proportion z-test: χ² = 120.1 for 130 points (p = 0.72). No point has |z| > 3.
 - Against LinLai2025's 3.92%, the framework is 0.028 points (X) and 0.016 points (Z) lower, i.e. 0.7% and 0.4% (relative).
 
 ## Verdict

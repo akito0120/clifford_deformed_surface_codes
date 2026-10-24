@@ -4,7 +4,7 @@
 
 | Key | Paper | Where | Value | Conditions |
 |---|---|---|---|---|
-| ORourke2025 | A. R. O'Rourke and S. Devitt, "Compare the Pair: Rotated vs. Unrotated Surface Codes at Equal Logical Error Rates," *Phys. Rev. Research* **7**, 033074 (2025) [arXiv:2409.14765](https://arxiv.org/abs/2409.14765) | Table III (SD, rotated, odd d), §IV.D, and the released circuits and statistics ([compare_the_pair](https://github.com/wamud/compare_the_pair): `src/circuits/SD/z`, `SD_stats.csv`) | Fit p_L = α (p/β)^(γd − δ): α = 0.081 ± 0.014, β = 0.00531 ± 0.00002, γ = 0.577 ± 0.010, δ = 0.24 ± 0.16. Footprint: 1395 ± 18 qubits for p_L = 10⁻¹² at p = 10⁻³ (d* ≈ 26.4; d = 27 gives 1457) | Rotated code, 2d² − 1 qubits. SD noise: two-qubit depolarizing p after each CNOT, depolarizing p after each H and on every idle qubit, reset and measurement errors p. A round has 7 layers: H, CNOT × 4, H, MR. 3d rounds, converted to p_L per d rounds. Memory Z, PyMatching 2. The fit uses p ≤ 0.004 and d ≥ 8. The footprint comes from an unweighted line fit of log p_L against √n over d = 8–22 |
+| ORourke2025 | A. R. O'Rourke and S. Devitt, "Compare the Pair: Rotated vs. Unrotated Surface Codes at Equal Logical Error Rates," *Phys. Rev. Research* **7**, 033074 (2025) [arXiv:2409.14765](https://arxiv.org/abs/2409.14765) | Table III (SD, rotated, odd d), §IV.D, and the released circuits and statistics ([compare_the_pair](https://github.com/wamud/compare_the_pair): `src/circuits/SD/z`, `SD_stats.csv`) | Fit p_L = α (p/β)^(γd − δ): α = 0.081 ± 0.014, β = 0.00531 ± 0.00002, γ = 0.577 ± 0.010, δ = 0.24 ± 0.16. Footprint: 1395 ± 18 qubits for p_L = 10⁻¹² at p = 10⁻³ (d* ≈ 26.4; d = 27 gives 1457) | Rotated code, 2d² − 1 qubits. SD noise: two-qubit depolarizing p after each CNOT, depolarizing p after each H and on every idle qubit, reset and measurement errors p. A round has 7 layers: H, CNOT × 4, H, MR. 3d rounds, converted to p_L per d rounds. Memory Z, PyMatching 2. The fit uses p ≤ 0.004 and d ≥ 8. The footprint comes from an unweighted line fit (released code; the figure caption says weighted) of log p_L against √n over d = 8–22 |
 
 - **The plugins reproduce the released circuits.**
   - [codes.py](codes.py) adds one gate-free step before the CNOTs, for the first H layer. [noises.py](noises.py) folds the second H layer into the measurement flip, q = p ⊕ 2p/3 = 5p/3 − 4p²/3. On the final data readout, q stands for the paper's idle error during the last MR plus its readout flip.
@@ -47,16 +47,17 @@ p_L per d rounds, from [results/suppression/samples.csv](results/suppression/sam
 - Each framework value is within 2.1σ of the data. At 7→9 both lie below (β/p)^(2γ), whose fit starts at d = 8.
 - `suppression.csv` reports Λ per round (7.76 and 3.63), a different quantity.
 
-d* for p_L = 10⁻¹². Ranges are 16–84% of a binomial bootstrap:
+d* for p_L = 10⁻¹² per d rounds. d_teraquop is the smallest odd d ≥ d*, with 2d² − 1 qubits. Ranges are 16–84% of a binomial bootstrap:
 
-| | p = 10⁻³ | d_teraquop, qubits | p = 2 × 10⁻³ |
-|---|---|---|---|
-| ORourke2025 | 26.4 (§IV.D) | 27, 1457 | 45.0 (Table 3 fit) |
-| Framework, `suppression.csv` (d = 7–13) | 26.29 (26.08–26.49) | 27, 1457 | 42.73 |
-| Framework, refit on d = 9–13 | 26.00 (25.67–26.36) | 27, 1457 | 42.8 |
-| Framework data, the paper's method (d = 9–13) | 26.44 | 27, 1457 | 45.7 |
+| | p = 10⁻³: d* | p = 10⁻³: d_teraquop, qubits | p = 2 × 10⁻³: d* | p = 2 × 10⁻³: d_teraquop |
+|---|---|---|---|---|
+| ORourke2025 | 26.42 ± 0.17, from 1395 ± 18 qubits (§IV.D) | 27, 1457 (§IV.D) | 45.00, computed from Table III (not quoted) | 45 |
+| Framework, `suppression.csv` (d = 7–13) | 26.29 (26.09–26.50) | 27, 1457 | 42.73 (42.36–43.10) | 43 |
+| Framework, refit on d = 9–13 | 26.00 (25.67–26.35) | 27, 1457 | 42.82 (42.26–43.42) | 43 |
+| Framework data, the paper's method (d = 9–13) | 26.44 | 27, 1457 | 45.71 | 47 |
 
-- The extrapolation models differ: the framework takes the per-round ε to fall exponentially in d, the paper takes p_L per d rounds. On the same data, d* moves by 0.4–0.6 at p = 10⁻³, and by about 3 at 2 × 10⁻³, where it changes d_teraquop.
+- The extrapolation models differ: the framework fits log ε per round against d, weighted; the paper fits log p_L per d rounds against √n, unweighted. On the same data, d* moves by 0.44–0.55 at p = 10⁻³ and by 2.9–3.6 at 2 × 10⁻³, where d_teraquop changes from 43 to 47.
+- At 2 × 10⁻³, d_teraquop is not robust: the upper ends of the framework ranges give 45, and the Table III d* (44.998) sits on the 45/47 boundary.
 
 ## Verdict
 
