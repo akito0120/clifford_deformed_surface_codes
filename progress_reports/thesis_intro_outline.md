@@ -31,9 +31,10 @@
 ## Research questions
 - RQ1 (Design): Can circuits for any Clifford deformation of the rotated surface code, at the
   code-capacity, phenomenological and circuit levels, be generated automatically from a definition
-  in the stabilizer formalism?
-- RQ2 (Correctness): Which checks are sufficient to guarantee that the generated circuits are
-  correct, and do the circuits reproduce known results?
+  in the stabilizer formalism, and how can a code and its generated circuits be verified as correct
+  before sampling?
+- RQ2 (Reproduction): Do simulations with the framework reproduce published results for known
+  codes at each of the three noise levels?
 - RQ3 (Usefulness): Does the framework make it practical to add a new deformation and compare it
   with existing codes under identical conditions?
 
@@ -67,6 +68,7 @@
 - Chapter 3. Related Work: reviews related work on surface codes and on simulation tools (could be merged into chapter 2)
 - Chapter 4. Design: presents the design of the framework and its validation method
 - Chapter 5. Implementation: describes the implementation
-- Chapter 6. Evaluation: evaluates correctness, extensibility and a case study, answering RQ1–RQ3
+- Chapter 6. Evaluation: evaluates the generation and validation of circuits, the reproduction of
+  published results, and extensibility through a case study, answering RQ1–RQ3
 - Chapter 7. Discussion: discusses the results and their limitations
 - Chapter 8. Conclusion and Future Work: concludes and outlines future work
