@@ -22,7 +22,7 @@ sweeps:
       mode: linspace
       start: 0.0044
       stop: 0.0068
-      num: 13 # step 0.0002, centred on 0.56%; 0.50, 0.52, 0.56, 0.58 and 0.60% are also in ORourke2025's data
+      num: 13 # step 0.0002, centred on 0.56%
 
   - id: suppression_sweep # required by the schema; not used here
     distances: [3, 5, 7]
@@ -40,7 +40,7 @@ sampling:
 
 threshold:
   source_sweep: threshold_sweep
-  distances: [9, 11, 13, 15] # d >= 9, as in config.yaml; the same fit on ORourke2025's data gives 0.560% on these d
+  distances: [9, 11, 13, 15] # d >= 9, as in config.yaml
   x_window: 0.012 # |p - p_th| <= 0.09% at d = 15, about the same relative width as config.yaml; every point at d = 9
   nu_0: 1.06 # Stephens2014, as in config.yaml
 
