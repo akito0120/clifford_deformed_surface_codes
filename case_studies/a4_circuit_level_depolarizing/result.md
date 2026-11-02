@@ -56,7 +56,6 @@ From [results/threshold.csv](results/threshold.csv) and [results_sd/threshold.cs
 | rotated_surface_sd | Z | 0.5687 ± 0.0007 | 1.14 | 1.12 | ORourke2025 (0.565%) |
 
 - `rotated_surface` X and Z agree: they differ by 0.0006 ± 0.0013 points.
-
 - Other distance sets (d = 7–15, 11–15) and windows (x_window = 0.008–0.02) give:
   - 0.692–0.698% for `rotated_surface`
   - 0.568–0.572% for `rotated_surface_sd`

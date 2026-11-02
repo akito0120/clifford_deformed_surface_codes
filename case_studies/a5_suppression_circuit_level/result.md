@@ -51,6 +51,8 @@ p_L per d rounds, from [results/suppression/samples.csv](results/suppression/sam
 - Each framework value is within 2.1σ of the data. At 7→9 both lie below (β/p)^(2γ), whose fit starts at d = 8.
 - [suppression.csv](./results/suppression/suppression.csv) reports Λ per round (7.76 and 3.63), a different quantity.
 
+---
+
 d* for p_L = 10⁻¹² per d rounds. d_teraquop is the smallest odd d ≥ d*, with 2d² − 1 qubits. Ranges are 16–84% of a binomial bootstrap:
 
 | | p = 10⁻³: d* | p = 10⁻³: d_teraquop, qubits | p = 2 × 10⁻³: d* | p = 2 × 10⁻³: d_teraquop |
