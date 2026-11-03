@@ -15,7 +15,7 @@
 - **Fig. 7 is the equivalent reference for one basis.**
   - In one memory basis, the decoder sees one component of each qubit's error: Z for the X basis.
   - Under depolarizing noise, that component appears with probability p_Z + p_Y = 2p/3, independently on each qubit. MWPM decodes it on its own graph with uniform weights. That is Criger2018's independent-flip problem at q = 2p/3.
-
+- **ℓ in Campos2026 is the elongation parameter:** when ℓ = 2, the code is equivalent to the rotated surface code.
 
 ## Setup
 
