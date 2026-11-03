@@ -32,14 +32,14 @@
 
 From `results/*/threshold.csv` and A1's [results/threshold.csv](../a1_code_capacity_depolarizing/results/threshold.csv):
 
-| Noise | Decoder | p_th (%) | ν | χ²_red | Ratio to MWPM | p_th, d = 11–23 (%) |
-|---|---|---|---|---|---|---|
-| Depolarizing | `mwpm` (A1) | 14.973 ± 0.013 | 1.59 | 2.12 | — | 15.090 |
-| Depolarizing | `bp` | 17.649 ± 0.025 | 1.67 | 0.94 | 1.179 | 17.657 |
-| Depolarizing | `uf` | 13.380 ± 0.013 | 1.63 | 1.56 | 0.894 | 13.459 |
-| Independent Z | `mwpm` | 9.972 ± 0.010 | 1.61 | 2.06 | — | 10.035 |
-| Independent Z | `bp` | 10.311 ± 0.016 | 1.67 | 2.52 | 1.034 | 10.441 |
-| Independent Z | `uf` | 8.813 ± 0.010 | 1.62 | 2.15 | 0.884 | 8.878 |
+| Noise | Decoder | p_th (%) | ν | χ²_red | Ratio to MWPM | p_th, d = 11–23 (%) | Compare against |
+|---|---|---|---|---|---|---|---|
+| Depolarizing | `mwpm` (A1) | 14.973 ± 0.013 | 1.59 | 2.12 | — | 15.090 | Criger2018 Fig. 7 (14.952%) and Campos2026 (14.8%) |
+| Depolarizing | `bp` | 17.649 ± 0.025 | 1.67 | 0.94 | 1.179 | 17.657 | Criger2018 (1.19 gain) |
+| Depolarizing | `uf` | 13.380 ± 0.013 | 1.63 | 1.56 | 0.894 | 13.459 | published UF range (11.6–14.68%) |
+| Independent Z | `mwpm` | 9.972 ± 0.010 | 1.61 | 2.06 | — | 10.035 | Criger2018 (9.97%), Campos2026 (10.0%) |
+| Independent Z | `bp` | 10.311 ± 0.016 | 1.67 | 2.52 | 1.034 | 10.441 | Criger2018 (1.037 gain) |
+| Independent Z | `uf` | 8.813 ± 0.010 | 1.62 | 2.15 | 0.884 | 8.878 | Delfosse2021 (0.893 gain) |
 
 - Without d = 7, χ²_red falls to 1.0–1.3.
 
