@@ -81,6 +81,7 @@ def _run(args: argparse.Namespace) -> int:
     console.run_details(config, commit_hash(), git_dirty(), plans)
 
     manifest_file = _write_manifest(config, args.config)
+    # TODO: record when sampling finishes in manifest.json; it is written before the sweep, so it has only started_at
     result = sweep(
         config,
         on_plan_start=console.plan_started,
