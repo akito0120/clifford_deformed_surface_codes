@@ -239,6 +239,7 @@ def installed_packages() -> dict[str, str]:
     return dict(sorted(packages.items(), key=lambda item: item[0].lower()))
 
 
+# TODO: add a "run-all" command that runs validate, compile-plans, run, analyze and visualize in one go
 HANDLERS = {
     "run": _run,
     "validate": _validate,
