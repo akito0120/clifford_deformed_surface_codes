@@ -15,6 +15,7 @@ class Noise:
     def with_p_meas(self, p_meas: str | float) -> Noise:
         # Return a copy whose measurement flip rate is the configured p_meas
         if p_meas == SAME_AS_P:
+            # TODO: consider renaming SAME_AS_P; it keeps the definition's meas_flip, which is p only for built-in noises
             return self
         if isinstance(p_meas, str):
             raise ValueError(
