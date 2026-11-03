@@ -14,7 +14,7 @@ noise:
 
 sweeps:
   - id: threshold_sweep
-    distances: [7, 11, 15, 19, 23] # Criger2018 Fig. 10
+    distances: [7, 11, 15, 19, 23] # As in Criger2018 Fig. 7 and 10
     basis: [X, Z]
     p:
       mode: linspace
