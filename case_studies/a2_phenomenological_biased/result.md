@@ -11,7 +11,7 @@
   - Campos2026 checks "whether the residual error is trivial" (§Methods).
   - BonillaAtaides2021 also counts a non-trivial cycle along the time axis.
   - The framework counts one memory basis.
-- **The CSS reference line is not a simulation.**
+- **The CSS reference line in BonillaAtaides2021 Fig. 5 is not a simulation.**
   - It is Wang2003's 2.9% for independent flips, written as p_hr + p_lr = 2.9%.
   - In terms of p it is p_th(η) = 2.9% × 2(η + 1)/(2η + 1). That gives 4.350, 3.038, 2.957, 2.929, 2.914 and 2.900% at η = 0.5, 10, 25, 50, 100 and inf.
 - Campos2026's values were read from the vector PDF of Fig. 6 in its arXiv source (v3) into [Campos2026_fig6_l2.csv](Campos2026_fig6_l2.csv).
@@ -23,7 +23,7 @@
 - d = 11, 13, 15, 17, 19
 - `phenomenological` noise with the plugin `biased_meas_yz` from [noises.py](noises.py)
   - It is the built-in `biased` noise, with measurement flips at p_Y + p_Z instead of p
-  - d noisy rounds are followed by a data readout flipped at the same rate. Campos2026 makes its last round perfect instead
+  - d noisy rounds are followed by a data readout flipped at the same rate. Campos2026 makes its last round perfect instead.
 - CSS:
   - Config: [config_css.yaml](config_css.yaml)
   - Code: `rotated_surface` with η = 0.5, 10, 25, 50, 100, inf
@@ -32,7 +32,7 @@
 - XZZX:
   - Config: [config_xzzx.yaml](config_xzzx.yaml)
   - Code: `xzzx` with η = 0.5, 10, 25, 50, 100
-  - p: 9 points per (η, basis) around a pilot crossing
+  - p: 9 points per (η, basis) around the crossing
   - Bases: X and Z (The lower of the two thresholds is compared)
 
 
@@ -50,7 +50,7 @@ From [results/css/threshold.csv](results/css/threshold.csv). Difference is (fram
 | inf | 2.911 ± 0.003 | 2.900 | — | — |
 
 - Every η is 0.2–0.4% (relative) above the reference line, which is built from the rounded 2.9%.
-- In terms of q = p_Y + p_Z, the six thresholds coincide: 2.910 ± 0.001%, with χ² = 1.78 for 5 degrees of freedom.
+- In terms of q = p_Y + p_Z, the six thresholds coincide: 2.910 ± 0.001%.
 
 ---
 
@@ -64,18 +64,15 @@ From [results/xzzx/threshold.csv](results/xzzx/threshold.csv). The difference is
 | 50 | 6.817 ± 0.016 | 6.620 ± 0.013 | 6.9 | −1.4 |
 | 100 | 7.081 ± 0.015 | 6.860 ± 0.014 | 7.4 | −2.7 |
 
-- At η = 0.5 the XZZX code agrees with the CSS code point by point: χ² = 20.7 (X basis) and 26.8 (Z basis) for 25 points.
 
 ## Verdict
 
 - **Bias dependence: pass.**
   - The CSS threshold falls with η, from 4.36% to 2.91%. The XZZX threshold rises, from 4.35% to 6.86%.
   - This matches the trend of both papers.
-- **Biased noise and deformation: pass.** The CSS thresholds coincide in q, and at η = 0.5 the XZZX and CSS codes agree point by point.
 - **CSS against both papers: pass.** At every η, the threshold is within 0.4% (relative) of the reference line and within 0.4 error bars of Campos2026.
 - **XZZX against Campos2026: consistent for η ≤ 50 (within 1.4 error bars), low at η = 100.**
   - At η = 100 the threshold is 0.54 points (7%, 2.7 error bars) below 7.4%.
   - Two conditions differ. Campos2026 uses distances up to 40 and counts either logical. Here the distances are d = 11–19, and the lower basis is compared.
-  - Counting either logical, with X and Z failures assumed independent, gives 6.97% (−2.2 error bars).
-  - A small pilot at d = 19–35 showed the crossing rising with d, toward about 7.2%.
+  - A small sampling at d = 19–35 showed the crossing rising with d, toward about 7.2%.
   - Neither effect has been confirmed with a production run.
