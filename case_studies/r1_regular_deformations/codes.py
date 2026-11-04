@@ -5,10 +5,10 @@ from cdsc.codes.definition import H, SQRT_X, CodeDefinition, apply_deformation
 from cdsc.codes.registry import register_code
 
 # Regular Clifford deformations of the rotated surface code (case study R1).
-# Each data qubit, at column c and row r, gets I, H or S (SQRT_X) from a periodic pattern.
+# Each data qubit, at column c and row r, gets I, H or V (SQRT_X) from a periodic pattern.
 # Under Z-biased noise with p_X = p_Y these three labels give every distinct deformation:
 # they turn a Z error into a Z, X or Y error on the CSS code.
-CLIFFORDS = {"I": None, "H": H, "S": SQRT_X}
+CLIFFORDS = {"I": None, "H": H, "V": SQRT_X}
 
 # Pattern families: name prefix, number of labels, and the label index of data qubit (c, r)
 FAMILIES = [
@@ -21,8 +21,8 @@ FAMILIES = [
 ]
 
 # Patterns equal to a built-in code are left to the built-in: all I (rotated_surface),
-# the checkerboard of xzzx (H where c + r is odd) and all S (xy)
-BUILTIN_PATTERNS = [lambda c, r: "I", lambda c, r: "IH"[(c + r) % 2], lambda c, r: "S"]
+# the checkerboard of xzzx (H where c + r is odd) and all V (xy)
+BUILTIN_PATTERNS = [lambda c, r: "I", lambda c, r: "IH"[(c + r) % 2], lambda c, r: "V"]
 
 # Every period divides 12, so two patterns agree everywhere if they agree on a 12x12 patch
 PATCH = 12
@@ -48,7 +48,7 @@ def _register_all() -> None:
     # Register every pattern of every family once, in a fixed order; the first name of a pattern wins
     seen = {_patch(label_of) for label_of in BUILTIN_PATTERNS}
     for prefix, size, index_of in FAMILIES:
-        for labels in product("IHS", repeat=size):
+        for labels in product("IHV", repeat=size):
             label_of = lambda c, r, labels=labels, index_of=index_of: labels[index_of(c, r)]
             patch = _patch(label_of)
             if patch in seen:

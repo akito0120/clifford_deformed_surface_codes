@@ -1,11 +1,11 @@
 experiment:
-  name: xzzx_vs_anti3_ISH_circuit_level_v2
+  name: xzzx_vs_anti3_IVH_circuit_level_v2
   seed: 0
 
 plugins:
   - case_studies/r1_regular_deformations/codes.py
 
-codes: [xzzx, anti3_ISH]
+codes: [xzzx, anti3_IVH]
 
 noise:
   model: circuit_level
@@ -49,4 +49,4 @@ suppression:
   target_pl: 1e-12
 
 output:
-  dir: case_studies/r1_regular_deformations/results/xzzx_vs_anti3_ISH_circuit_level_v2/
+  dir: case_studies/r1_regular_deformations/results/xzzx_vs_anti3_IVH_circuit_level_v2/

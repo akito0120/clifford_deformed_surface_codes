@@ -40,8 +40,8 @@ KEYS = {
 
 # The registered code drawn as each family's example
 EXAMPLES = {
-    "cell": "cell_IS_HI", "row3": "row3_ISH", "col3": "col3_ISH",
-    "diag3": "diag3_ISH", "anti3": "anti3_ISH", "diag4": "diag4_ISHI",
+    "cell": "cell_IV_HI", "row3": "row3_IVH", "col3": "col3_IVH",
+    "diag3": "diag3_IVH", "anti3": "anti3_IVH", "diag4": "diag4_IVHI",
 }
 
 READING = "data qubit (c, r) takes letter k of the name's suffix (k = 0 is the first letter)"
@@ -52,15 +52,15 @@ INK, INK_SECONDARY, INK_MUTED, HAIRLINE = "#0b0b0b", "#52514e", "#898781", "#c3c
 # k: a gray ramp from light to dark, the same in every family
 INDEX_FILL = {"0": "#e1e0d9", "1": "#c3c2b7", "2": "#898781", "3": "#52514e"}
 INDEX_TEXT = {"0": INK, "1": INK, "2": INK, "3": "#ffffff"}
-# Labels: I leaves the qubit undeformed; H and S take the first two categorical colors
-LABEL_FILL = {"I": "#ffffff", "H": "#2a78d6", "S": "#eb6834"}
-LABEL_TEXT = {"I": INK, "H": "#ffffff", "S": "#ffffff"}
+# Labels: I leaves the qubit undeformed; H and V take the first two categorical colors
+LABEL_FILL = {"I": "#ffffff", "H": "#2a78d6", "V": "#eb6834"}
+LABEL_TEXT = {"I": INK, "H": "#ffffff", "V": "#ffffff"}
 CHECK_FILL = {"Z": "#e1e0d9", "X": "#ffffff"}
 
 RADIUS = 0.32  # of a data qubit; neighbours are 1 apart
 
-# A deformation's label is the Pauli its Z error acts as on the CSS code: Z (I), X (H) or Y (S)
-LABEL_OF_PAULI = {"Z": "I", "X": "H", "Y": "S"}
+# A deformation's label is the Pauli its Z error acts as on the CSS code: Z (I), X (H) or Y (V)
+LABEL_OF_PAULI = {"Z": "I", "X": "H", "Y": "V"}
 
 
 def label_grid(code: CodeDefinition) -> tuple[tuple[str, ...], ...]:
@@ -172,7 +172,7 @@ def add_legend(fig: plt.Figure, ncol: int, y: float) -> None:
     handles = [
         qubit("I", "I: none; a Z error stays a Z error"),
         qubit("H", "H: Hadamard; a Z error acts as X on the CSS code"),
-        qubit("S", "S: √X; a Z error acts as Y on the CSS code"),
+        qubit("V", "V: √X; a Z error acts as Y on the CSS code"),
         Patch(facecolor=CHECK_FILL["Z"], edgecolor=HAIRLINE, label="Z check of the CSS code"),
         Patch(facecolor=CHECK_FILL["X"], edgecolor=HAIRLINE, label="X check of the CSS code"),
         Patch(facecolor="none", edgecolor=INK, linewidth=1.8, label="the qubits that spell the suffix in order"),
@@ -187,7 +187,7 @@ def skipped_suffixes(prefix: str, size: int, index_of, owner: dict) -> tuple[int
     # How many suffixes of the family are registered, and the others, each with the code of the same pattern
     names = set(registered_codes())
     skipped = []
-    for labels in product("IHS", repeat=size):
+    for labels in product("IHV", repeat=size):
         name = name_of(prefix, "".join(labels))
         if name not in names:
             grid = tuple(tuple(labels[index_of(c, r)] for c in range(PATCH)) for r in range(PATCH))

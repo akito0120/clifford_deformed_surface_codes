@@ -77,24 +77,25 @@
     }
   },
   "software": {
-    "git_commit": "50ff75333b4336756e051656479fe8e7eb3b0743",
+    "git_commit": "f36d3baf204ca00d0ee8492de29d4c831cddb7ee",
     "git_dirty": false,
     "plugins": {
       "case_studies/r1_regular_deformations/codes.py": "245f7884b43b1d2721893ad4894ceedf79aba0af9dd06e5f9d9ac3a6dfcb6ada"
     }
   },
-  "started_at": "2026-11-03 17:22:07.190519",
-  "config_path": "case_studies/r1_regular_deformations/config_cell_IISH_circuit_level.yaml",
+  "started_at": "2026-11-03 02:25:31.722196",
+  "config_path": "case_studies/r1_regular_deformations/config_xzzx_vs_anti3_IVH_circuit_level_v2.yaml",
   "config": {
     "experiment": {
-      "name": "cell_IISH_circuit_level",
+      "name": "xzzx_vs_anti3_IVH_circuit_level_v2",
       "seed": 0
     },
     "plugins": [
       "case_studies/r1_regular_deformations/codes.py"
     ],
     "codes": [
-      "cell_II_SH"
+      "xzzx",
+      "anti3_IVH"
     ],
     "noise": {
       "model": "circuit_level",
@@ -166,7 +167,7 @@
       "target_pl": 1e-12
     },
     "output": {
-      "dir": "case_studies/r1_regular_deformations/results/cell_IISH_circuit_level/"
+      "dir": "case_studies/r1_regular_deformations/results/xzzx_vs_anti3_IVH_circuit_level_v2/"
     }
   }
 }
