@@ -1,5 +1,7 @@
 # Case studies
 
+## Reproduction
+
 Each case reproduces published results with the framework. Its `result.md` lists the references, the setup, the results and a verdict.
 
 | Case | What it evaluates |
@@ -10,3 +12,11 @@ Each case reproduces published results with the framework. Its `result.md` lists
 | [A4](a4_circuit_level_depolarizing/result.md) | The circuit-level depolarizing threshold of the rotated surface code with `mwpm`, against Stephens2014, ORourke2025 and the published band of 0.50–0.82%. |
 | [A5](a5_suppression_circuit_level/result.md) | Below-threshold suppression at circuit level under ORourke2025's SD noise, rebuilt with plugins. Compares p_L, Λ and the teraquop footprint at p = 0.1% and 0.2% with the paper's released circuits and data. |
 | [B1](b1_decoder_comparison/result.md) | The `bp` and `uf` decoders against `mwpm` at code capacity, under depolarizing noise and independent Z flips. Compares the thresholds and their ratios to MWPM with Criger2018, Delfosse2021, LinLai2025 and the optimal bounds. |
+
+## Usefulness
+
+Each case adds new deformations with a plugin and compares them with existing codes under identical conditions. Its `result.md` lists the codes, the setup, the results, a discussion and whether the framework made this practical.
+
+| Case | What it evaluates |
+|---|---|
+| [R1](r1_regular_deformations/result.md) | 246 periodic Clifford deformations of the rotated surface code, added with one plugin. Screens them against XZZX at code capacity under biased noise (η = 100) with `bp`, then compares the best two with XZZX at circuit level by threshold, p_L, Λ and teraquop footprint. |
