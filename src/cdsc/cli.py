@@ -74,8 +74,7 @@ def _write_manifest(config: Config, config_path: str) -> Path:
     return output_file
 
 
-def _run(args: argparse.Namespace) -> int:
-    config = _load_config(args.config)
+def _run(config: Config, args: argparse.Namespace) -> int:
     plans = build_sweep_plans(config)
     console.header("run", config, args.config)
     console.run_details(config, commit_hash(), git_dirty(), plans)
@@ -98,8 +97,7 @@ def _run(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
-def _validate(args: argparse.Namespace) -> int:
-    config = _load_config(args.config)
+def _validate(config: Config, args: argparse.Namespace) -> int:
     distances = [3, 5, 7, 9]
     console.header("validate", config, args.config)
 
@@ -128,8 +126,7 @@ def _validate(args: argparse.Namespace) -> int:
     return EXIT_OK if all(validation.passed for validation in result) else EXIT_FAILED
 
 
-def _analyze(args: argparse.Namespace) -> int:
-    config = _load_config(args.config)
+def _analyze(config: Config, args: argparse.Namespace) -> int:
     _require(config.output.path / "samples.csv", "run", args.config)
     console.header("analyze", config, args.config)
 
@@ -150,8 +147,7 @@ def _analyze(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
-def _visualize(args: argparse.Namespace) -> int:
-    config = _load_config(args.config)
+def _visualize(config: Config, args: argparse.Namespace) -> int:
     _require(config.output.path / "samples.csv", "run", args.config)
     _require(config.output.path / "threshold.csv", "analyze", args.config)
     _require(config.output.path / "suppression.csv", "analyze", args.config)
@@ -176,8 +172,7 @@ def _visualize(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
-def _compile_plans(args: argparse.Namespace) -> int:
-    config = _load_config(args.config)
+def _compile_plans(config: Config, args: argparse.Namespace) -> int:
     output_dir = config.output.path
     console.header("compile-plans", config, args.config)
 
@@ -189,6 +184,23 @@ def _compile_plans(args: argparse.Namespace) -> int:
     console.plan_table(plans, config.sampling)
     console.wrote(plan_file)
 
+    return EXIT_OK
+
+
+# The steps of run-all, in order: each one reads what the ones before it wrote
+RUN_ALL_STEPS: tuple[str, ...] = ("validate", "compile-plans", "run", "analyze", "visualize")
+
+
+def _run_all(config: Config, args: argparse.Namespace) -> int:
+    # Every step gets the same loaded config
+    # Stop at the first step that fails
+    for index, step in enumerate(RUN_ALL_STEPS):
+        if index > 0:
+            console.info()
+        exit_code = HANDLERS[step](config, args)
+        if exit_code != EXIT_OK:
+            console.error(console.run_all_stopped_message(step, RUN_ALL_STEPS[index + 1:]))
+            return exit_code
     return EXIT_OK
 
 
@@ -215,6 +227,9 @@ def _build_parser() -> argparse.ArgumentParser:
     compile_plans = subparsers.add_parser("compile-plans", help="Generate sweep plans from the configuration file")
     compile_plans.add_argument("config", help="path to the YAML config")
 
+    run_all = subparsers.add_parser("run-all", help="Run the entire simulation pipeline, stopping at the first failure")
+    run_all.add_argument("config", help="path to the YAML config")
+
     return parser
 
 
@@ -239,13 +254,13 @@ def installed_packages() -> dict[str, str]:
     return dict(sorted(packages.items(), key=lambda item: item[0].lower()))
 
 
-# TODO: add a "run-all" command that runs validate, compile-plans, run, analyze and visualize in one go
 HANDLERS = {
     "run": _run,
     "validate": _validate,
     "analyze": _analyze,
     "visualize": _visualize,
-    "compile-plans": _compile_plans
+    "compile-plans": _compile_plans,
+    "run-all": _run_all,
 }
 
 
@@ -255,7 +270,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     start = time.monotonic()
     try:
-        exit_code = handler(args)
+        config = _load_config(args.config)
+        exit_code = handler(config, args)
     except CliError as e:
         console.error(str(e))
         return e.exit_code

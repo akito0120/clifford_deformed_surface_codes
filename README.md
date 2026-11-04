@@ -22,7 +22,11 @@ cdsc compile-plans <path-to-config-file>
 cdsc run <path-to-config-file>
 cdsc analyze <path-to-config-file>
 cdsc visualize <path-to-config-file>
+
+cdsc run-all <path-to-config-file>
 ```
+
+`run-all` runs `validate`, `compile-plans`, `run`, `analyze` and `visualize` in this order and stops at the first step that fails, so a code that fails validation is not sampled.
 
 ## Config file
 

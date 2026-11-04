@@ -379,3 +379,11 @@ def rendered(items: list[tuple[str, str, list[Path]]]) -> None:
         })
     info()
     info(indent(table(rows)))
+
+
+# --- run-all ---
+
+def run_all_stopped_message(failed: str, skipped: Sequence[str]) -> str:
+    if not skipped:
+        return f"{failed} failed"
+    return f"{failed} failed; run-all stopped before {', '.join(skipped)}"
