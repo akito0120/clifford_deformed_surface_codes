@@ -1,0 +1,52 @@
+experiment:
+  name: xzzx_vs_anti3_ISH_circuit_level_v2
+  seed: 0
+
+plugins:
+  - case_studies/r1_regular_deformations/codes.py
+
+codes: [xzzx, anti3_ISH]
+
+noise:
+  model: circuit_level
+  definition: biased
+  params:
+    eta: [100]
+  p_meas: same_as_p
+
+sweeps:
+  - id: threshold_sweep
+    distances: [3, 5, 7]
+    basis: [X, Z]
+    p:
+      mode: linspace
+      start: 0.01
+      stop: 0.02
+      num: 10
+  
+  - id: suppression_sweep
+    distances: [3, 5, 7]
+    basis: [X, Z]
+    p:
+      mode: list
+      values: [0.01]
+
+sampling:
+  decoder: bp
+  max_shots: 500000
+  max_errors: 5000
+  max_batch_size: 2048
+  workers: 4
+
+threshold:
+  source_sweep: threshold_sweep
+  distances: [3, 5, 7]
+  x_window: 0.01
+  nu_0: 1.5
+
+suppression:
+  source_sweep: suppression_sweep
+  target_pl: 1e-12
+
+output:
+  dir: case_studies/r1_regular_deformations/results/xzzx_vs_anti3_ISH_circuit_level_v2/
