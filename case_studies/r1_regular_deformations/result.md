@@ -88,7 +88,7 @@ In the worse basis, which decides whether both logicals survive:
 
 - **The code-capacity advantage does not carry over directly.** At circuit level, both codes have a higher worse-basis p_L than XZZX at every simulated point (p = 1–2%, d ≤ 7). Their order also flips: cell_II_SH, first in the screen, falls behind anti3_ISH, and its weak basis changes from Z to X.
 - **The deformed codes gain where XZZX is weak.** XZZX's Z basis has the lowest threshold and the slowest suppression of the six series, and it sets XZZX's footprint. anti3_ISH is balanced between its two bases.
-- Thresholds may go up with the distance. Samples from higher distances are required to see where the real therehold converges.
+- Thresholds may go up with the distance. Samples from higher distances are required to see where the real threshold converges.
 - Not tested: other values of η and p in the screen, and d > 7.
 
 ## RQ3
