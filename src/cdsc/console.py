@@ -184,6 +184,23 @@ def run_details(config: Config, commit: str, dirty: bool, plans: list[SweepPlan]
     info(f"  plan:     {sweeps} sweeps, {_plan_totals(plans, sampling)}")
 
 
+def ask_missing_validation(path: str | Path) -> str:
+    # "validate", "skip" or "abort"; no answer (EOF) counts as abort
+    info(f"{path} not found")
+    info("  1) validate, then continue")
+    info("  2) continue without validation")
+    info("  3) abort")
+    choices = {"1": "validate", "2": "skip", "3": "abort"}
+    while True:
+        try:
+            answer = input("choose [1-3]: ").strip()
+        except EOFError:
+            info()
+            return "abort"
+        if answer in choices:
+            return choices[answer]
+
+
 def plan_table(plans: list[SweepPlan], sampling: SamplingConfig) -> None:
     rows = [
         {

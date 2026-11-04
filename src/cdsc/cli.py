@@ -77,6 +77,19 @@ def _write_manifest(config: Config, manifest: dict[str, Any]) -> Path:
 
 
 def _run(config: Config, args: argparse.Namespace) -> int:
+    # Check if validation result exists
+    validation_file = config.output.path / "validation.json"
+    if not validation_file.exists():
+        choice = console.ask_missing_validation(validation_file)
+        if choice == "abort":
+            raise CliError(console.missing_input_message(validation_file, "validate", args.config), EXIT_FAILED)
+        if choice == "validate":
+            exit_code = _validate(config, args)
+            if exit_code != EXIT_OK:
+                console.error("validate failed; run stopped before sampling")
+                return exit_code
+            console.info()
+
     plans = build_sweep_plans(config)
     console.header("run", config, args.config)
     console.run_details(config, commit_hash(), git_dirty(), plans)
@@ -84,6 +97,7 @@ def _run(config: Config, args: argparse.Namespace) -> int:
     # Create the output directory before sampling, so that a bad path fails before the sweep
     config.output.path.mkdir(parents=True, exist_ok=True)
 
+    # Run sampling
     manifest = _manifest(config, args.config)
     result = sweep(
         config,
@@ -92,6 +106,7 @@ def _run(config: Config, args: argparse.Namespace) -> int:
     )
     manifest["finished_at"] = str(datetime.now())
 
+    # Write the sampling result
     samples_file = config.output.path / "samples.csv"
     result.to_csv(samples_file, index=False)
     manifest_file = _write_manifest(config, manifest)
