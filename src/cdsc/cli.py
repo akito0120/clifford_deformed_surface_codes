@@ -9,7 +9,7 @@ import time
 import argparse
 import hashlib
 from pathlib import Path
-from typing import Optional, Sequence
+from typing import Any, Optional, Sequence
 from .visualization.diagrams import render_diagrams
 from datetime import datetime
 import platform
@@ -46,9 +46,10 @@ def _require(path: Path, command: str, config_path: str) -> None:
         raise CliError(console.missing_input_message(path, command, config_path), EXIT_FAILED)
 
 
-def _write_manifest(config: Config, config_path: str) -> Path:
-    now = datetime.now()
-    manifest = {
+def _manifest(config: Config, config_path: str) -> dict[str, Any]:
+    # The environment, software and config as they are when sampling starts
+    # finished_at is set when it ends
+    return {
         "environment": {
             "python_version": platform.python_version(),
             "platform": platform.platform(),
@@ -62,14 +63,15 @@ def _write_manifest(config: Config, config_path: str) -> Path:
                 for entry in config.plugins
             },
         },
-        "started_at": str(now),
+        "started_at": str(datetime.now()),
+        "finished_at": None,
         "config_path": str(config_path),
         "config": config.as_dict(),
     }
 
-    output_dir = config.output.path
-    output_dir.mkdir(parents=True, exist_ok=True)
-    output_file = output_dir / "manifest.json"
+
+def _write_manifest(config: Config, manifest: dict[str, Any]) -> Path:
+    output_file = config.output.path / "manifest.json"
     output_file.write_text(json.dumps(manifest, indent=2) + "\n")
     return output_file
 
@@ -79,15 +81,20 @@ def _run(config: Config, args: argparse.Namespace) -> int:
     console.header("run", config, args.config)
     console.run_details(config, commit_hash(), git_dirty(), plans)
 
-    manifest_file = _write_manifest(config, args.config)
-    # TODO: record when sampling finishes in manifest.json; it is written before the sweep, so it has only started_at
+    # Create the output directory before sampling, so that a bad path fails before the sweep
+    config.output.path.mkdir(parents=True, exist_ok=True)
+
+    manifest = _manifest(config, args.config)
     result = sweep(
         config,
         on_plan_start=console.plan_started,
         on_plan_done=console.plan_finished,
     )
+    manifest["finished_at"] = str(datetime.now())
+
     samples_file = config.output.path / "samples.csv"
     result.to_csv(samples_file, index=False)
+    manifest_file = _write_manifest(config, manifest)
 
     console.samples_summary(result, config)
     console.info()
