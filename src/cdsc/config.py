@@ -3,6 +3,7 @@ from typing import Annotated, Any, Literal
 from pathlib import Path
 from math import prod
 import importlib.util
+import os
 import sys
 import yaml
 
@@ -384,9 +385,14 @@ def _problem(error: dict[str, Any]) -> tuple[str, str]:
 _LOADED_PLUGINS: set[Path] = set()
 
 
+def _resolve(base: Path, entry: str) -> str:
+    # A path in the config is relative to the config's directory; an absolute path is kept
+    return os.path.normpath(base / entry)
+
+
 def _load_plugin(entry: str) -> None:
     # Import a user module so that its @register_code / @register_noise decorators run
-    # A relative path is resolved against the working directory, like output.dir
+    # The caller has already resolved entry against the config's directory
     path = Path(entry).resolve()
     if path in _LOADED_PLUGINS:
         return
@@ -435,6 +441,9 @@ def load_config(path: Path) -> Config:
             f"top level must be a mapping of sections (experiment, codes, ...), got {type(document).__name__}"
         )])
 
+    # Relative paths in the config start from its directory, so that it runs from any working directory
+    base = path.parent
+
     # Load plugins
     entries = document.get("plugins") or []
     if isinstance(entries, list):
@@ -445,7 +454,7 @@ def load_config(path: Path) -> Config:
             if not isinstance(entry, str):
                 continue
             try:
-                _load_plugin(entry)
+                _load_plugin(_resolve(base, entry))
             except ValueError as e:
                 problems.append((f"plugins[{index}]", str(e)))
         if problems:
@@ -456,6 +465,10 @@ def load_config(path: Path) -> Config:
         config = Config.model_validate(document)
     except ValidationError as e:
         raise ConfigError(path, [_problem(error) for error in e.errors()]) from e
+
+    # After validation, so that an empty output.dir is still rejected
+    config.plugins = [_resolve(base, entry) for entry in config.plugins]
+    config.output.dir = _resolve(base, config.output.dir)
 
     problems = check_references(config)
     if problems:

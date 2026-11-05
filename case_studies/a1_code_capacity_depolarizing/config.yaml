@@ -47,4 +47,4 @@ suppression:
   target_pl: 1e-12
 
 output:
-  dir: case_studies/a1_code_capacity_depolarizing/results/
+  dir: results/

@@ -3,7 +3,7 @@ experiment:
   seed: 0
 
 plugins:
-  - examples/multiple_params/my_noises.py
+  - my_noises.py
 
 codes:
   - rotated_surface
@@ -53,4 +53,4 @@ suppression:
   target_pl: 1e-12
 
 output:
-  dir: examples/multiple_params/results/
+  dir: results/

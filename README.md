@@ -85,7 +85,7 @@ suppression:
   target_pl: 1e-12
 
 output:
-  dir: results/smoke
+  dir: results/
 ```
 
 Notes:

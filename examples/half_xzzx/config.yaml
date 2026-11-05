@@ -3,8 +3,8 @@ experiment:
   seed: 0
 
 plugins:
-  - examples/half_xzzx/my_codes.py
-  - examples/half_xzzx/my_noises.py
+  - my_codes.py
+  - my_noises.py
 
 codes:
   - rotated_surface
@@ -51,4 +51,4 @@ suppression:
   target_pl: 1e-12
 
 output:
-  dir: examples/half_xzzx/results/
+  dir: results/

@@ -3,7 +3,7 @@ experiment:
   seed: 0
 
 plugins:
-  - case_studies/r1_regular_deformations/codes.py
+  - codes.py
 
 codes: [
   rotated_surface, xzzx, xy, cell_II_IH, cell_II_IV, cell_II_HI, cell_II_HH, cell_II_HV, cell_II_VI,
@@ -69,4 +69,4 @@ suppression: # required by the schema; not used
   target_pl: 1e-12
 
 output:
-  dir: case_studies/r1_regular_deformations/results/screen_eta100/
+  dir: results/screen_eta100/

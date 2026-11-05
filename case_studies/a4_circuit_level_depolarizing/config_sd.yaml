@@ -3,8 +3,8 @@ experiment:
   seed: 0
 
 plugins: # A5's plugins for ORourke2025's SD circuits
-  - case_studies/a5_suppression_circuit_level/codes.py
-  - case_studies/a5_suppression_circuit_level/noises.py
+  - ../a5_suppression_circuit_level/codes.py
+  - ../a5_suppression_circuit_level/noises.py
 
 codes:
   - rotated_surface_sd
@@ -49,4 +49,4 @@ suppression:
   target_pl: 1e-12
 
 output:
-  dir: case_studies/a4_circuit_level_depolarizing/results_sd/
+  dir: results_sd/
