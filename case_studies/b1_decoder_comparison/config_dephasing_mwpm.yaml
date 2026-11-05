@@ -47,4 +47,4 @@ suppression:
   target_pl: 1e-12
 
 output:
-  dir: case_study/b1_decoder_comparison/results/dephasing_mwpm/
+  dir: case_studies/b1_decoder_comparison/results/dephasing_mwpm/

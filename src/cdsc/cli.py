@@ -19,6 +19,7 @@ from .sweep.run import build_sweep_plans, sweep
 from .visualization.figures import render_all_sweeps, render_all_suppressions
 from .analysis.threshold import estimate_all_thresholds
 from .analysis.suppression import estimate_all_suppressions
+from .summary import build_summary
 
 # Exit codes for the cli
 EXIT_OK = 0
@@ -209,8 +210,23 @@ def _compile_plans(config: Config, args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _summarize(config: Config, args: argparse.Namespace) -> int:
+    _require(config.output.path / "samples.csv", "run", args.config)
+    _require(config.output.path / "threshold.csv", "analyze", args.config)
+    _require(config.output.path / "suppression.csv", "analyze", args.config)
+    console.header("summarize", config, args.config)
+
+    summary_file = config.output.path / "summary.md"
+    summary_file.write_text(build_summary(config, args.config), encoding="utf-8")
+
+    console.info()
+    console.wrote(summary_file)
+
+    return EXIT_OK
+
+
 # The steps of run-all, in order: each one reads what the ones before it wrote
-RUN_ALL_STEPS: tuple[str, ...] = ("validate", "compile-plans", "run", "analyze", "visualize")
+RUN_ALL_STEPS: tuple[str, ...] = ("validate", "compile-plans", "run", "analyze", "visualize", "summarize")
 
 
 def _run_all(config: Config, args: argparse.Namespace) -> int:
@@ -249,6 +265,9 @@ def _build_parser() -> argparse.ArgumentParser:
     compile_plans = subparsers.add_parser("compile-plans", help="Generate sweep plans from the configuration file")
     compile_plans.add_argument("config", help="path to the YAML config")
 
+    summarize = subparsers.add_parser("summarize", help="Write summary.md: the setup, warnings and results")
+    summarize.add_argument("config", help="path to the YAML config")
+
     run_all = subparsers.add_parser("run-all", help="Run the entire simulation pipeline, stopping at the first failure")
     run_all.add_argument("config", help="path to the YAML config")
 
@@ -282,6 +301,7 @@ HANDLERS = {
     "analyze": _analyze,
     "visualize": _visualize,
     "compile-plans": _compile_plans,
+    "summarize": _summarize,
     "run-all": _run_all,
 }
 

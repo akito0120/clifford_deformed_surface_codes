@@ -1,4 +1,3 @@
-"""Everything the cli prints: message formats, tables and warnings."""
 from __future__ import annotations
 import sys
 import textwrap
@@ -236,17 +235,14 @@ def plan_finished(index: int, total: int, plan: SweepPlan, shots: int, errors: i
     info(f"{pad} done in {fmt_duration(elapsed)}  shots={fmt_compact(shots)}  errors={fmt_count(errors)}")
 
 
-def samples_summary(samples: pd.DataFrame, config: Config) -> None:
-    sampling = config.sampling
-    info()
-    info(f"samples: {fmt_count(len(samples))} rows")
-    if samples.empty:
-        return
+def limited_by(samples: pd.DataFrame, sampling: SamplingConfig) -> tuple[int, int]:
+    # Tasks that stopped at max_errors, and tasks that ran out of shots before it
     enough_errors = samples["errors"] >= sampling.max_errors
     out_of_shots = (samples["shots"] >= sampling.max_shots) & ~enough_errors
-    info(f"  limited by max_errors: {fmt_count(enough_errors.sum())} tasks")
-    info(f"  limited by max_shots:  {fmt_count(out_of_shots.sum())} tasks")
+    return int(enough_errors.sum()), int(out_of_shots.sum())
 
+
+def sample_warnings(samples: pd.DataFrame, config: Config) -> list[str]:
     param_names = _param_names(config)
     rows = samples.to_dict("records")
     zero = [
@@ -259,7 +255,18 @@ def samples_summary(samples: pd.DataFrame, config: Config) -> None:
     low = [row for row in rows if 0 < row["errors"] < MIN_ERRORS]
     if low:
         messages.append(f"{len(low)} tasks have < {MIN_ERRORS} errors; their error bars will be wide")
-    warn_all(messages)
+    return messages
+
+
+def samples_summary(samples: pd.DataFrame, config: Config) -> None:
+    info()
+    info(f"samples: {fmt_count(len(samples))} rows")
+    if samples.empty:
+        return
+    by_errors, by_shots = limited_by(samples, config.sampling)
+    info(f"  limited by max_errors: {fmt_count(by_errors)} tasks")
+    info(f"  limited by max_shots:  {fmt_count(by_shots)} tasks")
+    warn_all(sample_warnings(samples, config))
 
 
 # --- validate ---
@@ -309,6 +316,21 @@ def _at_bounds(row: dict[str, Any]) -> list[str]:
     return hits
 
 
+def threshold_warnings(df: pd.DataFrame, config: Config) -> list[str]:
+    param_names = _param_names(config)
+    messages = []
+    for row in df.to_dict("records"):
+        if _poor_fit(row):
+            messages.append(
+                f"{_label(row, param_names)}: poor fit "
+                f"(chi2_red={row['chi2_red']:.2f}, p-value={row['p_value']:.3f})"
+            )
+        hits = _at_bounds(row)
+        if hits:
+            messages.append(f"{_label(row, param_names)}: fit parameter at its bound ({', '.join(hits)})")
+    return messages
+
+
 def thresholds(df: pd.DataFrame, config: Config) -> None:
     th = config.threshold
     param_names = _param_names(config)
@@ -330,29 +352,39 @@ def thresholds(df: pd.DataFrame, config: Config) -> None:
     info()
     info(f"threshold  (sweep={th.source_sweep}, d={list(th.distances)}, x_window={th.x_window})")
     info(indent(table(rows)))
+    warn_all(threshold_warnings(df, config))
+
+
+def _skipped(row: dict[str, Any]) -> bool:
+    # A suppression row with no fit carries the reason in "skipped"
+    return isinstance(row.get("skipped"), str)
+
+
+def suppression_warnings(df: pd.DataFrame, config: Config) -> list[str]:
+    param_names = _param_names(config)
+    source = next((sweep for sweep in config.sweeps if sweep.id == config.suppression.source_sweep), None)
+    max_d = max(source.distances) if source is not None else None
+
+    records = df.to_dict("records")
+    skipped = [row for row in records if _skipped(row)]
+    fitted = [row for row in records if not _skipped(row)]
 
     messages = []
-    for row in records:
-        if _poor_fit(row):
+    for row in fitted:
+        if max_d is not None and row["d_teraquop"] > MAX_EXTRAPOLATION * max_d:
             messages.append(
-                f"{_label(row, param_names)}: poor fit "
-                f"(chi2_red={row['chi2_red']:.2f}, p-value={row['p_value']:.3f})"
+                f"{_label(row, param_names, ('p',))}: d_teraquop={int(row['d_teraquop'])} "
+                f"is extrapolated far beyond the largest sampled d={max_d}"
             )
-        hits = _at_bounds(row)
-        if hits:
-            messages.append(f"{_label(row, param_names)}: fit parameter at its bound ({', '.join(hits)})")
-    warn_all(messages)
+    for row in skipped:
+        messages.append(f"{_label(row, param_names, ('p',))}: skipped ({row['skipped']})")
+    return messages
 
 
 def suppressions(df: pd.DataFrame, config: Config) -> None:
     sup = config.suppression
     param_names = _param_names(config)
-    source = next((sweep for sweep in config.sweeps if sweep.id == sup.source_sweep), None)
-    max_d = max(source.distances) if source is not None else None
-
-    records = df.to_dict("records")
-    skipped = [row for row in records if isinstance(row.get("skipped"), str)]
-    fitted = [row for row in records if not isinstance(row.get("skipped"), str)]
+    fitted = [row for row in df.to_dict("records") if not _skipped(row)]
 
     rows = [
         {
@@ -368,17 +400,7 @@ def suppressions(df: pd.DataFrame, config: Config) -> None:
     info()
     info(f"suppression  (sweep={sup.source_sweep}, target p_L={sup.target_pl:g})")
     info(indent(table(rows)))
-
-    messages = []
-    for row in fitted:
-        if max_d is not None and row["d_teraquop"] > MAX_EXTRAPOLATION * max_d:
-            messages.append(
-                f"{_label(row, param_names, ('p',))}: d_teraquop={int(row['d_teraquop'])} "
-                f"is extrapolated far beyond the largest sampled d={max_d}"
-            )
-    for row in skipped:
-        messages.append(f"{_label(row, param_names, ('p',))}: skipped ({row['skipped']})")
-    warn_all(messages)
+    warn_all(suppression_warnings(df, config))
 
 
 # --- visualize ---
