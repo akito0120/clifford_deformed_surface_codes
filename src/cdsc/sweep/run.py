@@ -186,7 +186,6 @@ def sweep(
     on_plan_start: Optional[Callable[[int, int, SweepPlan], None]] = None,
     on_plan_done: Optional[Callable[[int, int, SweepPlan, int, int, float], None]] = None,
 ):
-    # NOTE: Prototype implementation
     # on_plan_start(index, total, plan) / on_plan_done(index, total, plan, shots, errors, elapsed)
     decoder, custom_decoders = resolve_decoder(config.sampling.decoder)
     rows: list[dict] = list()
