@@ -38,6 +38,7 @@
       "scf": "0.1.0",
       "scipy": "1.18.1",
       "setuptools": "82.0.1",
+      "simpleeval": "1.0.8",
       "sinter": "1.16.0",
       "six": "1.17.0",
       "smmap": "5.0.3",
@@ -77,14 +78,14 @@
     }
   },
   "software": {
-    "git_commit": "f406ab63746a6de1e2d8413025cf4483e691940e",
-    "git_dirty": false,
+    "git_commit": "9753b757e5db662f01345e9bf937672d5a940f7e",
+    "git_dirty": true,
     "plugins": {
       "examples/multiple_params/my_noises.py": "efa3cf5a87c24352ac01a3934fbce705470c25a910e76ba4e70a7cf6234f994c"
     }
   },
-  "started_at": "2026-11-05 00:47:40.630784",
-  "finished_at": "2026-11-05 00:50:22.498288",
+  "started_at": "2026-11-05 19:51:12.031209",
+  "finished_at": "2026-11-05 19:53:51.029932",
   "config_path": "examples/multiple_params/config.yaml",
   "config": {
     "experiment": {
@@ -129,7 +130,8 @@
           "start": 0.02,
           "stop": 0.09,
           "num": 15
-        }
+        },
+        "rounds": "2 * d"
       },
       {
         "id": "suppression_sweep",
@@ -148,7 +150,8 @@
             0.01,
             0.015
           ]
-        }
+        },
+        "rounds": "2 * d"
       }
     ],
     "sampling": {
@@ -173,7 +176,7 @@
       "target_pl": 1e-12
     },
     "output": {
-      "dir": "examples/multiple_params/results/"
+      "dir": "examples/multiple_params/results"
     }
   }
 }

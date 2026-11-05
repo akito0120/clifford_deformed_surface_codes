@@ -21,6 +21,7 @@ noise:
 sweeps:
   - id: threshold_sweep
     distances: [5, 7, 9]
+    rounds: 2 * d
     basis: [X]
     p:
       mode: linspace
@@ -30,6 +31,7 @@ sweeps:
 
   - id: suppression_sweep
     distances: [3, 5, 7, 9]
+    rounds: 2 * d
     basis: [X]
     p:
       mode: list
