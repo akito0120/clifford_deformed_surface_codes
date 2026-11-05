@@ -13,6 +13,15 @@ def physical_qubits(code: CodeDefinition) -> int:
     return len(code.data_qubits) + len(code.ancilla_qubits)
 
 
+def rounds_of(samples: pd.DataFrame) -> np.ndarray:
+    # Syndrome rounds of each sample, for the per-round rate
+    # d where there is no rounds column (code capacity)
+    d = samples["d"].astype(float)
+    if "rounds" not in samples:
+        return d.to_numpy()
+    return samples["rounds"].astype(float).fillna(d).to_numpy()
+
+
 @dataclass(frozen=True)
 class SuppressionFitResult:
     slope: float
@@ -39,12 +48,13 @@ def estimate_suppression(
     d = samples["d"].to_numpy(dtype=float)
     pl = samples["pl"].to_numpy(dtype=float)
     sig = samples["sigma"].to_numpy(dtype=float)
+    rounds = rounds_of(samples)
     eps = np.array([
-        sinter.shot_error_rate_to_piece_error_rate(p, pieces=r) 
-        for p, r in zip(pl, d)
+        sinter.shot_error_rate_to_piece_error_rate(p, pieces=r)
+        for p, r in zip(pl, rounds)
     ])
     log_eps = np.log10(eps)
-    sig_eps = sig * (1.0 - 2.0 * pl) ** (1.0 / d - 1.0) / d
+    sig_eps = sig * (1.0 - 2.0 * pl) ** (1.0 / rounds - 1.0) / rounds
     sig_log_eps = sig_eps / (eps * np.log(10.0))
 
     slope, intercept = np.polyfit(d, log_eps, 1, w=1.0 / sig_log_eps)

@@ -3,6 +3,7 @@ from pathlib import Path
 from ..config import Config
 from typing import Hashable
 from ..sweep.run import wilson_interval
+from ..analysis.suppression import rounds_of
 import numpy as np
 import sinter
 import matplotlib.pyplot as plt
@@ -135,6 +136,7 @@ def render_one_suppression(
 
         pls = sorted_samples["pl"].to_numpy()
         ds = sorted_samples["d"].to_numpy()
+        rounds = rounds_of(sorted_samples)
         errs = sorted_samples["errors"].to_numpy()
         shots = sorted_samples["shots"].to_numpy()
         bounds = np.array([wilson_interval(e, s, z=1.0) for e, s in zip(errs, shots)]).reshape(-1, 2)
@@ -142,8 +144,8 @@ def render_one_suppression(
 
         def per_round(rates: np.ndarray) -> np.ndarray:
             return np.array([
-                sinter.shot_error_rate_to_piece_error_rate(rate, pieces=float(d))
-                for rate, d in zip(rates, ds)
+                sinter.shot_error_rate_to_piece_error_rate(rate, pieces=r)
+                for rate, r in zip(rates, rounds)
             ])
         eps, eps_lows, eps_highs = per_round(pls), per_round(lows), per_round(highs)
 

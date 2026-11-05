@@ -1,4 +1,5 @@
 from itertools import product
+import pytest
 from pytest import approx
 from cdsc.circuit_builder import build_circuit
 from cdsc.codes.registry import build_code
@@ -11,7 +12,15 @@ CENTERS = [0.006, 0.007, 0.008, 0.009]
 HALF_WIDTH = 0.001
 
 
-def _config() -> Config:
+def _config(rounds=None) -> Config:
+    sweep = {
+        "id": "window",
+        "distances": [3, 5],
+        "basis": ["X"],
+        "p": {"mode": "window", "centers": CENTERS, "half_width": HALF_WIDTH, "step": 0.0005},
+    }
+    if rounds is not None:
+        sweep["rounds"] = rounds
     return Config.model_validate({
         "experiment": {"name": "test"},
         "codes": ["rotated_surface", "xzzx"],
@@ -21,12 +30,7 @@ def _config() -> Config:
             "params": {"eta": [0.5, 10]},
             "p_meas": "same_as_p",
         },
-        "sweeps": [{
-            "id": "window",
-            "distances": [3, 5],
-            "basis": ["X"],
-            "p": {"mode": "window", "centers": CENTERS, "half_width": HALF_WIDTH, "step": 0.0005},
-        }],
+        "sweeps": [sweep],
         "sampling": {"decoder": "mwpm", "max_shots": 100, "max_errors": 10, "max_batch_size": 100, "workers": 1},
         "threshold": {"source_sweep": "window", "distances": [3, 5], "x_window": 0.1, "nu_0": 1.1},
         "suppression": {"source_sweep": "window", "target_pl": 1e-12},
@@ -65,3 +69,18 @@ def test_task_labels_match_the_circuit_they_carry():
         noise = build_noise("biased", meta["p"], {"eta": meta["eta"]})
         expected = build_circuit("circuit_level", build_code(meta["code"], distance=meta["d"]), noise, meta["basis"])
         assert task.circuit == expected
+
+
+# Without rounds a sweep runs d rounds; with an expression, each task runs and records the rounds it gives
+@pytest.mark.parametrize("rounds, expected", [(None, lambda d: d), ("3 * d", lambda d: 3 * d), ("d + 2", lambda d: d + 2)])
+def test_tasks_run_and_record_the_configured_rounds(rounds, expected):
+    plan = build_sweep_plans(_config(rounds))[0]
+    assert plan.as_dict()["rounds"] == (rounds or "d")
+    assert plan.as_dict()["rounds_per_distance"] == [expected(d) for d in plan.distances]
+
+    for task in plan_to_tasks(plan):
+        meta = task.json_metadata
+        assert meta["rounds"] == expected(meta["d"])
+        noise = build_noise("biased", meta["p"], {"eta": meta["eta"]})
+        code = build_code(meta["code"], distance=meta["d"])
+        assert task.circuit == build_circuit("circuit_level", code, noise, meta["basis"], rounds=meta["rounds"])

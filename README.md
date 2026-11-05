@@ -54,12 +54,14 @@ noise:
 sweeps:
   - id: threshold_sweep
     distances: [7, 9, 11]
+    rounds: 3 * d             # optional, default d
     basis: [X]
     p:
       mode: window
       centers: [0.0069, 0.0072, 0.0061, 0.0123]
       half_width: 0.003
       step: 0.00025
+      
   - id: suppression_sweep
     distances: [3, 5, 7, 9, 11]
     basis: [X]
@@ -91,6 +93,7 @@ output:
 Notes:
 
 - One sweep plan is created per combination of `noise.params` × `basis` × `codes`. The last key varies fastest, and params keep their YAML order. In `window` mode, `centers` needs one entry per combination, in that order. The example gives (eta, code) = (0.5, rotated_surface), (0.5, xzzx), (10, rotated_surface), (10, xzzx). Check the plans with `cdsc compile-plans`.
+- `rounds` sets the number of syndrome rounds of a sweep as an integer expression in `d`, such as `3 * d`, `d + 2` or `5`. It may use integers, `d`, `+`, `-`, `*`, `//` and parentheses, and must give at least 1 at every distance of the sweep. Without it, a sweep runs `d` rounds. The `code_capacity` model has no repeated rounds and rejects it.
 
 ## Layout
 

@@ -209,6 +209,7 @@ def plan_table(plans: list[SweepPlan], sampling: SamplingConfig) -> None:
             "basis": plan.basis,
             "params": fmt_params(plan.params) or "-",
             "d": fmt_distances(plan.distances),
+            "rounds": plan.rounds or "-",
             "p": fmt_ps(plan.ps),
             "tasks": fmt_count(_plan_tasks(plan)),
         }
@@ -226,6 +227,7 @@ def plan_started(index: int, total: int, plan: SweepPlan) -> None:
     info(
         f"[{index:>{width}}/{total}] {plan.sweep_id}  {plan.code}  basis={plan.basis}  "
         f"{fmt_params(plan.params)}  d={fmt_distances(plan.distances)}  "
+        f"{'' if plan.rounds is None else f'rounds={plan.rounds}  '}"
         f"p={fmt_ps(plan.ps)}  ({fmt_count(_plan_tasks(plan))} tasks)"
     )
 

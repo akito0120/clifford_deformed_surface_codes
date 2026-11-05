@@ -1,8 +1,14 @@
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
+from pydantic import (
+    AfterValidator, BaseModel, ConfigDict, Field, StrictInt, StrictStr, ValidationError,
+    field_validator, model_validator
+)
+from simpleeval import InvalidExpression, SimpleEval
 from typing import Annotated, Any, Literal
 from pathlib import Path
 from math import prod
+import ast
 import importlib.util
+import operator
 import os
 import sys
 import yaml
@@ -13,6 +19,18 @@ LINSPACE_MODE = "linspace"
 LIST_MODE = "list"
 
 SAME_AS_P = "same_as_p"
+
+# Syndrome rounds when a sweep does not set them
+DEFAULT_ROUNDS = "d"
+
+# The only operators a rounds expression may use
+_ROUNDS_OPERATORS = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.FloorDiv: operator.floordiv,
+    ast.USub: operator.neg,
+}
 
 
 class ConfigError(Exception):
@@ -37,6 +55,20 @@ def _check_distances(distances: list[int]) -> list[int]:
 
 
 Distances = Annotated[list[int], Field(min_length=1), AfterValidator(_check_distances)]
+
+
+def rounds_for(expr: str, d: int) -> int:
+    # Evaluate a rounds expression at distance d
+    evaluator = SimpleEval(operators=_ROUNDS_OPERATORS, functions={}, names={"d": d}, allowed_attrs={})
+    try:
+        value = evaluator.eval(expr)
+    except (InvalidExpression, SyntaxError, ArithmeticError, LookupError, TypeError) as e:
+        raise ValueError(
+            f"rounds {expr!r} is not an integer expression in d using +, -, *, // and parentheses ({e})"
+        ) from e
+    if not isinstance(value, int) or isinstance(value, bool):
+        raise ValueError(f"rounds {expr!r} must give an integer, got {value!r} at d={d}")
+    return value
 
 
 def _check_probabilities(name: str, values: list[float]) -> list[str]:
@@ -175,16 +207,29 @@ class PointsConfig(_Model):
 class SweepConfig(_Model):
     id: str = Field(min_length=1)
     distances: Distances
+    rounds: StrictInt | StrictStr | None = None
     basis: list[Literal["X", "Z"]] = Field(min_length=1)
     p: PointsConfig
 
+    @model_validator(mode="after")
+    def _rounds_at_every_distance(self) -> "SweepConfig":
+        if self.rounds is None:
+            return self
+        bad = {d: n for d in self.distances if (n := rounds_for(str(self.rounds), d)) < 1}
+        if bad:
+            raise ValueError(f"rounds {self.rounds!r} must be at least 1, got {bad} (d: rounds)")
+        return self
+
     def as_dict(self) -> dict[str, Any]:
-        return {
+        sweep = {
             "id": self.id,
             "distances": self.distances,
             "basis": self.basis,
             "p": self.p.as_dict()
         }
+        if self.rounds is not None:
+            sweep["rounds"] = self.rounds
+        return sweep
 
 
 class SamplingConfig(_Model):
@@ -308,6 +353,15 @@ def check_references(config: Config) -> list[tuple[str, str]]:
                 "threshold.distances",
                 f"{missing} are not sampled by sweep {source.id!r} (distances: {source.distances})"
             ))
+
+    # Rounds where the circuit has no repeated rounds
+    if config.noise.model == "code_capacity":
+        for index, sweep in enumerate(config.sweeps):
+            if sweep.rounds is not None:
+                problems.append((
+                    f"sweeps[{index}].rounds",
+                    "not used by the code_capacity model, which has a single round of perfect syndrome extraction"
+                ))
 
     # One center for one parameter combination
     params = config.noise.params or {}

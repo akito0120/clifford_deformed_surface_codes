@@ -1,11 +1,11 @@
-from ..config import Config, WINDOW_MODE, LINSPACE_MODE, LIST_MODE
+from ..config import Config, DEFAULT_ROUNDS, WINDOW_MODE, LINSPACE_MODE, LIST_MODE, rounds_for
 from itertools import product
 from .points import build_p_linspace, build_p_window
 from typing import Any, Callable, Optional
 from dataclasses import dataclass
 from ..noise.registry import build_noise
 from ..codes.registry import build_code
-from ..circuit_builder import build_circuit
+from ..circuit_builder import CODE_CAPACITY, build_circuit
 from ..decoder import resolve_decoder
 import sinter
 import numpy as np
@@ -24,6 +24,10 @@ class SweepPlan:
     basis: str
     distances: list[int]
     ps: list[float]
+    rounds: str | None = None
+
+    def rounds_at(self, distance: int) -> int | None:
+        return None if self.rounds is None else rounds_for(self.rounds, distance)
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -35,6 +39,10 @@ class SweepPlan:
             "p_meas": self.p_meas,
             "basis": self.basis,
             "distances": self.distances,
+            "rounds": self.rounds,
+            "rounds_per_distance": (
+                None if self.rounds is None else [self.rounds_at(d) for d in self.distances]
+            ),
             "ps": self.ps
         }
 
@@ -51,6 +59,7 @@ def build_sweep_plans(config: Config) -> list[SweepPlan]:
         keys = params.keys()
         values = params.values()
         combinations = [dict(zip(keys, combination)) for combination in product(*values)]
+        rounds = None if config.noise.model == CODE_CAPACITY else str(sweep.rounds or DEFAULT_ROUNDS)
 
         ps: list[float] | None = None
         if sweep.p.mode == WINDOW_MODE:
@@ -72,7 +81,8 @@ def build_sweep_plans(config: Config) -> list[SweepPlan]:
                     p_meas=config.noise.p_meas,
                     basis=basis,
                     distances=sweep.distances,
-                    ps=ps
+                    ps=ps,
+                    rounds=rounds
                 ))
 
         elif sweep.p.mode == LINSPACE_MODE:
@@ -89,7 +99,8 @@ def build_sweep_plans(config: Config) -> list[SweepPlan]:
                     p_meas=config.noise.p_meas,
                     basis=basis,
                     distances=sweep.distances,
-                    ps=ps
+                    ps=ps,
+                    rounds=rounds
                 ))
 
         elif  sweep.p.mode == LIST_MODE:
@@ -106,7 +117,8 @@ def build_sweep_plans(config: Config) -> list[SweepPlan]:
                     p_meas=config.noise.p_meas,
                     basis=basis,
                     distances=sweep.distances,
-                    ps=ps
+                    ps=ps,
+                    rounds=rounds
                 ))
 
     return plans
@@ -118,6 +130,7 @@ def plan_to_tasks(plan: SweepPlan) -> list[sinter.Task]:
     
     for distance in plan.distances:
         code = build_code(plan.code, distance=distance)
+        rounds = plan.rounds_at(distance)
         for p in plan.ps:
             noise = build_noise(plan.noise_definition, p, plan.params).with_p_meas(plan.p_meas)
             circuit = build_circuit(
@@ -125,6 +138,7 @@ def plan_to_tasks(plan: SweepPlan) -> list[sinter.Task]:
                 code=code,
                 noise=noise,
                 basis=plan.basis,
+                rounds=rounds,
             )
 
             dem = circuit.detector_error_model(
@@ -137,6 +151,7 @@ def plan_to_tasks(plan: SweepPlan) -> list[sinter.Task]:
                 detector_error_model=dem,
                 json_metadata={
                     "d": distance,
+                    **({} if rounds is None else {"rounds": rounds}),
                     "p": p,
                     "sweep_id": plan.sweep_id,
                     "code": plan.code,

@@ -9,7 +9,7 @@ from urllib.parse import quote
 import pandas as pd
 from tabulate import tabulate
 from . import console
-from .config import Config
+from .config import Config, DEFAULT_ROUNDS
 from .console import fmt_compact, fmt_count, fmt_distances, fmt_duration, fmt_prob, fmt_ps, fmt_threshold, fmt_value
 from .visualization.figures import make_figure_tag
 
@@ -119,7 +119,8 @@ def _setup(config: Config, config_path: str, samples: pd.DataFrame, manifest: Op
         distances = sorted(int(d) for d in rows["d"].unique())
         ps = sorted(float(p) for p in rows["p"].unique())
         bases = ", ".join(sorted(rows["basis"].unique()))
-        lines.append(f"  - `{sweep.id}`: d = {fmt_distances(distances)}, basis {bases}, p = {fmt_ps(ps)}")
+        rounds = "" if noise.model == "code_capacity" else f", rounds = {sweep.rounds or DEFAULT_ROUNDS}"
+        lines.append(f"  - `{sweep.id}`: d = {fmt_distances(distances)}{rounds}, basis {bases}, p = {fmt_ps(ps)}")
 
     lines.append(
         f"- Sampling: decoder {sampling.decoder}, each task until {fmt_count(sampling.max_errors)} errors "

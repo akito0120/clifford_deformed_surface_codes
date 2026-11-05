@@ -46,6 +46,28 @@ def test_circuit_distance_equals_code_distance(model, code, basis, d):
     assert len(circuit.shortest_graphlike_error()) == d
 
 
+# With a given number of rounds, the circuit is deterministic, keeps the code distance,
+# and measures every ancilla once per round before the data readout
+@pytest.mark.parametrize(
+    "model, code, basis, d, rounds",
+    [
+        (model, code, basis, d, rounds)
+        for model in ("phenomenological", "circuit_level")
+        for code in ("rotated_surface", "xzzx")
+        for basis in ("X", "Z")
+        for d in (3, 5)
+        for rounds in (1, 2, 3 * d)
+    ],
+)
+def test_circuit_with_given_rounds(model, code, basis, d, rounds):
+    surface = build_code(code, distance=d)
+    circuit = build_circuit(model, surface, depolarizing_noise(0.001, None), basis, rounds=rounds)
+    dem = circuit.detector_error_model(decompose_errors=True, approximate_disjoint_errors=True)
+    assert dem.num_observables == 1
+    assert circuit.num_measurements == rounds * len(surface.ancilla_qubits) + len(surface.data_qubits)
+    assert len(circuit.shortest_graphlike_error()) == d
+
+
 # Depolarizing noise is invariant under single-qubit Cliffords, so a deformed code has the CSS code's error model
 @pytest.mark.parametrize(
     "model, code, basis, d",
