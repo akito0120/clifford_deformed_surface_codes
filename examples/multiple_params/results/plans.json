@@ -1,0 +1,450 @@
+[
+  {
+    "sweep_id": "threshold_sweep",
+    "code": "rotated_surface",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 0.5,
+      "meas_ratio": 0.5
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.02,
+      0.025,
+      0.03,
+      0.034999999999999996,
+      0.039999999999999994,
+      0.045,
+      0.049999999999999996,
+      0.05499999999999999,
+      0.06,
+      0.06499999999999999,
+      0.06999999999999999,
+      0.075,
+      0.07999999999999999,
+      0.08499999999999999,
+      0.09
+    ]
+  },
+  {
+    "sweep_id": "threshold_sweep",
+    "code": "xzzx",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 0.5,
+      "meas_ratio": 0.5
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.02,
+      0.025,
+      0.03,
+      0.034999999999999996,
+      0.039999999999999994,
+      0.045,
+      0.049999999999999996,
+      0.05499999999999999,
+      0.06,
+      0.06499999999999999,
+      0.06999999999999999,
+      0.075,
+      0.07999999999999999,
+      0.08499999999999999,
+      0.09
+    ]
+  },
+  {
+    "sweep_id": "threshold_sweep",
+    "code": "rotated_surface",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 0.5,
+      "meas_ratio": 1
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.02,
+      0.025,
+      0.03,
+      0.034999999999999996,
+      0.039999999999999994,
+      0.045,
+      0.049999999999999996,
+      0.05499999999999999,
+      0.06,
+      0.06499999999999999,
+      0.06999999999999999,
+      0.075,
+      0.07999999999999999,
+      0.08499999999999999,
+      0.09
+    ]
+  },
+  {
+    "sweep_id": "threshold_sweep",
+    "code": "xzzx",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 0.5,
+      "meas_ratio": 1
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.02,
+      0.025,
+      0.03,
+      0.034999999999999996,
+      0.039999999999999994,
+      0.045,
+      0.049999999999999996,
+      0.05499999999999999,
+      0.06,
+      0.06499999999999999,
+      0.06999999999999999,
+      0.075,
+      0.07999999999999999,
+      0.08499999999999999,
+      0.09
+    ]
+  },
+  {
+    "sweep_id": "threshold_sweep",
+    "code": "rotated_surface",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 10,
+      "meas_ratio": 0.5
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.02,
+      0.025,
+      0.03,
+      0.034999999999999996,
+      0.039999999999999994,
+      0.045,
+      0.049999999999999996,
+      0.05499999999999999,
+      0.06,
+      0.06499999999999999,
+      0.06999999999999999,
+      0.075,
+      0.07999999999999999,
+      0.08499999999999999,
+      0.09
+    ]
+  },
+  {
+    "sweep_id": "threshold_sweep",
+    "code": "xzzx",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 10,
+      "meas_ratio": 0.5
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.02,
+      0.025,
+      0.03,
+      0.034999999999999996,
+      0.039999999999999994,
+      0.045,
+      0.049999999999999996,
+      0.05499999999999999,
+      0.06,
+      0.06499999999999999,
+      0.06999999999999999,
+      0.075,
+      0.07999999999999999,
+      0.08499999999999999,
+      0.09
+    ]
+  },
+  {
+    "sweep_id": "threshold_sweep",
+    "code": "rotated_surface",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 10,
+      "meas_ratio": 1
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.02,
+      0.025,
+      0.03,
+      0.034999999999999996,
+      0.039999999999999994,
+      0.045,
+      0.049999999999999996,
+      0.05499999999999999,
+      0.06,
+      0.06499999999999999,
+      0.06999999999999999,
+      0.075,
+      0.07999999999999999,
+      0.08499999999999999,
+      0.09
+    ]
+  },
+  {
+    "sweep_id": "threshold_sweep",
+    "code": "xzzx",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 10,
+      "meas_ratio": 1
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.02,
+      0.025,
+      0.03,
+      0.034999999999999996,
+      0.039999999999999994,
+      0.045,
+      0.049999999999999996,
+      0.05499999999999999,
+      0.06,
+      0.06499999999999999,
+      0.06999999999999999,
+      0.075,
+      0.07999999999999999,
+      0.08499999999999999,
+      0.09
+    ]
+  },
+  {
+    "sweep_id": "suppression_sweep",
+    "code": "rotated_surface",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 0.5,
+      "meas_ratio": 0.5
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      3,
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.01,
+      0.015
+    ]
+  },
+  {
+    "sweep_id": "suppression_sweep",
+    "code": "xzzx",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 0.5,
+      "meas_ratio": 0.5
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      3,
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.01,
+      0.015
+    ]
+  },
+  {
+    "sweep_id": "suppression_sweep",
+    "code": "rotated_surface",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 0.5,
+      "meas_ratio": 1
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      3,
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.01,
+      0.015
+    ]
+  },
+  {
+    "sweep_id": "suppression_sweep",
+    "code": "xzzx",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 0.5,
+      "meas_ratio": 1
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      3,
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.01,
+      0.015
+    ]
+  },
+  {
+    "sweep_id": "suppression_sweep",
+    "code": "rotated_surface",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 10,
+      "meas_ratio": 0.5
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      3,
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.01,
+      0.015
+    ]
+  },
+  {
+    "sweep_id": "suppression_sweep",
+    "code": "xzzx",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 10,
+      "meas_ratio": 0.5
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      3,
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.01,
+      0.015
+    ]
+  },
+  {
+    "sweep_id": "suppression_sweep",
+    "code": "rotated_surface",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 10,
+      "meas_ratio": 1
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      3,
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.01,
+      0.015
+    ]
+  },
+  {
+    "sweep_id": "suppression_sweep",
+    "code": "xzzx",
+    "noise_model": "phenomenological",
+    "noise_definition": "biased_meas_ratio",
+    "noise_params": {
+      "eta": 10,
+      "meas_ratio": 1
+    },
+    "p_meas": "same_as_p",
+    "basis": "X",
+    "distances": [
+      3,
+      5,
+      7,
+      9
+    ],
+    "ps": [
+      0.01,
+      0.015
+    ]
+  }
+]

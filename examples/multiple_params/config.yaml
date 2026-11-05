@@ -1,0 +1,56 @@
+experiment:
+  name: multiple_params
+  seed: 0
+
+plugins:
+  - examples/multiple_params/my_noises.py
+
+codes:
+  - rotated_surface
+  - xzzx
+
+noise:
+  model: phenomenological
+  definition: biased_meas_ratio
+  params:
+    eta: [0.5, 10]        # bias: p_Z / (p_X + p_Y)
+    meas_ratio: [0.5, 1]  # measurement flip rate / p
+  p_meas: same_as_p       # keeps the plugin's flip, meas_ratio * p
+
+# Each sweep has 2 eta x 2 meas_ratio x 1 basis x 2 codes = 8 plans
+sweeps:
+  - id: threshold_sweep
+    distances: [5, 7, 9]
+    basis: [X]
+    p:
+      mode: linspace
+      start: 0.02
+      stop: 0.09
+      num: 15
+
+  - id: suppression_sweep
+    distances: [3, 5, 7, 9]
+    basis: [X]
+    p:
+      mode: list
+      values: [0.01, 0.015]
+
+sampling:
+  decoder: mwpm
+  max_shots: 100000
+  max_errors: 2000
+  max_batch_size: 1024
+  workers: 4
+
+threshold:
+  source_sweep: threshold_sweep
+  distances: [5, 7, 9]
+  x_window: 0.05
+  nu_0: 1.5
+
+suppression:
+  source_sweep: suppression_sweep
+  target_pl: 1e-12
+
+output:
+  dir: examples/multiple_params/results/
