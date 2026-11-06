@@ -1,5 +1,5 @@
 {
-  "rotated_surface_d3": {
+  "rotated_surface_sd_d3": {
     "passed": true,
     "checks": {
       "stabilizer_commutation": {
@@ -23,7 +23,7 @@
       },
       "schedule_consistency": {
         "passed": true,
-        "steps": 4,
+        "steps": 5,
         "scheduled": true
       },
       "detector_determinism": {
@@ -44,7 +44,7 @@
       }
     }
   },
-  "rotated_surface_d5": {
+  "rotated_surface_sd_d5": {
     "passed": true,
     "checks": {
       "stabilizer_commutation": {
@@ -68,7 +68,7 @@
       },
       "schedule_consistency": {
         "passed": true,
-        "steps": 4,
+        "steps": 5,
         "scheduled": true
       },
       "detector_determinism": {
@@ -89,7 +89,7 @@
       }
     }
   },
-  "rotated_surface_d7": {
+  "rotated_surface_sd_d7": {
     "passed": true,
     "checks": {
       "stabilizer_commutation": {
@@ -113,7 +113,7 @@
       },
       "schedule_consistency": {
         "passed": true,
-        "steps": 4,
+        "steps": 5,
         "scheduled": true
       },
       "detector_determinism": {
@@ -134,7 +134,7 @@
       }
     }
   },
-  "rotated_surface_d9": {
+  "rotated_surface_sd_d9": {
     "passed": true,
     "checks": {
       "stabilizer_commutation": {
@@ -158,7 +158,7 @@
       },
       "schedule_consistency": {
         "passed": true,
-        "steps": 4,
+        "steps": 5,
         "scheduled": true
       },
       "detector_determinism": {

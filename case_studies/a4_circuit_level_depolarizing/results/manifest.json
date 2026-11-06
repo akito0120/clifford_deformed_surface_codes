@@ -38,6 +38,7 @@
       "scf": "0.1.0",
       "scipy": "1.18.1",
       "setuptools": "82.0.1",
+      "simpleeval": "1.0.8",
       "sinter": "1.16.0",
       "six": "1.17.0",
       "smmap": "5.0.3",
@@ -77,24 +78,31 @@
     }
   },
   "software": {
-    "git_commit": "e79a96d9d8578e5433aa8672efae2ba0c8f842a2",
-    "git_dirty": false,
-    "plugins": {}
+    "git_commit": "da1c6102dfe5425b02ab450fb1e3b8d7c16a1ccc",
+    "git_dirty": true,
+    "plugins": {
+      "case_studies/a5_suppression_circuit_level/codes.py": "ffeab85a3d3f58e81dab9c1ebefe0a5119e0a32225c4f2bf909c305afe851a1f",
+      "case_studies/a5_suppression_circuit_level/noises.py": "e9b1a46dec133e6489d354f252b57e19c21a2b5d46257db0cd9f508057879e6d"
+    }
   },
-  "started_at": "2026-10-20 20:14:27.833997",
-  "config_path": "case_study/a4_circuit_level_depolarizing/config.yaml",
+  "started_at": "2026-11-05 21:12:01.029907",
+  "finished_at": "2026-11-05 21:58:18.509700",
+  "config_path": "case_studies/a4_circuit_level_depolarizing/config.yaml",
   "config": {
     "experiment": {
       "name": "a4_circuit_level_depolarizing",
       "seed": 0
     },
-    "plugins": [],
+    "plugins": [
+      "case_studies/a5_suppression_circuit_level/codes.py",
+      "case_studies/a5_suppression_circuit_level/noises.py"
+    ],
     "codes": [
-      "rotated_surface"
+      "rotated_surface_sd"
     ],
     "noise": {
       "model": "circuit_level",
-      "definition": "depolarizing",
+      "definition": "depolarizing_sd",
       "params": {},
       "p_meas": "same_as_p"
     },
@@ -102,22 +110,24 @@
       {
         "id": "threshold_sweep",
         "distances": [
-          7,
           9,
           11,
           13,
-          15
+          15,
+          17,
+          19,
+          21
         ],
         "basis": [
-          "X",
           "Z"
         ],
         "p": {
           "mode": "linspace",
-          "start": 0.0055,
-          "stop": 0.0085,
-          "num": 13
-        }
+          "start": 0.005,
+          "stop": 0.0062,
+          "num": 10
+        },
+        "rounds": "3 * d"
       },
       {
         "id": "suppression_sweep",
@@ -127,7 +137,7 @@
           7
         ],
         "basis": [
-          "X"
+          "Z"
         ],
         "p": {
           "mode": "list",
@@ -139,9 +149,9 @@
     ],
     "sampling": {
       "decoder": "mwpm",
-      "max_shots": 1000000,
-      "max_errors": 20000,
-      "max_batch_size": 1024,
+      "max_shots": 500000,
+      "max_errors": 5000,
+      "max_batch_size": 2048,
       "workers": 4
     },
     "threshold": {
@@ -150,9 +160,12 @@
         9,
         11,
         13,
-        15
+        15,
+        17,
+        19,
+        21
       ],
-      "x_window": 0.015,
+      "x_window": 0.012,
       "nu_0": 1.06
     },
     "suppression": {
@@ -160,7 +173,7 @@
       "target_pl": 1e-12
     },
     "output": {
-      "dir": "case_study/a4_circuit_level_depolarizing/results/"
+      "dir": "case_studies/a4_circuit_level_depolarizing/results"
     }
   }
 }
