@@ -9,9 +9,6 @@ from ldpc.union_find_decoder import UnionFindDecoder
 
 
 class UnionFindSinterDecoder(Decoder):
-    def __init__(self, uf_method: str = "inversion"):
-        self.uf_method = uf_method
-
     def decode_via_files(
         self,
         *,
@@ -38,7 +35,7 @@ class UnionFindSinterDecoder(Decoder):
         edge_prior = np.clip(edge_prior, 1e-12, 0.5)
         llrs = np.log((1.0 - edge_prior) / edge_prior)
 
-        uf = UnionFindDecoder(check_matrix, uf_method=self.uf_method)
+        uf = UnionFindDecoder(check_matrix, uf_method="matrix")
 
         shots = stim.read_shot_data_file(
             path=dets_b8_in_path,
