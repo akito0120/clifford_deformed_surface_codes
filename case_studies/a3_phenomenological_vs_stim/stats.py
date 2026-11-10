@@ -25,11 +25,9 @@ def print_total(table):
 
 def p_th_weighted_mean_and_chi2():
     df = load("threshold.csv")
-    table = df.groupby("basis").apply(
-        lambda g: weighted_mean_and_chi2(g["p_th"], g["p_th_err"]), include_groups=False
-    ).astype({"dof": int})
-    print(table.to_string())
-    print_total(table)
+    r = weighted_mean_and_chi2(df["p_th"], df["p_th_err"])
+    print(f"p_th = {r['mean']:.6f} ± {r['err']:.6f}")
+    print(f"chi2/dof = {r['chi2']:.2f}/{r['dof']:.0f}, p-value = {r['p_value']:.3f}")
 
 
 def pl_weighted_mean_and_chi2():
