@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "clifford_deformed_surface_codes: A simulation framework for Clifford-deformed surface codes"
+authors:
+  - family-names: Yamaguchi
+    given-names: Akito
+date-released: 2026-11-11
+version: 1.0.0
+license: MIT
+repository-code: "https://github.com/akito0120/clifford_deformed_surface_codes"
+keywords:
+  - quantum error correction
+  - surface code

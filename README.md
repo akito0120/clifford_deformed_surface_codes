@@ -116,3 +116,7 @@ Notes:
 │   └── summary.py          # summary.md writer
 └── tests/                  # Tests
 ```
+
+## License
+
+[MIT](LICENSE)
