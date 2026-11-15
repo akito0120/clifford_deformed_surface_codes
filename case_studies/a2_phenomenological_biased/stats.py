@@ -3,11 +3,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from cdsc.config import load_config
 from cdsc.noise.builtin import biased_pauli_rates
 
 HERE = Path(__file__).parent
 RESULTS = HERE / "results"
 STATS = RESULTS / "stats.txt"
+CONFIGS = {"css": HERE / "config_css.yaml", "xzzx": HERE / "config_xzzx.yaml"}
 REFERENCE_LINE = 2.9  # %, BonillaAtaides2021 Fig. 5: Wang2003's p_hr + p_lr = 2.9%
 DEPOLARIZING_ETA = 0.5  # p_X = p_Y = p_Z, where the XZZX code is a Clifford deformation of the CSS code
 
@@ -77,6 +79,20 @@ def print_xzzx_campos2026_diff(side):
         print(f"p_th eta={eta:g} xzzx {side} - campos2026 = {d:+.3f} ± {ei:.3f} points ({d / ei:+.1f}σ)")
 
 
+def print_shot_budget():
+    # total shots per config and sweep, and the points that stopped at max_shots, with their fewest errors
+    for name, path in CONFIGS.items():
+        config = load_config(path)
+        max_shots = config.sampling.max_shots
+        df = pd.read_csv(config.output.path / "samples.csv")
+        for sweep, g in df.groupby("sweep_id", sort=False):
+            capped = g[g["shots"] >= max_shots]
+            line = f"{name} {sweep}: {g['shots'].sum():,} shots, {len(capped)}/{len(g)} points stopped at max_shots = {max_shots:,}"
+            if len(capped):
+                line += f", fewest errors among them = {capped['errors'].min():,}"
+            print(line)
+
+
 def main():
     th = pd.read_csv(RESULTS / "css" / "threshold.csv")
     with STATS.open("w", encoding="utf-8") as f, redirect_stdout(f):
@@ -93,6 +109,8 @@ def main():
         print_xzzx_campos2026_diff("lower")
         print()
         print_xzzx_campos2026_diff("higher")
+        print()
+        print_shot_budget()
     print(f"wrote {STATS.relative_to(HERE)}")
 
 

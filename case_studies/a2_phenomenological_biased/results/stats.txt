@@ -41,3 +41,8 @@ p_th eta=10 xzzx higher - campos2026 = +0.184 ± 0.200 points (+0.9σ)
 p_th eta=25 xzzx higher - campos2026 = +0.101 ± 0.200 points (+0.5σ)
 p_th eta=50 xzzx higher - campos2026 = -0.083 ± 0.201 points (-0.4σ)
 p_th eta=100 xzzx higher - campos2026 = -0.319 ± 0.201 points (-1.6σ)
+
+css threshold_sweep: 92,648,348 shots, 5/330 points stopped at max_shots = 1,000,000, fewest errors among them = 17,913
+css suppression_sweep: 18,000,000 shots, 18/18 points stopped at max_shots = 1,000,000, fewest errors among them = 402
+xzzx threshold_sweep: 44,726,023 shots, 0/450 points stopped at max_shots = 1,000,000
+xzzx suppression_sweep: 12,123,063 shots, 9/15 points stopped at max_shots = 1,000,000, fewest errors among them = 2,050
