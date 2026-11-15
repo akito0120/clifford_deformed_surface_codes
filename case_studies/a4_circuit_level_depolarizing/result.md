@@ -4,9 +4,9 @@
 
 | Key | Paper | Where | Value | Conditions |
 |---|---|---|---|---|
-| ORourke2025 | A. R. O'Rourke and S. Devitt, "Compare the Pair: Rotated vs. Unrotated Surface Codes at Equal Logical Error Rates" [arXiv:2409.14765](https://arxiv.org/abs/2409.14765) | §IV.B | 0.565%, the same for the rotated and the worst-case unrotated code | SD noise, whose round adds two H layers (H, 4 CNOT, H, MR), 3d rounds, memory Z, PyMatching. Fit on d = 8–22 (odd and even) and p = 0.55–0.58% |
+| ORourke2025 | A. R. O'Rourke and S. Devitt, "Compare the Pair: Rotated vs. Unrotated Surface Codes at Equal Logical Error Rates," *Phys. Rev. Research* **7**, 033074 (2025) [arXiv:2409.14765](https://arxiv.org/abs/2409.14765) | Table III (SD, rotated), and the released statistics ([compare_the_pair](https://github.com/wamud/compare_the_pair): `SD_stats.pickle`) | 0.5637 ± 0.0004%, ν = 1.09 ± 0.03 | SD noise, whose round adds two H layers (H, 4 CNOT, H, MR), 3d rounds, memory Z, PyMatching. Fit on d = 8–22 (odd and even) and p = 0.55–0.58% |
 
-- **A5's plugins rebuild ORourke2025's round.** A gate-free step stands in for the first H layer, and the second is folded into the measurement flip, 5p/3 − 4p²/3. What differs: the CNOT order, one extra data idle layer before the first round, and one data qubit per round that the released circuits leave without an idle error during MR (possibly a bug in their idle insertion; the intent is unknown).
+- **The plugins [codes.py](codes.py) and [noises.py](noises.py) rebuild ORourke2025's round.** A gate-free step stands in for the first H layer, and the second is folded into the measurement flip, 5p/3 − 4p²/3. What differs: the CNOT order, one extra data idle layer before the first round, and one data qubit per round that the released circuits leave without an idle error during MR (possibly a bug in their idle insertion; the intent is unknown).
 
 ---
 
@@ -29,18 +29,12 @@ The other studies make up the **0.50–0.82%** band:
 - Bases: only Z
 - 3d rounds
 - d = 9, 11, …, 21.
-- p = 0.50–0.62%, 10 points
+- p = ORourke2025's nine values near the threshold: 0.49, 0.50, 0.51, 0.52, 0.55, 0.56, 0.57, 0.58, 0.60%
 - Decoder: `mwpm`
 - Each point ran to 5,000 errors (the 5 × 10⁵-shot limit was never reached)
-- Fit: d = 9–21, x_window = 0.012 (covers every point), ν0 = 1.06
+- Fit: d = 9–21, x_window = 0.014 (covers every point), ν0 = 1.06
 - Suppression: required by the schema, not used
-
-<!-- - Stephens2014:
-  - Config: [config.yaml](config.yaml)
-  - Code: `rotated_surface`
-  - Bases: X and Z
-  - p = 0.55–0.85% in steps of 0.025% -->
-
+- ORourke2025's data: [convert_orourke2025.py](convert_orourke2025.py) converts [SD_stats.pickle](SD_stats.pickle) to [results/orourke2025_samples.csv](results/orourke2025_samples.csv)
 
 ## Result
 
@@ -48,14 +42,11 @@ From [results/threshold.csv](results/threshold.csv):
 
 | Code | Basis | p_th (%) | ν | χ²_red | Compare against |
 |---|---|---|---|---|---|
-| rotated_surface_sd | Z | 0.5661 ± 0.0008 | 1.17 | 1.17 | ORourke2025 (0.565%) |
-
-
-- Other windows (x_window = 0.006–0.02) give 0.5653–0.5661%.
-- At the 14 points shared with ORourke2025's data ([SD_stats.pickle](../a5_suppression_circuit_level/SD_stats.pickle)), p_L is 1.007 ± 0.004 times theirs.
+| rotated_surface_sd | Z | 0.5644 ± 0.0009 | 1.16 | 1.12 | ORourke2025 (0.5637 ± 0.0004%, ν = 1.09 ± 0.03) |
 
 
 ## Verdict
 
 - **Literature band (0.50–0.82%): pass.**
-- **ORourke2025 (0.565%): pass, 0.19% (0.0011 points) above.**
+- **ORourke2025 Table III (0.5637 ± 0.0004%): pass, 0.0007 points (0.13%) above, 0.7σ.**
+- **p_L on the 63 points shared with ORourke2025's data: pass, 1.0034 ± 0.0017 times theirs.**

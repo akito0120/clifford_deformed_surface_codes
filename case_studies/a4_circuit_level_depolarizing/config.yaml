@@ -2,9 +2,9 @@ experiment:
   name: a4_circuit_level_depolarizing
   seed: 0
 
-plugins: # A5's plugins for ORourke2025's SD circuits
-  - ../a5_suppression_circuit_level/codes.py
-  - ../a5_suppression_circuit_level/noises.py
+plugins: # ORourke2025's SD circuits
+  - codes.py
+  - noises.py
 
 codes:
   - rotated_surface_sd
@@ -19,11 +19,9 @@ sweeps:
     distances: [9, 11, 13, 15, 17, 19, 21]
     rounds: 3 * d # as ORourke2025
     basis: [Z] # ORourke2025's main-text memory
-    p:
-      mode: linspace
-      start: 0.005
-      stop: 0.0062
-      num: 10
+    p: # ORourke2025's p near the threshold (SD_stats.pickle), for a point-by-point p_L comparison
+      mode: list
+      values: [0.0049, 0.005, 0.0051, 0.0052, 0.0055, 0.0056, 0.0057, 0.0058, 0.006]
 
   - id: suppression_sweep # required by the schema; not used
     distances: [3, 5, 7]
@@ -42,7 +40,7 @@ sampling:
 threshold:
   source_sweep: threshold_sweep
   distances: [9, 11, 13, 15, 17, 19, 21]
-  x_window: 0.012
+  x_window: 0.014 # covers every point, down to d = 21 at p = 0.0049
   nu_0: 1.06
 
 suppression:
