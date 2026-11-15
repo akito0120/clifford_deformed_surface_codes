@@ -1,9 +1,12 @@
 1σ: 41/63 (65.1%), N(0,1): 68.3%
 2σ: 61/63 (96.8%), N(0,1): 95.4%
 max |z|: 2.3σ, N(0,1) median: 2.5σ
+mean z: +0.28 ± 0.12, t-test p-value = 0.03
+chi2/dof: 63.9/63 = 1.01, chi2-test p-value = 0.45
+KS D: 0.22, ks-test p-value = 0.0048
 
-deviation vs p: r = -0.11, p-value = 0.39
-deviation vs d: r = -0.15, p-value = 0.23
+deviation vs p: r = -0.11, pearson-test p-value = 0.39
+deviation vs d: r = -0.15, pearson-test p-value = 0.23
 
 pl ratio weighted mean (framework/orourke) = 1.0034 ± 0.0017
 

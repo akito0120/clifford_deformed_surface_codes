@@ -1,9 +1,12 @@
 1σ: 90/130 (69.2%), N(0,1): 68.3%
 2σ: 125/130 (96.2%), N(0,1): 95.4%
 max |z|: 2.1σ, N(0,1) median: 2.8σ
+mean z: +0.05 ± 0.08, t-test p-value = 0.59
+chi2/dof: 120.1/130 = 0.92, chi2-test p-value = 0.72
+KS D: 0.07, ks-test p-value = 0.55
 
-deviation vs p: r = +0.10, p-value = 0.26
-deviation vs d: r = +0.08, p-value = 0.39
+deviation vs p: r = +0.10, pearson-test p-value = 0.26
+deviation vs d: r = +0.08, pearson-test p-value = 0.39
 
 pl ratio weighted mean (framework/stim) = 1.0003 ± 0.0008
 

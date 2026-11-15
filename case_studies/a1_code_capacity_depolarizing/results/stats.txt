@@ -1,6 +1,21 @@
 1σ: 294/450 (65.3%), N(0,1): 68.3%
 2σ: 429/450 (95.3%), N(0,1): 95.4%
 max |z|: 2.9σ, N(0,1) median: 3.2σ
+chi2/dof: 396.7/375 = 1.06, chi2-test p-value = 0.21
+
+mean z rotated_surface X: -0.15 ± 0.13, t-test p-value = 0.24
+mean z rotated_surface Z: -0.02 ± 0.12, t-test p-value = 0.85
+mean z xy X: +0.14 ± 0.13, t-test p-value = 0.27
+mean z xy Z: -0.11 ± 0.11, t-test p-value = 0.31
+mean z xzzx X: +0.12 ± 0.11, t-test p-value = 0.29
+mean z xzzx Z: +0.05 ± 0.12, t-test p-value = 0.70
+
+KS D rotated_surface X: 0.11, ks-test p-value = 0.33
+KS D rotated_surface Z: 0.07, ks-test p-value = 0.86
+KS D xy X: 0.09, ks-test p-value = 0.60
+KS D xy Z: 0.09, ks-test p-value = 0.62
+KS D xzzx X: 0.09, ks-test p-value = 0.55
+KS D xzzx Z: 0.11, ks-test p-value = 0.28
 
 p_th weighted mean = 14.961 ± 0.005%
 p_th rotated_surface X - mean = +0.1σ

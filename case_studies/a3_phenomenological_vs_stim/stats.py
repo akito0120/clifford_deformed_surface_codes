@@ -2,7 +2,7 @@ from contextlib import redirect_stdout
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from scipy.stats import norm, pearsonr
+from scipy.stats import chi2, kstest, norm, pearsonr, ttest_1samp
 
 from cdsc.config import load_config
 
@@ -34,6 +34,14 @@ def print_normality(z):
         print(f"{k}σ: {inside}/{n} ({inside / n:.1%}), N(0,1): {norm.cdf(k) - norm.cdf(-k):.1%}")
     # the largest |z|, next to the median of the largest |z| among n draws from N(0,1)
     print(f"max |z|: {z.abs().max():.1f}σ, N(0,1) median: {norm.ppf((1 + 0.5 ** (1 / n)) / 2):.1f}σ")
+    # one-sample t-test of the mean of the signed z against 0, with the standard error s/sqrt(n) from the sample
+    print(f"mean z: {z.mean():+.2f} ± {z.sem():.2f}, t-test p-value = {ttest_1samp(z, 0).pvalue:.2f}")
+    # sum of z^2 against chi^2 with n degrees of freedom: nothing is fitted to the deviations
+    c = (z ** 2).sum()
+    print(f"chi2/dof: {c:.1f}/{n} = {c / n:.2f}, chi2-test p-value = {chi2.sf(c, n):.2f}")
+    # Kolmogorov-Smirnov test against N(0,1): D is the largest gap between the empirical CDF of z and Φ
+    ks = kstest(z, "norm")
+    print(f"KS D: {ks.statistic:.2f}, ks-test p-value = {ks.pvalue:#.2g}")
 
 
 def print_trend(table):
@@ -41,7 +49,7 @@ def print_trend(table):
     # would point to a p- or d-dependent difference between the two circuits
     for var in ("p", "d"):
         r = pearsonr(table[var], table["deviation"])
-        print(f"deviation vs {var}: r = {r.statistic:+.2f}, p-value = {r.pvalue:.2f}")
+        print(f"deviation vs {var}: r = {r.statistic:+.2f}, pearson-test p-value = {r.pvalue:.2f}")
 
 
 def print_pl_ratio(table):

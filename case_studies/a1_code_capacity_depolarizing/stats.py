@@ -2,7 +2,7 @@ from contextlib import redirect_stdout
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from scipy.stats import norm
+from scipy.stats import chi2, kstest, norm, ttest_1samp
 
 from cdsc.config import load_config
 
@@ -12,23 +12,43 @@ CRIGER2018_P_TH = 14.95, 0.02  # %, Fig. 7 (top): 9.97 ± 0.01% at q, converted 
 
 
 def pl_pulls():
-    # each series' pl against the weighted mean of the six at the same (p, d), as a z score
+    # each series' pl against the weighted mean of the six at the same (p, d), as a z score,
+    # and chi^2 = sum of ((pl - mean) / sigma)^2, with 6 - 1 degrees of freedom per (p, d)
     df = pd.read_csv(RESULTS / "samples.csv")
     df = df[df["sweep_id"] == "threshold_sweep"]
     w = df["sigma"] ** -2
     g = df.assign(w=w, wx=w * df["pl"]).groupby(["p", "d"])
     w_sum = g["w"].transform("sum")
     mean, mean_err = g["wx"].transform("sum") / w_sum, w_sum ** -0.5
-    return (df["pl"] - mean) / (df["sigma"] ** 2 - mean_err ** 2) ** 0.5
+    residual = df["pl"] - mean
+    table = df.assign(pull=residual / (df["sigma"] ** 2 - mean_err ** 2) ** 0.5)
+    return table, ((residual / df["sigma"]) ** 2).sum(), len(df) - g.ngroups
 
 
-def print_normality(z):
+def print_normality(z, c, dof):
     n = len(z)
     for k in (1, 2):
         inside = int((z.abs() <= k).sum())
         print(f"{k}σ: {inside}/{n} ({inside / n:.1%}), N(0,1): {norm.cdf(k) - norm.cdf(-k):.1%}")
     # the largest |z|, next to the median of the largest |z| among n draws from N(0,1)
     print(f"max |z|: {z.abs().max():.1f}σ, N(0,1) median: {norm.ppf((1 + 0.5 ** (1 / n)) / 2):.1f}σ")
+    # chi^2 from the residuals, not the sum of pulls^2: the six pulls at a (p, d) are correlated through their mean
+    print(f"chi2/dof: {c:.1f}/{dof} = {c / dof:.2f}, chi2-test p-value = {chi2.sf(c, dof):.2f}")
+
+
+def print_series_means(table):
+    # one-sample t-test of each series' mean pull against 0: the pooled mean is ~0 by construction,
+    # but a series sitting above or below the other five shows up in its own mean
+    for (code, basis), z in table.groupby(["code", "basis"])["pull"]:
+        print(f"mean z {code} {basis}: {z.mean():+.2f} ± {z.sem():.2f}, t-test p-value = {ttest_1samp(z, 0).pvalue:.2f}")
+
+
+def print_series_ks(table):
+    # Kolmogorov-Smirnov test of each series' pulls against N(0,1), per series only: the six pulls at a (p, d)
+    # are correlated through their mean, which makes a test on all pulls together far too conservative
+    for (code, basis), z in table.groupby(["code", "basis"])["pull"]:
+        ks = kstest(z, "norm")
+        print(f"KS D {code} {basis}: {ks.statistic:.2f}, ks-test p-value = {ks.pvalue:#.2g}")
 
 
 def print_threshold_pulls():
@@ -64,7 +84,12 @@ def print_shot_budget():
 
 def main():
     with STATS.open("w", encoding="utf-8") as f, redirect_stdout(f):
-        print_normality(pl_pulls())
+        table, c, dof = pl_pulls()
+        print_normality(table["pull"], c, dof)
+        print()
+        print_series_means(table)
+        print()
+        print_series_ks(table)
         print()
         mean, mean_err = print_threshold_pulls()
         print()
