@@ -1,5 +1,6 @@
 1σ: 41/63 (65.1%), N(0,1): 68.3%
 2σ: 61/63 (96.8%), N(0,1): 95.4%
+max |z|: 2.3σ, N(0,1) median: 2.5σ
 
 deviation vs p: r = -0.11, p-value = 0.39
 deviation vs d: r = -0.15, p-value = 0.23

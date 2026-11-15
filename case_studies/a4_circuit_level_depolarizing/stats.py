@@ -27,6 +27,8 @@ def print_normality(z):
     for k in (1, 2):
         inside = int((z.abs() <= k).sum())
         print(f"{k}σ: {inside}/{n} ({inside / n:.1%}), N(0,1): {norm.cdf(k) - norm.cdf(-k):.1%}")
+    # the largest |z|, next to the median of the largest |z| among n draws from N(0,1)
+    print(f"max |z|: {z.abs().max():.1f}σ, N(0,1) median: {norm.ppf((1 + 0.5 ** (1 / n)) / 2):.1f}σ")
 
 
 def print_trend(table):

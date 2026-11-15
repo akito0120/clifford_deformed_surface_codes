@@ -1,5 +1,6 @@
 1σ: 294/450 (65.3%), N(0,1): 68.3%
 2σ: 429/450 (95.3%), N(0,1): 95.4%
+max |z|: 2.9σ, N(0,1) median: 3.2σ
 
 p_th weighted mean = 14.961 ± 0.005%
 p_th rotated_surface X - mean = +0.1σ
