@@ -1,3 +1,4 @@
+from contextlib import redirect_stdout
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -5,6 +6,8 @@ from scipy.stats import norm
 
 RESULTS = Path(__file__).parent / "results"
 OUT = RESULTS / "orourke2025_zscore.csv"
+STATS = RESULTS / "stats.txt"
+OROURKE2025_P_TH = 0.5637, 0.0004  # %, Table III (SD noise, rotated code, memory Z)
 
 
 def pl_zscores():
@@ -34,11 +37,23 @@ def print_pl_ratio(table):
     print(f"pl ratio weighted mean (framework/orourke) = {(w * r).sum() / w.sum():.4f} ± {w.sum() ** -0.5:.4f}")
 
 
+def print_threshold_diff():
+    # p_th(framework) - p_th(ORourke2025 Table III), in percentage points and in units of the combined sigma
+    th = pd.read_csv(RESULTS / "threshold.csv")
+    paper, paper_err = OROURKE2025_P_TH
+    for basis, p_th, p_th_err in zip(th["basis"], 100 * th["p_th"], 100 * th["p_th_err"]):
+        dp, e = p_th - paper, np.hypot(p_th_err, paper_err)
+        print(f"p_th {basis} (framework - orourke) = {dp:+.4f} ± {e:.4f} points ({dp / e:+.1f}σ)")
+
+
 def main():
     table = pl_zscores()
     table.assign(deviation=table["deviation"].map("{:.6f}".format)).to_csv(OUT, index=False)
-    print_normality(table["deviation"])
-    print_pl_ratio(table)
+    with STATS.open("w", encoding="utf-8") as f, redirect_stdout(f):
+        print_normality(table["deviation"])
+        print_pl_ratio(table)
+        print_threshold_diff()
+    print(f"wrote {OUT.relative_to(RESULTS.parent)} and {STATS.relative_to(RESULTS.parent)}")
 
 
 if __name__ == "__main__":
