@@ -49,7 +49,9 @@ def print_criger2018_diff(mean, mean_err):
 def main():
     with STATS.open("w", encoding="utf-8") as f, redirect_stdout(f):
         print_normality(pl_pulls())
+        print()
         mean, mean_err = print_threshold_pulls()
+        print()
         print_criger2018_diff(mean, mean_err)
     print(f"wrote {STATS.relative_to(RESULTS.parent)}")
 

@@ -64,8 +64,11 @@ def main():
     table.assign(deviation=table["deviation"].map("{:.6f}".format)).to_csv(OUT, index=False)
     with STATS.open("w", encoding="utf-8") as f, redirect_stdout(f):
         print_normality(table["deviation"])
+        print()
         print_pl_ratio(table)
+        print()
         print_threshold_diff()
+        print()
         print_threshold_pulls()
     print(f"wrote {OUT.relative_to(RESULTS.parent)} and {STATS.relative_to(RESULTS.parent)}")
 
