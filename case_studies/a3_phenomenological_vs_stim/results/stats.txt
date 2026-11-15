@@ -1,6 +1,9 @@
 1σ: 90/130 (69.2%), N(0,1): 68.3%
 2σ: 125/130 (96.2%), N(0,1): 95.4%
 
+deviation vs p: r = +0.10, p-value = 0.26
+deviation vs d: r = +0.08, p-value = 0.39
+
 pl ratio weighted mean (framework/stim) = 1.0003 ± 0.0008
 
 p_th X (framework - stim) = -0.008 ± 0.007 points (-1.2σ)
