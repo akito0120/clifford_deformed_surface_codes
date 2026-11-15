@@ -3,6 +3,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from cdsc.config import load_config
+
 HERE = Path(__file__).parent
 RESULTS = HERE / "results"
 STATS = RESULTS / "stats.txt"
@@ -26,11 +28,28 @@ def print_mwpm_ratios(noise):
             print(f"p_th {noise} {decoder} / mwpm = {ri:.3f} ± {ei:.3f}")
 
 
+def print_shot_budget():
+    # total shots per config and sweep, and the points that stopped at max_shots, with their fewest errors
+    for path in sorted(HERE.glob("config_*.yaml")):
+        name = path.stem.removeprefix("config_")
+        config = load_config(path)
+        max_shots = config.sampling.max_shots
+        df = pd.read_csv(config.output.path / "samples.csv")
+        for sweep, g in df.groupby("sweep_id", sort=False):
+            capped = g[g["shots"] >= max_shots]
+            line = f"{name} {sweep}: {g['shots'].sum():,} shots, {len(capped)}/{len(g)} points stopped at max_shots = {max_shots:,}"
+            if len(capped):
+                line += f", fewest errors among them = {capped['errors'].min():,}"
+            print(line)
+
+
 def main():
     with STATS.open("w", encoding="utf-8") as f, redirect_stdout(f):
         print_mwpm_ratios("depolarizing")
         print()
         print_mwpm_ratios("dephasing")
+        print()
+        print_shot_budget()
     print(f"wrote {STATS.relative_to(HERE)}")
 
 
