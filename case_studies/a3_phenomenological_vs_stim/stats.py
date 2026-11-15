@@ -4,9 +4,13 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm, pearsonr
 
-RESULTS = Path(__file__).parent / "results"
+from cdsc.config import load_config
+
+HERE = Path(__file__).parent
+RESULTS = HERE / "results"
 OUT = RESULTS / "stim_zscore.csv"
 STATS = RESULTS / "stats.txt"
+CONFIGS = {"framework": HERE / "config_framework.yaml", "stim": HERE / "config_stim.yaml"}
 
 
 def load(source):
@@ -69,6 +73,20 @@ def print_threshold_pulls():
         print(f"p_th {basis} {source} - mean = {(xi - mean) / (ei ** 2 - mean_err ** 2) ** 0.5:+.1f}σ")
 
 
+def print_shot_budget():
+    # total shots per config and sweep, and the points that stopped at max_shots, with their fewest errors
+    for name, path in CONFIGS.items():
+        config = load_config(path)
+        max_shots = config.sampling.max_shots
+        df = pd.read_csv(config.output.path / "samples.csv")
+        for sweep, g in df.groupby("sweep_id", sort=False):
+            capped = g[g["shots"] >= max_shots]
+            line = f"{name} {sweep}: {g['shots'].sum():,} shots, {len(capped)}/{len(g)} points stopped at max_shots = {max_shots:,}"
+            if len(capped):
+                line += f", fewest errors among them = {capped['errors'].min():,}"
+            print(line)
+
+
 def main():
     table = pl_zscores()
     table.assign(deviation=table["deviation"].map("{:.6f}".format)).to_csv(OUT, index=False)
@@ -82,6 +100,8 @@ def main():
         print_threshold_diff()
         print()
         print_threshold_pulls()
+        print()
+        print_shot_budget()
     print(f"wrote {OUT.relative_to(RESULTS.parent)} and {STATS.relative_to(RESULTS.parent)}")
 
 

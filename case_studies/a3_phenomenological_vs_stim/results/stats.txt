@@ -15,3 +15,8 @@ p_th X framework - mean = -1.8σ
 p_th Z framework - mean = +1.0σ
 p_th X stim - mean = +0.2σ
 p_th Z stim - mean = +0.6σ
+
+framework threshold_sweep: 30,883,643 shots, 0/130 points stopped at max_shots = 1,000,000
+framework suppression_sweep: 3,000,000 shots, 3/3 points stopped at max_shots = 1,000,000, fewest errors among them = 542
+stim threshold_sweep: 30,907,040 shots, 0/130 points stopped at max_shots = 1,000,000
+stim suppression_sweep: 3,000,000 shots, 3/3 points stopped at max_shots = 1,000,000, fewest errors among them = 578
