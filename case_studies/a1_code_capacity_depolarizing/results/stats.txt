@@ -1,0 +1,10 @@
+1σ: 294/450 (65.3%), N(0,1): 68.3%
+2σ: 429/450 (95.3%), N(0,1): 95.4%
+p_th weighted mean = 14.961 ± 0.005%
+p_th rotated_surface X - mean = +0.1σ
+p_th rotated_surface Z - mean = +1.1σ
+p_th xy X - mean = +0.1σ
+p_th xy Z - mean = -0.5σ
+p_th xzzx X - mean = -1.3σ
+p_th xzzx Z - mean = +0.4σ
+p_th weighted mean - criger2018 = +0.011 ± 0.021 points (+0.5σ)
