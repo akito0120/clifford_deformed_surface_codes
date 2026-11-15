@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
+from cdsc.config import load_config
+
 RESULTS = Path(__file__).parent / "results"
 STATS = RESULTS / "stats.txt"
 CRIGER2018_P_TH = 14.95, 0.02  # %, Fig. 7 (top): 9.97 ± 0.01% at q, converted to p = 1.5q
@@ -48,6 +50,18 @@ def print_criger2018_diff(mean, mean_err):
     print(f"p_th weighted mean - criger2018 = {dp:+.3f} ± {e:.3f} points ({dp / e:+.1f}σ)")
 
 
+def print_shot_budget():
+    # total shots per sweep, and the points that stopped at max_shots, with their fewest errors
+    max_shots = load_config(RESULTS.parent / "config.yaml").sampling.max_shots
+    df = pd.read_csv(RESULTS / "samples.csv")
+    for sweep, g in df.groupby("sweep_id", sort=False):
+        capped = g[g["shots"] >= max_shots]
+        line = f"{sweep}: {g['shots'].sum():,} shots, {len(capped)}/{len(g)} points stopped at max_shots = {max_shots:,}"
+        if len(capped):
+            line += f", fewest errors among them = {capped['errors'].min():,}"
+        print(line)
+
+
 def main():
     with STATS.open("w", encoding="utf-8") as f, redirect_stdout(f):
         print_normality(pl_pulls())
@@ -55,6 +69,8 @@ def main():
         mean, mean_err = print_threshold_pulls()
         print()
         print_criger2018_diff(mean, mean_err)
+        print()
+        print_shot_budget()
     print(f"wrote {STATS.relative_to(RESULTS.parent)}")
 
 

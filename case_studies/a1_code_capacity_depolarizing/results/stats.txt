@@ -11,3 +11,6 @@ p_th xzzx X - mean = -1.3σ
 p_th xzzx Z - mean = +0.4σ
 
 p_th weighted mean - criger2018 = +0.011 ± 0.021 points (+0.5σ)
+
+threshold_sweep: 73,716,909 shots, 0/450 points stopped at max_shots = 1,000,000
+suppression_sweep: 9,000,000 shots, 9/9 points stopped at max_shots = 1,000,000, fewest errors among them = 3,842
