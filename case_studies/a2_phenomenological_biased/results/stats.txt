@@ -1,0 +1,43 @@
+p_th eta=0.5 css - css reference line = +0.015 points (+0.34%)
+p_th eta=10 css - css reference line = +0.007 points (+0.24%)
+p_th eta=25 css - css reference line = +0.012 points (+0.40%)
+p_th eta=50 css - css reference line = +0.009 points (+0.31%)
+p_th eta=100 css - css reference line = +0.010 points (+0.34%)
+p_th eta=inf css - css reference line = +0.011 points (+0.38%)
+
+p_th eta=0.5 css - campos2026 = -0.035 ± 0.200 points (-0.2σ)
+p_th eta=10 css - campos2026 = +0.045 ± 0.200 points (+0.2σ)
+p_th eta=25 css - campos2026 = +0.069 ± 0.200 points (+0.3σ)
+p_th eta=50 css - campos2026 = +0.038 ± 0.200 points (+0.2σ)
+p_th eta=100 css - campos2026 = +0.024 ± 0.200 points (+0.1σ)
+
+q_th weighted mean = 2.9097 ± 0.0012%
+q_th eta=0.5 css - mean = +0.0001 points (+0.1σ)
+q_th eta=10 css - mean = -0.0029 points (-1.1σ)
+q_th eta=25 css - mean = +0.0020 points (+0.8σ)
+q_th eta=50 css - mean = -0.0008 points (-0.3σ)
+q_th eta=100 css - mean = +0.0002 points (+0.1σ)
+q_th eta=inf css - mean = +0.0014 points (+0.5σ)
+
+p_th eta=0.5 weighted mean = 4.362 ± 0.003%
+p_th eta=0.5 rotated_surface X - mean = +0.003 points (+1.1σ)
+p_th eta=0.5 xzzx X - mean = -0.009 points (-1.5σ)
+p_th eta=0.5 xzzx Z - mean = +0.001 points (+0.2σ)
+
+p_th eta=0.5 xzzx X - xzzx Z = -0.010 ± 0.010 points (-1.0σ)
+p_th eta=10 xzzx X - xzzx Z = +0.066 ± 0.014 points (+4.7σ)
+p_th eta=25 xzzx X - xzzx Z = +0.113 ± 0.016 points (+7.0σ)
+p_th eta=50 xzzx X - xzzx Z = +0.196 ± 0.020 points (+9.7σ)
+p_th eta=100 xzzx X - xzzx Z = +0.221 ± 0.020 points (+10.8σ)
+
+p_th eta=0.5 xzzx lower - campos2026 = -0.048 ± 0.200 points (-0.2σ)
+p_th eta=10 xzzx lower - campos2026 = +0.118 ± 0.200 points (+0.6σ)
+p_th eta=25 xzzx lower - campos2026 = -0.012 ± 0.200 points (-0.1σ)
+p_th eta=50 xzzx lower - campos2026 = -0.280 ± 0.200 points (-1.4σ)
+p_th eta=100 xzzx lower - campos2026 = -0.540 ± 0.200 points (-2.7σ)
+
+p_th eta=0.5 xzzx higher - campos2026 = -0.037 ± 0.200 points (-0.2σ)
+p_th eta=10 xzzx higher - campos2026 = +0.184 ± 0.200 points (+0.9σ)
+p_th eta=25 xzzx higher - campos2026 = +0.101 ± 0.200 points (+0.5σ)
+p_th eta=50 xzzx higher - campos2026 = -0.083 ± 0.201 points (-0.4σ)
+p_th eta=100 xzzx higher - campos2026 = -0.319 ± 0.201 points (-1.6σ)
