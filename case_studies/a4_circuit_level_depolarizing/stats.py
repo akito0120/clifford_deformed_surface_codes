@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm, pearsonr
 
+from cdsc.config import load_config
+
 RESULTS = Path(__file__).parent / "results"
 OUT = RESULTS / "orourke2025_zscore.csv"
 STATS = RESULTS / "stats.txt"
@@ -56,6 +58,18 @@ def print_threshold_diff():
         print(f"p_th {basis} (framework - orourke) = {dp:+.4f} ± {e:.4f} points ({dp / e:+.1f}σ)")
 
 
+def print_shot_budget():
+    # total shots per sweep, and the points that stopped at max_shots, with their fewest errors
+    max_shots = load_config(RESULTS.parent / "config.yaml").sampling.max_shots
+    df = pd.read_csv(RESULTS / "samples.csv")
+    for sweep, g in df.groupby("sweep_id", sort=False):
+        capped = g[g["shots"] >= max_shots]
+        line = f"{sweep}: {g['shots'].sum():,} shots, {len(capped)}/{len(g)} points stopped at max_shots = {max_shots:,}"
+        if len(capped):
+            line += f", fewest errors among them = {capped['errors'].min():,}"
+        print(line)
+
+
 def main():
     table = pl_zscores()
     table.assign(deviation=table["deviation"].map("{:.6f}".format)).to_csv(OUT, index=False)
@@ -67,6 +81,8 @@ def main():
         print_pl_ratio(table)
         print()
         print_threshold_diff()
+        print()
+        print_shot_budget()
     print(f"wrote {OUT.relative_to(RESULTS.parent)} and {STATS.relative_to(RESULTS.parent)}")
 
 
