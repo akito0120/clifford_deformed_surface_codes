@@ -1,4 +1,4 @@
-# A5-refit: Suppression fit on published data
+# A5: Suppression fit on published data
 
 ## Prior studies
 
