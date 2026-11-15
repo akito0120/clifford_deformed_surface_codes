@@ -1,6 +1,9 @@
 1σ: 41/63 (65.1%), N(0,1): 68.3%
 2σ: 61/63 (96.8%), N(0,1): 95.4%
 
+deviation vs p: r = -0.11, p-value = 0.39
+deviation vs d: r = -0.15, p-value = 0.23
+
 pl ratio weighted mean (framework/orourke) = 1.0034 ± 0.0017
 
 p_th Z (framework - orourke) = +0.0007 ± 0.0010 points (+0.7σ)

@@ -2,7 +2,7 @@ from contextlib import redirect_stdout
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from scipy.stats import norm
+from scipy.stats import norm, pearsonr
 
 RESULTS = Path(__file__).parent / "results"
 OUT = RESULTS / "orourke2025_zscore.csv"
@@ -29,6 +29,14 @@ def print_normality(z):
         print(f"{k}σ: {inside}/{n} ({inside / n:.1%}), N(0,1): {norm.cdf(k) - norm.cdf(-k):.1%}")
 
 
+def print_trend(table):
+    # Pearson correlation of the deviation with p and with d: a trend, unlike the mean offset,
+    # would point to a p- or d-dependent　difference between the two circuits
+    for var in ("p", "d"):
+        r = pearsonr(table[var], table["deviation"])
+        print(f"deviation vs {var}: r = {r.statistic:+.2f}, p-value = {r.pvalue:.2f}")
+
+
 def print_pl_ratio(table):
     # inverse-variance weighted mean of pl_framework / pl_orourke
     r = table["pl_framework"] / table["pl_orourke"]
@@ -51,6 +59,8 @@ def main():
     table.assign(deviation=table["deviation"].map("{:.6f}".format)).to_csv(OUT, index=False)
     with STATS.open("w", encoding="utf-8") as f, redirect_stdout(f):
         print_normality(table["deviation"])
+        print()
+        print_trend(table)
         print()
         print_pl_ratio(table)
         print()
