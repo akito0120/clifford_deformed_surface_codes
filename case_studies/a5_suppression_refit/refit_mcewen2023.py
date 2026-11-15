@@ -1,22 +1,11 @@
-# Refit McEwen2023's released memory-experiment counts with McEwen2023's own footprint fit and with cdsc's suppression fit.
-# McEwen2023: M. McEwen, D. Bacon, C. Gidney, "Relaxing hardware requirements for surface code circuits using
-# time-dynamics", Quantum 7, 1172 (2023), arXiv:2302.02192. Data: Zenodo 7587578, fused_stats.csv (CC-BY 4.0).
-# Code: github.com/Strilanc/midout (Apache-2.0); its fit is re-implemented below, with the source of each part.
-#
-# The counts: X and Z memory experiments fused into one "XZ" row per (style, noise, d, p): the smaller shot count,
-# and errors for "X or Z fails", 1 - (1 - p_X)(1 - p_Z). r = 4d rounds, q = 2d^2 - 1 qubits for the standard circuits.
-# - McEwen2023 (tools/plot_footprint): p_L per d rounds with xz_piece_error_rate(pieces = r/d, combo = True),
-#   then sqrt(q) against ln(p_L per d rounds), unweighted, with sinter.fit_line_y_at_x(max_extra_squared_error=1)
-#   at 1e-12, squared: the teraquop footprint and its band
-# - cdsc: cdsc.analysis.suppression.estimate_suppression on the same tasks: p_L per round (pieces = r), log10 against d,
-#   weighted by the binomial sigma (Wilson, cdsc.sweep.run.sample_row), d* for 1e-12 per d rounds, n* = 2 d*^2 - 1
-# - cdsc with McEwen2023's unit: estimate_suppression on p_L per d rounds (rounds = r/d, so pieces = r/d), its weighted
-#   line, then d* where that line meets 1e-12 directly (estimate_suppression's own d* assumes a per-round line)
-# All use the tasks McEwen2023 keeps: 0 < p_shot < 0.3.
+# Refit McEwen2023's released memory-experiment samples with McEwen2023's own footprint fit and with cdsc's suppression fit.
+# McEwen2023: M. McEwen, D. Bacon, C. Gidney, "Relaxing hardware requirements for surface code circuits using time-dynamics",
+# Quantum 7, 1172 (2023), arXiv:2302.02192. Data: Zenodo 7587578, fused_stats.csv (CC-BY 4.0).
+# Code: github.com/Strilanc/midout; a snapshot, midout.zip, is in Zenodo 7587578 (CC-BY 4.0).
+# Its fit is re-implemented below.
 
 # Usage:
 # python case_studies/a5_suppression_refit/refit_mcewen2023.py [--stats CSV] [--out-dir DIR]
-# Writes mcewen2023_footprint.csv next to this script unless --out-dir is given.
 
 import argparse
 import math
@@ -27,7 +16,7 @@ import numpy as np
 import pandas as pd
 import sinter
 
-import cdsc.codes.builtin  # noqa: F401  registers rotated_surface (q = 2d^2 - 1) for estimate_suppression
+import cdsc.codes.builtin  # registers rotated_surface for estimate_suppression
 from cdsc.analysis.suppression import estimate_suppression
 from cdsc.sweep.run import sample_row
 
@@ -69,7 +58,7 @@ def cdsc_footprint(tasks: list[sinter.TaskStats]) -> dict:
     samples = pd.DataFrame([sample_row(stat) for stat in tasks]).rename(columns={"r": "rounds"})
     fit = estimate_suppression(samples, "rotated_surface", TARGET)
 
-    # McEwen2023's unit: one piece per d rounds, and a line in log10(p_L per d rounds) that meets the target directly
+    # McEwen2023's unit: one piece per d rounds, and a line in log10(p_L per d rounds)
     per_d = samples.assign(rounds=samples["rounds"] / samples["d"])
     fit_d = estimate_suppression(per_d, "rotated_surface", TARGET)
     d_star_d = (np.log10(TARGET) - fit_d.intercept) / fit_d.slope
