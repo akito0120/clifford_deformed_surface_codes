@@ -1,0 +1,5 @@
+p_th depolarizing bp / mwpm = 1.179 ± 0.002
+p_th depolarizing uf / mwpm = 0.894 ± 0.001
+
+p_th dephasing bp / mwpm = 1.034 ± 0.002
+p_th dephasing uf / mwpm = 0.884 ± 0.001
