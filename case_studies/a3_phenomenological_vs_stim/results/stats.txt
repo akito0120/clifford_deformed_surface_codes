@@ -1,0 +1,10 @@
+1σ: 90/130 (69.2%), N(0,1): 68.3%
+2σ: 125/130 (96.2%), N(0,1): 95.4%
+pl ratio weighted mean (framework/stim) = 1.0003 ± 0.0008
+p_th X (framework - stim) = -0.008 ± 0.007 points (-1.2σ)
+p_th Z (framework - stim) = +0.002 ± 0.007 points (+0.2σ)
+p_th weighted mean = 3.899 ± 0.002%
+p_th X framework - mean = -1.8σ
+p_th Z framework - mean = +1.0σ
+p_th X stim - mean = +0.2σ
+p_th Z stim - mean = +0.6σ
