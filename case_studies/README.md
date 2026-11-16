@@ -11,7 +11,7 @@ Each case reproduces published results with the framework. Its `result.md` lists
 | [A3](a3_phenomenological_vs_stim/result.md) | A differential test of the phenomenological builder against stim's generated rotated-code circuits, by threshold and by p_L point by point. The threshold is also compared with LinLai2025. |
 | [A4](a4_circuit_level_depolarizing/result.md) | The circuit-level depolarizing threshold of the rotated surface code with `mwpm`, against ORourke2025 and the published band of 0.50–0.82%. |
 | [A5](a5_suppression_refit/result.md) | The teraquop footprint from cdsc's suppression fit, on McEwen2023's released data, without sampling. Compares it with McEwen2023's own fit, re-run on the same data. |
-| [B1](b1_decoder_comparison/result.md) | The `bp` and `uf` decoders against `mwpm` at code capacity, under depolarizing noise and independent Z flips. Compares the thresholds and their ratios to MWPM with Criger2018, Delfosse2021, LinLai2025 and the optimal bounds. |
+| [B1](b1_decoder_comparison/result.md) | The `bp` and `uf` decoders against `mwpm` at code capacity, under depolarizing noise and independent Z flips. Compares the thresholds and their ratios to MWPM with Criger2018, Delfosse2021, LinLai2025, deMartiIOlius2024 and the optimal bounds. |
 
 ## Usefulness
 
