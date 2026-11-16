@@ -1,10 +1,10 @@
 # Summary: b1_dephasing_bp
 
-Written by `cdsc summarize` on 2026-11-05 00:21.
+Written by `cdsc summarize` on 2026-11-16 01:48.
 
 ## Setup
 
-- Config: [case_studies/b1_decoder_comparison/config_dephasing_bp.yaml](../../config_dephasing_bp.yaml)
+- Config: [config_dephasing_bp.yaml](../../config_dephasing_bp.yaml)
 - Codes: rotated_surface
 - Noise: code_capacity / biased, eta = [inf], p_meas = 0.0
 - Sweeps:
@@ -15,16 +15,15 @@ Written by `cdsc summarize` on 2026-11-05 00:21.
 
 ## Warnings
 
-- rotated_surface X eta=inf: poor fit (chi2_red=2.52, p-value=0.000)
 - rotated_surface X eta=inf p=5.00e-02: d_teraquop=69 is extrapolated far beyond the largest sampled d=7
 
 ## Threshold
 
-Sweep `threshold_sweep`, fit on d = [7, 11, 15, 19, 23], x_window = 0.1, ν0 = 1.46. Data: [threshold.csv](threshold.csv)
+Sweep `threshold_sweep`, fit on d = [11, 15, 19, 23], x_window = 0.1, ν0 = 1.46. Data: [threshold.csv](threshold.csv)
 
 | code            | basis   | eta   | p_th               | ν    | χ²_red   | p-value   | figure                                             |
 |-----------------|---------|-------|--------------------|------|----------|-----------|----------------------------------------------------|
-| rotated_surface | X       | inf   | 10.3115% ± 0.0162% | 1.67 | 2.52     | 0.000     | [PDF](figures/threshold_rotated_surface_X_inf.pdf) |
+| rotated_surface | X       | inf   | 10.4409% ± 0.0244% | 1.62 | 1.32     | 0.086     | [PDF](figures/threshold_rotated_surface_X_inf.pdf) |
 
 ## Teraquop footprint
 

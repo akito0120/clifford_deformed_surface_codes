@@ -21,34 +21,29 @@
   - [config_dephasing_bp.yaml](config_dephasing_bp.yaml)
   - [config_dephasing_uf.yaml](config_dephasing_uf.yaml)
 - `rotated_surface`, `code_capacity`
-- d = 7, 11, 15, 19, 23
+- Sampled at d = 7, 11, 15, 19, 23; fit on d = 11, 15, 19, 23
 - p in steps of 0.2 points around each threshold
-- Depolarizing: `depolarizing`, Z basis. The MWPM reference is [A1](../a1_code_capacity_depolarizing/result.md)'s Z basis.
+- Depolarizing: `depolarizing`, Z basis. The MWPM reference is [A1](../a1_code_capacity_depolarizing/result.md)'s Z-basis samples, refit on d = 11–23 by [stats.py](stats.py).
 - Independent Z flips: `biased` with η = inf, X basis
 - Each point ran to 10,000 errors (`bp`) or 20,000 (others), with 0.5–3.3 × 10⁵ shots.
 - `results/*/suppression.csv` comes from the sweep the config schema requires and is not a result.
 
 ## Result
 
-From `results/*/threshold.csv` and A1's [results/threshold.csv](../a1_code_capacity_depolarizing/results/threshold.csv):
+From `results/*/threshold.csv` and [results/stats.txt](results/stats.txt) (A1's refit and the ratios):
 
-| Noise | Decoder | p_th (%) | ν | χ²_red | Ratio to MWPM | p_th, d = 11–23 (%) | Compare against |
-|---|---|---|---|---|---|---|---|
-| Depolarizing | `mwpm` (A1) | 14.973 ± 0.013 | 1.59 | 2.12 | — | 15.090 | Criger2018 Fig. 7 (14.952%) and Campos2026 (14.8%) |
-| Depolarizing | `bp` | 17.649 ± 0.025 | 1.67 | 0.94 | 1.179 | 17.657 | Criger2018 (1.19 gain) |
-| Depolarizing | `uf` | 13.380 ± 0.013 | 1.63 | 1.56 | 0.894 | 13.459 | published UF range (11.6–14.68%) |
-| Independent Z | `mwpm` | 9.972 ± 0.010 | 1.61 | 2.06 | — | 10.035 | Criger2018 (9.97%), Campos2026 (10.0%) |
-| Independent Z | `bp` | 10.311 ± 0.016 | 1.67 | 2.52 | 1.034 | 10.441 | Criger2018 (1.037 gain) |
-| Independent Z | `uf` | 8.813 ± 0.010 | 1.62 | 2.15 | 0.884 | 8.878 | Delfosse2021 (0.893 gain) |
-
-- Without d = 7, χ²_red falls to 1.0–1.3.
+| Noise | Decoder | p_th (%) | ν | χ²_red | Ratio to MWPM | Compare against |
+|---|---|---|---|---|---|---|
+| Depolarizing | `mwpm` (A1) | 15.090 ± 0.019 | 1.58 | 1.23 | — | Criger2018 Fig. 7 (14.952%) and Campos2026 (14.8%) |
+| Depolarizing | `bp` | 17.657 ± 0.038 | 1.75 | 1.05 | 1.170 | Criger2018 (1.19 gain) |
+| Depolarizing | `uf` | 13.459 ± 0.018 | 1.61 | 1.03 | 0.892 | published range (0.83–0.966 gain) |
+| Independent Z | `mwpm` | 10.035 ± 0.015 | 1.59 | 1.21 | — | Criger2018 (9.97%), Campos2026 (10.0%) |
+| Independent Z | `bp` | 10.441 ± 0.024 | 1.62 | 1.32 | 1.040 | Criger2018 (1.037 gain) |
+| Independent Z | `uf` | 8.878 ± 0.014 | 1.63 | 1.33 | 0.885 | Delfosse2021 (0.893 gain) |
 
 ## Verdict
 
-- **`mwpm`, independent Z: pass.** 9.972 ± 0.010% against Criger2018's 9.97 ± 0.01%, the equivalent setting, and Campos2026's 10.0%.
-- **`bp`, depolarizing: pass.** Between MWPM and 18.9%. 0.11 points below Criger2018's 17.76%, a different algorithm counting either logical, with the same gain over MWPM (1.18 against 1.19).
-- **`bp`, independent Z: pass.** 3.4% above MWPM, close to the 3.7% gain of Criger2018's path counting, and below 10.93%. Most of `bp`'s depolarizing gain (+18%) therefore comes from the X–Z correlation of Y errors.
-- **`uf`, depolarizing: pass.** Below MWPM, and inside the published UF range (11.6–14.68%; ratios 0.83–0.966).
-- **`uf`, independent Z: pass.** Its ratio to MWPM, 0.884, is within 1% of Delfosse2021's uniform growth (0.893). LinLai2025's uniform-growth UF keeps 0.966, so UF thresholds depend on the implementation.
-
-
+- **`bp`, depolarizing: pass.** Between MWPM and 18.9%. 0.10 points below Criger2018's 17.76%, a different algorithm counting either logical; its gain over MWPM is 1.17 against Criger2018's 1.19.
+- **`bp`, independent Z: pass.** 4.0% above MWPM, close to the 3.7% gain of Criger2018's path counting, and below 10.93%. Most of `bp`'s depolarizing gain (+17%) therefore comes from the X–Z correlation of Y errors.
+- **`uf`, depolarizing: pass.** Below MWPM, and inside the published range (11.6–14.68%; 0.83–0.966 gain).
+- **`uf`, independent Z: pass.** Its ratio to MWPM, 0.885, is within 1% of Delfosse2021's uniform growth (0.893). LinLai2025's uniform-growth UF keeps 0.966, so UF thresholds depend on the implementation.

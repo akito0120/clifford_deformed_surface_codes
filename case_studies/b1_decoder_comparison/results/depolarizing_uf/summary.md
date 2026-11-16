@@ -1,10 +1,10 @@
 # Summary: b1_depolarizing_uf
 
-Written by `cdsc summarize` on 2026-11-05 00:21.
+Written by `cdsc summarize` on 2026-11-16 01:49.
 
 ## Setup
 
-- Config: [case_studies/b1_decoder_comparison/config_depolarizing_uf.yaml](../../config_depolarizing_uf.yaml)
+- Config: [config_depolarizing_uf.yaml](../../config_depolarizing_uf.yaml)
 - Codes: rotated_surface
 - Noise: code_capacity / depolarizing, p_meas = 0.0
 - Sweeps:
@@ -15,17 +15,16 @@ Written by `cdsc summarize` on 2026-11-05 00:21.
 
 ## Warnings
 
-- validation.json not found; run `cdsc validate case_studies/b1_decoder_comparison/config_depolarizing_uf.yaml` first
-- rotated_surface Z: poor fit (chi2_red=1.56, p-value=0.004)
+- validation.json not found; run `cdsc validate config_depolarizing_uf.yaml` first
 - rotated_surface Z p=5.00e-02: d_teraquop=53 is extrapolated far beyond the largest sampled d=7
 
 ## Threshold
 
-Sweep `threshold_sweep`, fit on d = [7, 11, 15, 19, 23], x_window = 0.1, ν0 = 1.5. Data: [threshold.csv](threshold.csv)
+Sweep `threshold_sweep`, fit on d = [11, 15, 19, 23], x_window = 0.1, ν0 = 1.5. Data: [threshold.csv](threshold.csv)
 
 | code            | basis   | p_th               | ν    | χ²_red   | p-value   | figure                                         |
 |-----------------|---------|--------------------|------|----------|-----------|------------------------------------------------|
-| rotated_surface | Z       | 13.3796% ± 0.0125% | 1.63 | 1.56     | 0.004     | [PDF](figures/threshold_rotated_surface_Z.pdf) |
+| rotated_surface | Z       | 13.4590% ± 0.0184% | 1.61 | 1.03     | 0.419     | [PDF](figures/threshold_rotated_surface_Z.pdf) |
 
 ## Teraquop footprint
 
