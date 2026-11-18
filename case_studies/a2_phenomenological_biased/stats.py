@@ -10,17 +10,22 @@ HERE = Path(__file__).parent
 RESULTS = HERE / "results"
 STATS = RESULTS / "stats.txt"
 CONFIGS = {"css": HERE / "config_css.yaml", "xzzx": HERE / "config_xzzx.yaml"}
-REFERENCE_LINE = 2.9  # %, BonillaAtaides2021 Fig. 5: Wang2003's p_hr + p_lr = 2.9%
+WANG2003_Q_TH = 2.93, 0.02 # %, as q = p_Y + p_Z; Wang2003 abstract: p_c0 = .0293 ± .0002
 DEPOLARIZING_ETA = 0.5  # p_X = p_Y = p_Z, where the XZZX code is a Clifford deformation of the CSS code
 
 
-def print_reference_line_diff(th):
-    # p_th - the reference line 2.9% x 2(eta + 1)/(2 eta + 1) = 2.9% x (1 + 1/(2 eta + 1)),
-    # in percentage points and relative to the line (no z: the line has no error)
-    ref = REFERENCE_LINE * (1 + 1 / (2 * th["eta"] + 1))
-    dp = 100 * th["p_th"] - ref
-    for eta, d, r in zip(th["eta"], dp, ref):
-        print(f"p_th eta={eta:g} css - css reference line = {d:+.3f} points ({d / r:+.2%})")
+def q_per_p(th):
+    # q = p_Y + p_Z per unit p at each eta: the measurement flip rate of biased_meas_yz, and the X memory's data error rate
+    return th["eta"].map(lambda eta: sum(biased_pauli_rates(1.0, eta)[1:]))
+
+
+def print_wang2003_diff(th):
+    # p_th - Wang2003's q_th converted to p, in percentage points and in units of the combined sigma
+    paper, paper_err = WANG2003_Q_TH
+    to_p = 1 / q_per_p(th)
+    dp, e = 100 * th["p_th"] - paper * to_p, np.hypot(100 * th["p_th_err"], paper_err * to_p)
+    for eta, d, ei in zip(th["eta"], dp, e):
+        print(f"p_th eta={eta:g} css - wang2003 = {d:+.3f} ± {ei:.3f} points ({d / ei:+.1f}σ)")
 
 
 def campos2026_diff(th):
@@ -38,7 +43,7 @@ def print_campos2026_diff(th):
 def print_q_threshold_pulls(th):
     # each p_th as q = p_Y + p_Z, against the weighted mean of the six, in percentage points and as a z score
     # (sigma_i^2 - sigma_mean^2 removes q_i's share of the mean)
-    to_q = th["eta"].map(lambda eta: sum(biased_pauli_rates(1.0, eta)[1:]))
+    to_q = q_per_p(th)
     x, e = 100 * th["p_th"] * to_q, 100 * th["p_th_err"] * to_q
     w = e ** -2
     mean, mean_err = (w * x).sum() / w.sum(), w.sum() ** -0.5
@@ -96,7 +101,7 @@ def print_shot_budget():
 def main():
     th = pd.read_csv(RESULTS / "css" / "threshold.csv")
     with STATS.open("w", encoding="utf-8") as f, redirect_stdout(f):
-        print_reference_line_diff(th)
+        print_wang2003_diff(th)
         print()
         print_campos2026_diff(th)
         print()

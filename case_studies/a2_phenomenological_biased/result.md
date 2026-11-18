@@ -6,14 +6,16 @@
 |---|---|---|---|---|
 | BonillaAtaides2021 | J. P. Bonilla Ataides, D. K. Tuckett, S. D. Bartlett, S. T. Flammia and B. J. Brown, "The XZZX surface code" [arXiv:2009.07851](https://arxiv.org/abs/2009.07851) | Fig. 5(e) | CSS reference line p_hr + p_lr = 2.9%. The XZZX threshold rises with η, to about 10% at high bias | Toric d×d code, d rounds with periodic time, measurement flips q = p_hr + p_lr, MWPM, d = 12–20 at finite bias, 3 × 10⁴ samples per point |
 | Campos2026 | J. A. Campos and K. R. Brown, "Clifford-deformed compass codes" [arXiv:2412.03808](https://arxiv.org/abs/2412.03808) | Fig. 6, ℓ = 2 | CSS (a): 4.4, 3.2, 3.0, 2.9, 2.9, 2.9%. XZZX (b): 4.4, 5.1, 5.6, 6.3, 6.9, 7.4%. Both at η = 0.5, 5, 10, 25, 50, 100, each ±0.2 points | Rotated code, measurement flips p_Y + p_Z, a perfect last round, PyMatching, quadratic FSS fit, "distances up to 40" |
+| Wang2003 | C. Wang, J. Harrington and J. Preskill, "Confinement-Higgs transition in a disordered gauge theory and the accuracy threshold for quantum memory" [arXiv:quant-ph/0207088](https://arxiv.org/abs/quant-ph/0207088) | Abstract, §IV.3 | p_c0 = 2.93 ± 0.02%, the source of BonillaAtaides2021's CSS line | 3D random-plaquette gauge model at T = 0, qubit and measurement flips both at p, L = 9–16, 10⁶ samples per point |
 
 - **Both papers count a failure of either logical operator.**
   - Campos2026 checks "whether the residual error is trivial" (§Methods).
   - BonillaAtaides2021 also counts a non-trivial cycle along the time axis.
   - The framework counts one memory basis.
 - **The CSS reference line in BonillaAtaides2021 Fig. 5 is not a simulation.**
-  - It is Wang2003's 2.9% for independent flips, written as p_hr + p_lr = 2.9%.
-  - In terms of p it is p_th(η) = 2.9% × 2(η + 1)/(2η + 1). That gives 4.350, 3.038, 2.957, 2.929, 2.914 and 2.900% at η = 0.5, 10, 25, 50, 100 and inf.
+  - It is Wang2003's 2.93 ± 0.02% for independent flips, rounded and written as p_hr + p_lr = 2.9%. The unrounded value is compared.
+  - In the X memory here, data errors (p_Y + p_Z) and measurement flips both occur at q, as in Wang2003's p = q.
+  - In terms of p it is p_th(η) = 2.93% × 2(η + 1)/(2η + 1). That gives 4.395, 3.070, 2.987, 2.959, 2.945 and 2.930% at η = 0.5, 10, 25, 50, 100 and inf.
 - Campos2026's values were read from the vector PDF of Fig. 6 in its arXiv source (v3) into [Campos2026_fig6_l2.csv](Campos2026_fig6_l2.csv).
 - BonillaAtaides2021's XZZX curve is compared in trend only, because of its periodic boundaries.
 
@@ -38,25 +40,24 @@
 
 ## Result
 
-From [results/css/threshold.csv](results/css/threshold.csv). Difference is (framework − Campos2026) in units of Campos2026's ±0.2-point error bar.
+From [results/css/threshold.csv](results/css/threshold.csv) and [results/stats.txt](results/stats.txt). Differences are (framework − reference) in units of the combined σ, which for Campos2026 is its ±0.2-point error bar.
 
-| η | p_th (%) | Reference line (%) | Campos2026 (%) | Difference (error bars) |
-|---|---|---|---|---|
-| 0.5 | 4.365 ± 0.004 | 4.350 | 4.4 | −0.2 |
-| 10 | 3.045 ± 0.003 | 3.038 | 3.0 | +0.2 |
-| 25 | 2.969 ± 0.003 | 2.957 | 2.9 | +0.3 |
-| 50 | 2.938 ± 0.003 | 2.929 | 2.9 | +0.2 |
-| 100 | 2.924 ± 0.003 | 2.914 | 2.9 | +0.1 |
-| inf | 2.911 ± 0.003 | 2.900 | — | — |
+| η | p_th (%) | Wang2003 (%) | Difference (σ) | Campos2026 (%) | Difference (σ) |
+|---|---|---|---|---|---|
+| 0.5 | 4.365 ± 0.004 | 4.395 ± 0.030 | −1.0 | 4.4 | −0.2 |
+| 10 | 3.045 ± 0.003 | 3.070 ± 0.021 | −1.1 | 3.0 | +0.2 |
+| 25 | 2.969 ± 0.003 | 2.987 ± 0.020 | −0.9 | 2.9 | +0.3 |
+| 50 | 2.938 ± 0.003 | 2.959 ± 0.020 | −1.0 | 2.9 | +0.2 |
+| 100 | 2.924 ± 0.003 | 2.945 ± 0.020 | −1.0 | 2.9 | +0.1 |
+| inf | 2.911 ± 0.003 | 2.930 ± 0.020 | −0.9 | — | — |
 
-- Every η is 0.2–0.4% (relative) above the reference line, which is built from the rounded 2.9%.
 - In terms of q = p_Y + p_Z, the six thresholds coincide: 2.910 ± 0.001%.
 
 ---
 
 From [results/xzzx/threshold.csv](results/xzzx/threshold.csv). The difference is that of the lower basis, in the same units.
 
-| η | X basis (%) | Z basis (%) | Campos2026 (%) | Difference (error bars) |
+| η | X basis (%) | Z basis (%) | Campos2026 (%) | Difference (σ) |
 |---|---|---|---|---|
 | 0.5 | 4.352 ± 0.007 | 4.363 ± 0.007 | 4.4 | −0.2 |
 | 10 | 5.784 ± 0.010 | 5.718 ± 0.009 | 5.6 | +0.6 |
@@ -70,7 +71,7 @@ From [results/xzzx/threshold.csv](results/xzzx/threshold.csv). The difference is
 - **Bias dependence: pass.**
   - The CSS threshold falls with η, from 4.36% to 2.91%. The XZZX threshold rises, from 4.35% to 6.86%.
   - This matches the trend of both papers.
-- **CSS against both papers: pass.** At every η, the threshold is within 0.4% (relative) of the reference line and within 0.4 error bars of Campos2026.
+- **CSS against Wang2003 and Campos2026: pass.** At every η, the threshold is within 1.1σ of Wang2003 and within 0.4 σ of Campos2026.
 - **XZZX against Campos2026: consistent for η ≤ 50 (within 1.4 error bars), low at η = 100.**
   - At η = 100 the threshold is 0.54 points (7%, 2.7 error bars) below 7.4%.
   - Two conditions differ. Campos2026 uses distances up to 40 and counts either logical. Here the distances are d = 11–19, and the lower basis is compared.
